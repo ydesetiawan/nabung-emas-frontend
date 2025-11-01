@@ -1,57 +1,50 @@
 <template>
-  <button
-      @click="$emit('toggle')"
-      :class="[
-      'w-full flex items-center justify-between px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors duration-200 rounded-lg',
-      collapsed ? 'justify-center' : '',
-      isActive ? 'bg-blue-50 text-blue-600 font-semibold' : ''
-    ]"
-      :title="collapsed ? label : ''"
-  >
-    <div class="flex items-center gap-3">
-      <!-- Icon -->
-      <component :is="iconComponent" class="w-5 h-5 flex-shrink-0" />
-
-      <!-- Label -->
-      <span v-if="!collapsed" class="text-sm font-medium">{{ label }}</span>
-    </div>
-
-    <!-- Badge and Chevron -->
-    <div v-if="!collapsed" class="flex items-center gap-2">
+  <div class="relative group">
+    <NuxtLink
+        :to="to"
+        :class="[
+        'flex items-center gap-3 px-3 py-2 mx-1 rounded-full transition-all duration-200 relative',
+        'hover:bg-gray-100',
+        isActive ? 'bg-blue-50 text-blue-600' : 'text-gray-700',
+        collapsed ? 'justify-center w-12 h-12' : 'rounded-full'
+      ]"
+    >
+      <component
+        :is="icon"
+        :class="[
+          'flex-shrink-0 transition-colors duration-200',
+          collapsed ? 'h-6 w-6' : 'h-5 w-5',
+          isActive ? 'text-blue-600' : 'text-gray-600'
+        ]"
+      />
       <span
-          v-if="badge"
-          class="px-2 py-1 text-xs font-semibold text-emerald-600 bg-emerald-50 rounded"
+        v-if="!collapsed"
+        :class="[
+          'font-medium text-sm',
+          isActive ? 'text-blue-600' : 'text-gray-700'
+        ]"
       >
-        {{ badge }}
+        {{ label }}
       </span>
+    </NuxtLink>
 
-      <!-- Chevron -->
-      <svg
-          v-if="isExpanded"
-          xmlns="http://www.w3.org/2000/svg"
-          class="w-4 h-4 transition-transform duration-200"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-      >
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" />
-      </svg>
-      <svg
-          v-else-if="badge || isExpanded !== undefined"
-          xmlns="http://www.w3.org/2000/svg"
-          class="w-4 h-4 transition-transform duration-200"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-      >
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-      </svg>
+    <!-- Tooltip for collapsed state -->
+    <div
+        v-if="collapsed"
+        class="absolute left-full ml-2 px-3 py-2 bg-gray-900 text-white text-sm rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 whitespace-nowrap z-50 pointer-events-none"
+        style="top: 50%; transform: translateY(-50%);"
+    >
+      {{ label }}
+      <div class="absolute right-full top-1/2 -translate-y-1/2 border-4 border-transparent border-r-gray-900"></div>
     </div>
-  </button>
+  </div>
 </template>
 
 <script setup>
-defineProps({
+import { useRoute } from 'vue-router'
+import { computed } from 'vue'
+
+const props = defineProps({
   label: {
     type: String,
     required: true
@@ -61,12 +54,15 @@ defineProps({
     required: true
   },
   icon: {
-    type: String,
-    default: '📄'
+    type: [Object, Function],
+    required: true
   },
   collapsed: {
     type: Boolean,
     default: false
   }
 })
+
+const route = useRoute()
+const isActive = computed(() => route.path === props.to)
 </script>

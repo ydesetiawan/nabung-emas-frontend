@@ -10,74 +10,94 @@
     <!-- Side Menu -->
     <div
         :class="[
-        'bg-white shadow-lg h-screen fixed left-0 top-0 overflow-y-auto z-50 transition-all duration-300',
+        'bg-white border-r border-gray-200 h-screen fixed left-0 top-0 overflow-hidden z-50 transition-all duration-300 flex flex-col',
         isOpen ? 'w-64' : 'w-0 lg:w-20'
       ]"
     >
       <!-- Header -->
-      <div class="p-6 border-b border-gray-200 flex items-center justify-between">
-        <h1
-            :class="[
-            'text-2xl font-bold text-gray-800 transition-opacity duration-300',
-            isOpen ? 'opacity-100' : 'opacity-0 lg:opacity-0'
-          ]"
+      <div class="flex items-center h-16 px-4 border-b border-gray-100">
+        <button
+            @click="toggleMenu"
+            class="p-2 rounded-full hover:bg-gray-100 transition-colors duration-200"
         >
-          Nabung Emas
-        </h1>
+          <Bars3Icon class="h-6 w-6 text-gray-700" />
+        </button>
+        <div
+            v-show="isOpen"
+            class="ml-4 flex items-center gap-2"
+        >
+          <div class="h-8 w-8 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-lg flex items-center justify-center">
+            <span class="text-white font-bold text-sm">NE</span>
+          </div>
+          <h1 class="text-xl font-semibold text-gray-800">
+            Nabung Emas
+          </h1>
+        </div>
       </div>
 
       <!-- Menu Items -->
-      <nav class="p-4">
+      <nav class="flex-1 overflow-y-auto py-2 px-2">
         <MenuItem
             label="Dashboard"
             to="/dashboard"
-            icon="📊"
+            :icon="HomeIcon"
             :collapsed="!isOpen"
         />
         <MenuItem
             label="Tabungan"
             to="/tabungan"
-            icon="💰"
+            :icon="BanknotesIcon"
+            :collapsed="!isOpen"
+        />
+        <MenuItem
+            label="Emas"
+            to="/emas"
+            :icon="SparklesIcon"
+            :collapsed="!isOpen"
+        />
+
+        <div class="my-2 border-t border-gray-200"></div>
+
+        <MenuItem
+            label="Settings"
+            to="/settings"
+            :icon="Cog6ToothIcon"
             :collapsed="!isOpen"
         />
       </nav>
-    </div>
 
-    <!-- Toggle Button -->
-    <button
-        @click="toggleMenu"
-        class="fixed top-4 left-4 z-50 lg:left-[280px] lg:top-6 bg-blue-600 text-white p-2 rounded-md shadow-lg hover:bg-blue-700 transition-all duration-300"
-        :class="{ 'lg:left-24': !isOpen }"
-    >
-      <svg
-          xmlns="http://www.w3.org/2000/svg"
-          class="h-6 w-6"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-      >
-        <path
-            v-if="!isOpen"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M4 6h16M4 12h16M4 18h16"
-        />
-        <path
-            v-else
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M6 18L18 6M6 6l12 12"
-        />
-      </svg>
-    </button>
+      <!-- Footer / User Section -->
+      <div class="border-t border-gray-100 p-3">
+        <div
+            :class="[
+            'flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100 cursor-pointer transition-colors duration-200',
+            !isOpen && 'justify-center'
+          ]"
+        >
+          <div class="h-8 w-8 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
+            <UserIcon class="h-5 w-5 text-white" />
+          </div>
+          <div v-show="isOpen" class="flex-1 min-w-0">
+            <p class="text-sm font-medium text-gray-700 truncate">User Name</p>
+            <p class="text-xs text-gray-500 truncate">user@email.com</p>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup>
 import MenuItem from '~/components/ui/MenuItem.vue'
 import { ref, watch } from 'vue'
+import {
+  Bars3Icon,
+  HomeIcon,
+  BanknotesIcon,
+  SparklesIcon,
+  Cog6ToothIcon,
+  UserIcon
+} from '@heroicons/vue/24/outline'
 
 const props = defineProps({
   isOpen: {

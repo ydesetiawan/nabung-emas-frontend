@@ -1,10 +1,15 @@
 <template>
-  <div class="flex">
+  <div class="min-h-screen bg-gray-50">
     <!-- Side Menu -->
-    <SideMenu />
+    <SideMenu :isOpen="menuOpen" @toggle="handleToggle" />
 
     <!-- Main Content -->
-    <div class="ml-64 flex-1 bg-gray-100 min-h-screen">
+    <div
+      :class="[
+        'transition-all duration-300 min-h-screen',
+        menuOpen ? 'lg:ml-64' : 'lg:ml-20'
+      ]"
+    >
       <div class="p-8">
         <h1 class="text-3xl font-bold text-gray-800 mb-6">Dashboard</h1>
 
@@ -39,5 +44,12 @@
 
 <script setup>
 import SideMenu from '~/components/SideMenu.vue'
+import { ref } from 'vue'
+
+const menuOpen = ref(true)
+
+const handleToggle = (state) => {
+  menuOpen.value = state
+}
 </script>
 
