@@ -3,20 +3,21 @@
     <NuxtLink
         :to="to"
         :class="[
-        'flex items-center gap-3 px-3 py-2 mx-1 rounded-full transition-all duration-200 relative',
+        'flex items-center px-3 py-2 mx-1 rounded-full transition-all duration-200 relative',
         'hover:bg-gray-100',
-        isActive ? 'bg-blue-50 text-blue-600' : 'text-gray-700',
-        collapsed ? 'justify-center w-12 h-12' : 'rounded-full'
+        isActive ? 'bg-blue-50 text-blue-600' : 'text-gray-600',
+        collapsed ? 'justify-center w-12 h-12' : 'gap-3 rounded-full'
       ]"
     >
-      <component
-        :is="icon"
-        :class="[
-          'flex-shrink-0 transition-colors duration-200',
-          collapsed ? 'h-6 w-6' : 'h-5 w-5',
-          isActive ? 'text-blue-600' : 'text-gray-600'
-        ]"
-      />
+      <div class="flex items-center justify-center w-5 h-5 flex-shrink-0">
+        <component
+          :is="icon"
+          :class="[
+            'w-5 h-5 transition-colors duration-200',
+            isActive ? 'text-blue-600' : 'text-gray-600'
+          ]"
+        />
+      </div>
       <span
         v-if="!collapsed"
         :class="[

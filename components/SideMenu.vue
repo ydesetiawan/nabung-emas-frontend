@@ -26,9 +26,7 @@
             v-show="isOpen"
             class="ml-4 flex items-center gap-2"
         >
-          <div class="h-8 w-8 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-lg flex items-center justify-center">
-            <span class="text-white font-bold text-sm">NE</span>
-          </div>
+
           <h1 class="text-xl font-semibold text-gray-800">
             Nabung Emas
           </h1>
@@ -89,7 +87,7 @@
 
 <script setup>
 import MenuItem from '~/components/ui/MenuItem.vue'
-import { ref, watch } from 'vue'
+import { ref, watch, onMounted } from 'vue'
 import {
   Bars3Icon,
   HomeIcon,
@@ -108,11 +106,28 @@ const props = defineProps({
 
 const emit = defineEmits(['toggle'])
 
+// Initialize from localStorage or use prop default
 const isOpen = ref(props.isOpen)
+
+// Load saved state from localStorage on mount
+onMounted(() => {
+  if (typeof window !== 'undefined') {
+    const savedState = localStorage.getItem('sideMenuOpen')
+    if (savedState !== null) {
+      isOpen.value = savedState === 'true'
+      emit('toggle', isOpen.value)
+    }
+  }
+})
 
 const toggleMenu = () => {
   isOpen.value = !isOpen.value
   emit('toggle', isOpen.value)
+
+  // Save state to localStorage
+  if (typeof window !== 'undefined') {
+    localStorage.setItem('sideMenuOpen', isOpen.value.toString())
+  }
 }
 
 watch(() => props.isOpen, (newVal) => {

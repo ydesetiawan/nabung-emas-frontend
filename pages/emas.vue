@@ -21,11 +21,5 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
-
-const menuOpen = ref(true)
-
-const handleToggle = (state) => {
-  menuOpen.value = state
-}
+const { menuOpen, handleToggle } = useSideMenu()
 </script>

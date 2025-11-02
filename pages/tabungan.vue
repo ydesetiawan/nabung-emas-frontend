@@ -84,14 +84,12 @@ import SideMenu from '~/components/SideMenu.vue'
 import Input from '~/components/ui/Input.vue'
 import Button from '~/components/ui/Button.vue'
 
-const menuOpen = ref(true)
+const { menuOpen, handleToggle } = useSideMenu()
+
 const amount = ref('')
 const date = ref('')
 const savings = ref([])
 
-const handleToggle = (state) => {
-  menuOpen.value = state
-}
 
 const handleAddSavings = () => {
   if (amount.value && date.value) {
