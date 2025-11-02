@@ -2,9 +2,12 @@
   <div class="min-h-screen bg-gray-50">
     <SideMenu :isOpen="menuOpen" @toggle="handleToggle" />
 
+    <!-- Header -->
+    <Header :menuOpen="menuOpen" @toggle="handleToggle" />
+
     <div
       :class="[
-        'transition-all duration-300 min-h-screen',
+        'transition-all duration-300 min-h-screen pt-16',
         menuOpen ? 'lg:ml-64' : 'lg:ml-20'
       ]"
     >
@@ -26,6 +29,8 @@
 </template>
 
 <script setup>
+import Header from '~/components/Header.vue'
+
 const { menuOpen, handleToggle } = useSideMenu()
 </script>
 

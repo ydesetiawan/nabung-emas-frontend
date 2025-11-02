@@ -3,10 +3,13 @@
     <!-- Side Menu -->
     <SideMenu :isOpen="menuOpen" @toggle="handleToggle" />
 
+    <!-- Header -->
+    <Header :menuOpen="menuOpen" @toggle="handleToggle" />
+
     <!-- Main Content -->
     <div
       :class="[
-        'transition-all duration-300 min-h-screen',
+        'transition-all duration-300 min-h-screen pt-16',
         menuOpen ? 'lg:ml-64' : 'lg:ml-20'
       ]"
     >
@@ -44,6 +47,7 @@
 
 <script setup>
 import SideMenu from '~/components/SideMenu.vue'
+import Header from '~/components/Header.vue'
 
 const { menuOpen, handleToggle } = useSideMenu()
 </script>

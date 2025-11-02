@@ -3,10 +3,13 @@
     <!-- Side Menu -->
     <SideMenu :isOpen="menuOpen" @toggle="handleToggle" />
 
+    <!-- Header -->
+    <Header :menuOpen="menuOpen" @toggle="handleToggle" />
+
     <!-- Main Content -->
     <div
       :class="[
-        'transition-all duration-300 min-h-screen',
+        'transition-all duration-300 min-h-screen pt-16',
         menuOpen ? 'lg:ml-64' : 'lg:ml-20'
       ]"
     >
@@ -81,6 +84,7 @@
 <script setup>
 import { ref } from 'vue'
 import SideMenu from '~/components/SideMenu.vue'
+import Header from '~/components/Header.vue'
 import Input from '~/components/ui/Input.vue'
 import Button from '~/components/ui/Button.vue'
 
