@@ -114,9 +114,10 @@ const isOpen = ref(props.isOpen)
 const isDesktop = ref(true)
 
 // Computed property for collapsed state
-// On mobile: never collapsed (menu is completely hidden when closed)
-// On desktop: collapsed when closed (shows icons only)
+// Mobile: never collapsed (always show labels when menu is visible)
+// Desktop: can be collapsed (hide labels, show icons only)
 const isCollapsed = computed(() => {
+  // Only collapse on desktop when menu is closed
   return isDesktop.value && !isOpen.value
 })
 

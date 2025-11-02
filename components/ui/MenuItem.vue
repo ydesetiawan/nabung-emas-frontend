@@ -6,9 +6,10 @@
         'flex items-center px-3 py-2 mx-1 rounded-full transition-all duration-200 relative',
         'hover:bg-gray-100',
         isActive ? 'bg-blue-50 text-blue-600' : 'text-gray-600',
-        collapsed ? 'justify-center w-12 h-12' : 'gap-3 rounded-full'
+        collapsed ? 'justify-center w-12 h-12' : 'gap-3'
       ]"
     >
+      <!-- Icon Container - Always visible -->
       <div class="flex items-center justify-center w-5 h-5 flex-shrink-0">
         <component
           :is="icon"
@@ -18,10 +19,12 @@
           ]"
         />
       </div>
+
+      <!-- Label - Hidden when collapsed -->
       <span
         v-if="!collapsed"
         :class="[
-          'font-medium text-sm',
+          'font-medium text-sm whitespace-nowrap',
           isActive ? 'text-blue-600' : 'text-gray-700'
         ]"
       >

@@ -14,9 +14,9 @@
         </button>
 
         <!-- Search Bar -->
-        <div class="relative flex-1">
+<!--        <div class="relative flex-1">
           <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-            <MagnifyingGlassIcon class="h-5 w-5 text-gray-400" />
+            <MagnifyingGlassIcon class="h-5 w-5 text-gray-400"/>
           </div>
           <input
               type="text"
@@ -26,7 +26,7 @@
               @focus="showSearchResults = true"
               @blur="hideSearchResults"
           />
-          <!-- Search Results Dropdown -->
+          &lt;!&ndash; Search Results Dropdown &ndash;&gt;
           <div v-if="showSearchResults && searchQuery"
                class="absolute top-full mt-2 w-full bg-white rounded-lg shadow-lg border border-gray-200 py-2 max-h-96 overflow-y-auto">
             <div class="px-4 py-2 text-sm text-gray-500">Recent searches</div>
@@ -34,7 +34,7 @@
               Example search result
             </div>
           </div>
-        </div>
+        </div>-->
       </div>
 
       <!-- Right Section: Actions & User -->
