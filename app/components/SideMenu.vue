@@ -89,7 +89,6 @@
 </template>
 
 <script setup>
-import MenuItem from '~/components/ui/MenuItem.vue'
 import { ref, watch, onMounted, onUnmounted, computed } from 'vue'
 import {
   Bars3Icon,
@@ -99,6 +98,7 @@ import {
   Cog6ToothIcon,
   UserIcon
 } from '@heroicons/vue/24/outline'
+import MenuItem from "~/components/ui/MenuItem.vue";
 
 const props = defineProps({
   isOpen: {
