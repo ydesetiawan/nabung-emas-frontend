@@ -6,7 +6,7 @@
         'flex items-center px-3 py-2 mx-1 rounded-full transition-all duration-200 relative',
         'hover:bg-gray-100',
         isActive ? 'bg-blue-50 text-blue-600' : 'text-gray-600',
-        collapsed ? 'justify-center w-12 h-12' : 'gap-3'
+        collapsed ? 'justify-center w-12 h-12' : 'gap-3 h-12'
       ]"
     >
       <!-- Icon Container - Always visible -->

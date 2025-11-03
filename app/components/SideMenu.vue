@@ -15,11 +15,11 @@
       ]"
     >
       <!-- Header -->
-      <div class="flex items-center h-16 px-4 border-b border-gray-100">
+      <div class="flex items-center h-16 px-4 border-gray-100">
         <!-- Hamburger button - hidden on mobile, visible on desktop -->
         <button
             @click="toggleMenu"
-            class="p-2 rounded-full hover:bg-gray-100 transition-colors duration-200 hidden lg:flex"
+            class="p-2 rounded-full hover:bg-gray-100 transition-colors lg:flex"
         >
           <Bars3Icon class="h-6 w-6 text-gray-700" />
         </button>
@@ -37,7 +37,7 @@
       </div>
 
       <!-- Menu Items -->
-      <nav class="flex-1 overflow-y-auto py-2 px-2">
+      <nav :class="['flex-1 py-2 px-2', isOpen ? 'overflow-y-auto' : '']">
         <MenuItem
             label="Dashboard"
             to="/dashboard"
