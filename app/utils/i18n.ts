@@ -11,6 +11,7 @@ export const translations = {
             pockets: 'Pockets',
             history: 'History',
             analytics: 'Analytics',
+            profile: 'Profile',
         },
 
         // Dashboard
@@ -130,6 +131,23 @@ export const translations = {
             madeWith: 'Made with ❤️ for gold investors',
         },
 
+        // Profile
+        profile: {
+            title: 'Profile',
+            memberSince: 'Member since',
+            pockets: 'Pockets',
+            transactions: 'Transactions',
+            totalGold: 'Total Gold',
+            totalValue: 'Total Value',
+            accountInfo: 'Account Information',
+            fullName: 'Full Name',
+            email: 'Email',
+            phone: 'Phone',
+            quickActions: 'Quick Actions',
+            settings: 'Settings',
+            logout: 'Logout',
+        },
+
         // Common
         common: {
             save: 'Save',
@@ -154,6 +172,7 @@ export const translations = {
             pockets: 'Kantong',
             history: 'Riwayat',
             analytics: 'Analitik',
+            profile: 'Profil',
         },
 
         // Dashboard
@@ -271,6 +290,23 @@ export const translations = {
             about: 'Tentang',
             version: 'Versi',
             madeWith: 'Dibuat dengan ❤️ untuk investor emas',
+        },
+
+        // Profile
+        profile: {
+            title: 'Profil',
+            memberSince: 'Anggota sejak',
+            pockets: 'Kantong',
+            transactions: 'Transaksi',
+            totalGold: 'Total Emas',
+            totalValue: 'Total Nilai',
+            accountInfo: 'Informasi Akun',
+            fullName: 'Nama Lengkap',
+            email: 'Email',
+            phone: 'Telepon',
+            quickActions: 'Aksi Cepat',
+            settings: 'Pengaturan',
+            logout: 'Keluar',
         },
 
         // Common

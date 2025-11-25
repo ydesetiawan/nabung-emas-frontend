@@ -7,6 +7,7 @@ const navItems = computed(() => [
   { href: '/pockets', icon: 'heroicons:wallet', iconSolid: 'heroicons:wallet-solid', label: t.value.nav.pockets },
   { href: '/transactions', icon: 'heroicons:arrow-path', iconSolid: 'heroicons:arrow-path-solid', label: t.value.nav.history },
   { href: '/analytics', icon: 'heroicons:chart-bar', iconSolid: 'heroicons:chart-bar-solid', label: t.value.nav.analytics },
+  { href: '/profile', icon: 'heroicons:user', iconSolid: 'heroicons:user-solid', label: t.value.nav.profile },
 ])
 
 const isActive = (href: string) => {

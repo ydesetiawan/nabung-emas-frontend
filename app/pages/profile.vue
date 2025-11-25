@@ -98,7 +98,7 @@ const handleLogout = () => {
           <div class="text-center text-white">
             <h2 class="text-2xl font-bold mb-1">{{ user.name }}</h2>
             <p class="text-white/80 text-sm font-medium mb-1">{{ user.email }}</p>
-            <p class="text-white/70 text-xs font-medium">Member since {{ formatJoinDate(user.joinDate) }}</p>
+            <p class="text-white/70 text-xs font-medium">{{ t.profile.memberSince }} {{ formatJoinDate(user.joinDate) }}</p>
           </div>
         </div>
       </div>
@@ -111,7 +111,7 @@ const handleLogout = () => {
               <Icon name="heroicons:wallet" class="w-5 h-5 text-blue-600 dark:text-blue-400" />
             </div>
             <div>
-              <p class="text-xs text-gray-500 dark:text-gray-400 font-medium">Pockets</p>
+              <p class="text-xs text-gray-500 dark:text-gray-400 font-medium">{{ t.profile.pockets }}</p>
               <p class="text-2xl font-bold text-gray-900 dark:text-gray-100 tabular-nums">{{ stats.totalPockets }}</p>
             </div>
           </div>
@@ -123,7 +123,7 @@ const handleLogout = () => {
               <Icon name="heroicons:arrow-path" class="w-5 h-5 text-purple-600 dark:text-purple-400" />
             </div>
             <div>
-              <p class="text-xs text-gray-500 dark:text-gray-400 font-medium">Transactions</p>
+              <p class="text-xs text-gray-500 dark:text-gray-400 font-medium">{{ t.profile.transactions }}</p>
               <p class="text-2xl font-bold text-gray-900 dark:text-gray-100 tabular-nums">{{ stats.totalTransactions }}</p>
             </div>
           </div>
@@ -135,7 +135,7 @@ const handleLogout = () => {
               <Icon name="heroicons:scale" class="w-5 h-5 text-gold-600 dark:text-gold-400" />
             </div>
             <div>
-              <p class="text-xs text-gray-500 dark:text-gray-400 font-medium">Total Gold</p>
+              <p class="text-xs text-gray-500 dark:text-gray-400 font-medium">{{ t.profile.totalGold }}</p>
               <p class="text-2xl font-bold text-gray-900 dark:text-gray-100 tabular-nums">{{ formatWeight(stats.totalWeight) }}</p>
             </div>
           </div>
@@ -147,7 +147,7 @@ const handleLogout = () => {
               <Icon name="heroicons:currency-dollar" class="w-5 h-5 text-green-600 dark:text-green-400" />
             </div>
             <div>
-              <p class="text-xs text-gray-500 dark:text-gray-400 font-medium">Total Value</p>
+              <p class="text-xs text-gray-500 dark:text-gray-400 font-medium">{{ t.profile.totalValue }}</p>
               <p class="text-lg font-bold text-gray-900 dark:text-gray-100 tabular-nums">{{ formatCompactCurrency(stats.totalValue) }}</p>
             </div>
           </div>
@@ -156,7 +156,7 @@ const handleLogout = () => {
 
       <!-- Account Information -->
       <div class="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-2xl p-5 shadow-glass dark:shadow-glass-dark border border-gray-200/50 dark:border-gray-700/50 animate-slide-up" style="animation-delay: 0.2s; animation-fill-mode: both;">
-        <h3 class="text-sm font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-4">Account Information</h3>
+        <h3 class="text-sm font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-4">{{ t.profile.accountInfo }}</h3>
         
         <div class="space-y-4">
           <div class="flex items-center justify-between">
@@ -165,7 +165,7 @@ const handleLogout = () => {
                 <Icon name="heroicons:user" class="w-5 h-5 text-gray-600 dark:text-gray-400" />
               </div>
               <div>
-                <p class="text-xs text-gray-500 dark:text-gray-400 font-medium">Full Name</p>
+                <p class="text-xs text-gray-500 dark:text-gray-400 font-medium">{{ t.profile.fullName }}</p>
                 <p class="text-sm font-bold text-gray-900 dark:text-gray-100">{{ user.name }}</p>
               </div>
             </div>
@@ -180,7 +180,7 @@ const handleLogout = () => {
                 <Icon name="heroicons:envelope" class="w-5 h-5 text-gray-600 dark:text-gray-400" />
               </div>
               <div>
-                <p class="text-xs text-gray-500 dark:text-gray-400 font-medium">Email</p>
+                <p class="text-xs text-gray-500 dark:text-gray-400 font-medium">{{ t.profile.email }}</p>
                 <p class="text-sm font-bold text-gray-900 dark:text-gray-100">{{ user.email }}</p>
               </div>
             </div>
@@ -195,7 +195,7 @@ const handleLogout = () => {
                 <Icon name="heroicons:phone" class="w-5 h-5 text-gray-600 dark:text-gray-400" />
               </div>
               <div>
-                <p class="text-xs text-gray-500 dark:text-gray-400 font-medium">Phone</p>
+                <p class="text-xs text-gray-500 dark:text-gray-400 font-medium">{{ t.profile.phone }}</p>
                 <p class="text-sm font-bold text-gray-900 dark:text-gray-100">{{ user.phone }}</p>
               </div>
             </div>
@@ -208,7 +208,7 @@ const handleLogout = () => {
 
       <!-- Quick Actions -->
       <div class="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-2xl p-5 shadow-glass dark:shadow-glass-dark border border-gray-200/50 dark:border-gray-700/50 animate-slide-up" style="animation-delay: 0.3s; animation-fill-mode: both;">
-        <h3 class="text-sm font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-4">Quick Actions</h3>
+        <h3 class="text-sm font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-4">{{ t.profile.quickActions }}</h3>
         
         <div class="space-y-2">
           <NuxtLink 
@@ -219,7 +219,7 @@ const handleLogout = () => {
               <div class="w-10 h-10 rounded-xl bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
                 <Icon name="heroicons:cog-6-tooth" class="w-5 h-5 text-blue-600 dark:text-blue-400" />
               </div>
-              <span class="font-bold text-gray-900 dark:text-gray-100">Settings</span>
+              <span class="font-bold text-gray-900 dark:text-gray-100">{{ t.profile.settings }}</span>
             </div>
             <Icon name="heroicons:chevron-right" class="w-5 h-5 text-gray-400 group-hover:translate-x-1 transition-transform" />
           </NuxtLink>
@@ -232,7 +232,7 @@ const handleLogout = () => {
               <div class="w-10 h-10 rounded-xl bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
                 <Icon name="heroicons:arrow-right-on-rectangle" class="w-5 h-5 text-red-600 dark:text-red-400" />
               </div>
-              <span class="font-bold text-red-600 dark:text-red-400">Logout</span>
+              <span class="font-bold text-red-600 dark:text-red-400">{{ t.profile.logout }}</span>
             </div>
             <Icon name="heroicons:chevron-right" class="w-5 h-5 text-red-400 group-hover:translate-x-1 transition-transform" />
           </button>
