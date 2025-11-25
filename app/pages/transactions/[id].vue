@@ -59,63 +59,72 @@ const handleEdit = () => {
 </script>
 
 <template>
-  <div class="min-h-screen bg-gray-50 dark:bg-gray-900">
-    <!-- Header -->
-    <header class="sticky top-0 z-40 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 safe-top">
-      <div class="flex items-center gap-3 px-4 h-16">
+  <div class="min-h-screen bg-gradient-to-b from-slate-50 to-white dark:from-slate-950 dark:to-slate-900">
+    <!-- Header with gradient -->
+    <header class="sticky top-0 z-40 safe-top">
+      <div class="absolute inset-0 bg-gradient-to-b from-white/95 to-white/80 dark:from-slate-900/95 dark:to-slate-900/80 backdrop-blur-xl border-b border-gray-200/50 dark:border-gray-700/50"></div>
+      <div class="relative flex items-center gap-3 px-5 h-16">
         <button
           @click="router.back()"
-          class="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+          class="p-2.5 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition-all active:scale-95"
         >
           <Icon name="heroicons:arrow-left" class="w-6 h-6 text-gray-900 dark:text-gray-100" />
         </button>
-        <h1 class="text-xl font-bold text-gray-900 dark:text-gray-100">Transaction Details</h1>
+        <h1 class="text-xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 dark:from-white dark:to-gray-300 bg-clip-text text-transparent">
+          Transaction Details
+        </h1>
       </div>
     </header>
 
     <!-- Content -->
-    <div v-if="transaction" class="px-4 py-6 space-y-6 max-w-2xl mx-auto">
-      <!-- Transaction Header Card -->
-      <div class="bg-gradient-to-br from-blue-600 to-blue-700 text-white rounded-2xl p-6 shadow-lg">
-        <div class="flex items-start justify-between mb-4">
-          <span :class="['px-3 py-1.5 rounded-lg text-sm font-semibold', getBrandColor(transaction.brand)]">
-            {{ transaction.brand }}
-          </span>
-          <span class="text-sm text-white/80">
-            {{ formatDate(transaction.transactionDate) }}
-          </span>
-        </div>
+    <div v-if="transaction" class="px-5 py-6 space-y-6 max-w-2xl mx-auto pb-24">
+      <!-- Transaction Header Card with Premium Gradient -->
+      <div class="relative overflow-hidden bg-gradient-to-br from-blue-600 via-purple-600 to-pink-600 dark:from-blue-700 dark:via-purple-700 dark:to-pink-700 text-white rounded-3xl p-6 shadow-premium animate-slide-up">
+        <!-- Animated decorative elements -->
+        <div class="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2 animate-pulse-soft" />
+        <div class="absolute bottom-0 left-0 w-24 h-24 bg-white/10 rounded-full translate-y-1/2 -translate-x-1/2 animate-pulse-soft" style="animation-delay: 1s;" />
         
-        <div class="space-y-2">
-          <p class="text-sm text-white/80">Total Price</p>
-          <p class="text-4xl font-bold">{{ formatCurrency(transaction.totalPrice) }}</p>
+        <div class="relative z-10">
+          <div class="flex items-start justify-between mb-4">
+            <span :class="['px-3 py-1.5 rounded-xl text-sm font-bold backdrop-blur-sm', getBrandColor(transaction.brand)]">
+              {{ transaction.brand }}
+            </span>
+            <span class="text-sm text-white/90 font-medium">
+              {{ formatDate(transaction.transactionDate) }}
+            </span>
+          </div>
+          
+          <div class="space-y-2">
+            <p class="text-sm text-white/90 font-semibold">Total Price</p>
+            <p class="text-5xl font-bold drop-shadow-lg tabular-nums">{{ formatCurrency(transaction.totalPrice) }}</p>
+          </div>
         </div>
       </div>
 
       <!-- Transaction Details -->
-      <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm divide-y divide-gray-200 dark:divide-gray-700">
+      <div class="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-2xl shadow-glass dark:shadow-glass-dark divide-y divide-gray-200/50 dark:divide-gray-700/50 border border-gray-100/50 dark:border-gray-700/50 animate-slide-up" style="animation-delay: 0.1s; animation-fill-mode: both;">
         <!-- Weight -->
-        <div class="p-4 flex items-center justify-between">
+        <div class="p-5 flex items-center justify-between">
           <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-lg bg-gold-100 dark:bg-gold-900/30 flex items-center justify-center">
-              <Icon name="heroicons:scale" class="w-5 h-5 text-gold-600 dark:text-gold-400" />
+            <div class="w-12 h-12 rounded-2xl bg-gold-100 dark:bg-gold-900/30 flex items-center justify-center">
+              <Icon name="heroicons:scale" class="w-6 h-6 text-gold-600 dark:text-gold-400" />
             </div>
             <div>
-              <p class="text-sm text-gray-600 dark:text-gray-400">Weight</p>
-              <p class="font-semibold text-gray-900 dark:text-gray-100 tabular-nums">{{ formatWeight(transaction.weight) }}</p>
+              <p class="text-sm text-gray-600 dark:text-gray-400 font-medium">Weight</p>
+              <p class="font-bold text-gray-900 dark:text-gray-100 tabular-nums text-lg">{{ formatWeight(transaction.weight) }}</p>
             </div>
           </div>
         </div>
 
         <!-- Price per Gram -->
-        <div class="p-4 flex items-center justify-between">
+        <div class="p-5 flex items-center justify-between">
           <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-lg bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
-              <Icon name="heroicons:currency-dollar" class="w-5 h-5 text-blue-600 dark:text-blue-400" />
+            <div class="w-12 h-12 rounded-2xl bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
+              <Icon name="heroicons:currency-dollar" class="w-6 h-6 text-blue-600 dark:text-blue-400" />
             </div>
             <div>
-              <p class="text-sm text-gray-600 dark:text-gray-400">Price per Gram</p>
-              <p class="font-semibold text-gray-900 dark:text-gray-100 tabular-nums">{{ formatCurrency(transaction.pricePerGram) }}</p>
+              <p class="text-sm text-gray-600 dark:text-gray-400 font-medium">Price per Gram</p>
+              <p class="font-bold text-gray-900 dark:text-gray-100 tabular-nums text-lg">{{ formatCurrency(transaction.pricePerGram) }}</p>
             </div>
           </div>
         </div>
@@ -124,64 +133,64 @@ const handleEdit = () => {
         <NuxtLink
           v-if="pocket"
           :to="`/pockets/${pocket.id}`"
-          class="p-4 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+          class="p-5 flex items-center justify-between hover:bg-gray-50/50 dark:hover:bg-gray-700/50 transition-all group"
         >
           <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-lg bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center">
-              <Icon name="heroicons:wallet" class="w-5 h-5 text-purple-600 dark:text-purple-400" />
+            <div class="w-12 h-12 rounded-2xl bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center group-hover:scale-110 transition-transform">
+              <Icon name="heroicons:wallet" class="w-6 h-6 text-purple-600 dark:text-purple-400" />
             </div>
             <div>
-              <p class="text-sm text-gray-600 dark:text-gray-400">Pocket</p>
-              <p class="font-semibold text-gray-900 dark:text-gray-100">{{ pocket.name }}</p>
-              <p class="text-xs text-gray-500 dark:text-gray-400">{{ typePocket?.name }}</p>
+              <p class="text-sm text-gray-600 dark:text-gray-400 font-medium">Pocket</p>
+              <p class="font-bold text-gray-900 dark:text-gray-100">{{ pocket.name }}</p>
+              <p class="text-xs text-gray-500 dark:text-gray-400 font-medium">{{ typePocket?.name }}</p>
             </div>
           </div>
-          <Icon name="heroicons:chevron-right" class="w-5 h-5 text-gray-400" />
+          <Icon name="heroicons:chevron-right" class="w-5 h-5 text-gray-400 group-hover:translate-x-1 transition-transform" />
         </NuxtLink>
 
         <!-- Transaction Date -->
-        <div class="p-4 flex items-center justify-between">
+        <div class="p-5 flex items-center justify-between">
           <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-lg bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
-              <Icon name="heroicons:calendar" class="w-5 h-5 text-green-600 dark:text-green-400" />
+            <div class="w-12 h-12 rounded-2xl bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center">
+              <Icon name="heroicons:calendar" class="w-6 h-6 text-emerald-600 dark:text-emerald-400" />
             </div>
             <div>
-              <p class="text-sm text-gray-600 dark:text-gray-400">Transaction Date</p>
-              <p class="font-semibold text-gray-900 dark:text-gray-100">{{ formatDate(transaction.transactionDate, 'long') }}</p>
-              <p class="text-xs text-gray-500 dark:text-gray-400">{{ formatRelativeTime(transaction.transactionDate) }}</p>
+              <p class="text-sm text-gray-600 dark:text-gray-400 font-medium">Transaction Date</p>
+              <p class="font-bold text-gray-900 dark:text-gray-100">{{ formatDate(transaction.transactionDate, 'long') }}</p>
+              <p class="text-xs text-gray-500 dark:text-gray-400 font-medium">{{ formatRelativeTime(transaction.transactionDate) }}</p>
             </div>
           </div>
         </div>
       </div>
 
       <!-- Description -->
-      <div v-if="transaction.description" class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-4">
-        <h3 class="text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">Description</h3>
-        <p class="text-gray-900 dark:text-gray-100">{{ transaction.description }}</p>
+      <div v-if="transaction.description" class="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-2xl shadow-glass dark:shadow-glass-dark p-5 border border-gray-100/50 dark:border-gray-700/50 animate-slide-up" style="animation-delay: 0.2s; animation-fill-mode: both;">
+        <h3 class="text-sm font-bold text-gray-600 dark:text-gray-400 mb-2 uppercase tracking-wide">Description</h3>
+        <p class="text-gray-900 dark:text-gray-100 font-medium">{{ transaction.description }}</p>
       </div>
 
       <!-- Receipt Image -->
-      <div v-if="transaction.receiptImage" class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-4">
-        <h3 class="text-sm font-medium text-gray-600 dark:text-gray-400 mb-3">Receipt</h3>
+      <div v-if="transaction.receiptImage" class="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-2xl shadow-glass dark:shadow-glass-dark p-5 border border-gray-100/50 dark:border-gray-700/50 animate-slide-up" style="animation-delay: 0.3s; animation-fill-mode: both;">
+        <h3 class="text-sm font-bold text-gray-600 dark:text-gray-400 mb-3 uppercase tracking-wide">Receipt</h3>
         <img
           :src="transaction.receiptImage"
           alt="Receipt"
-          class="w-full rounded-lg border border-gray-200 dark:border-gray-700"
+          class="w-full rounded-xl border border-gray-200/50 dark:border-gray-700/50"
         />
       </div>
 
       <!-- Actions -->
-      <div class="grid grid-cols-2 gap-3">
+      <div class="grid grid-cols-2 gap-3 animate-slide-up" style="animation-delay: 0.4s; animation-fill-mode: both;">
         <button
           @click="handleEdit"
-          class="px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
+          class="px-5 py-3.5 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-xl font-bold transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-2 shadow-lg"
         >
           <Icon name="heroicons:pencil" class="w-5 h-5" />
           <span>Edit</span>
         </button>
         <button
           @click="handleDelete"
-          class="px-4 py-3 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
+          class="px-5 py-3.5 bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 text-white rounded-xl font-bold transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-2 shadow-lg"
         >
           <Icon name="heroicons:trash" class="w-5 h-5" />
           <span>Delete</span>
@@ -189,24 +198,26 @@ const handleEdit = () => {
       </div>
 
       <!-- Transaction Info -->
-      <div class="bg-gray-100 dark:bg-gray-800 rounded-xl p-4 text-center">
-        <p class="text-xs text-gray-600 dark:text-gray-400">
+      <div class="bg-gray-100/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-4 text-center border border-gray-200/50 dark:border-gray-700/50 animate-slide-up" style="animation-delay: 0.5s; animation-fill-mode: both;">
+        <p class="text-xs text-gray-600 dark:text-gray-400 font-medium">
           Created {{ formatRelativeTime(transaction.createdAt) }}
         </p>
-        <p class="text-xs text-gray-500 dark:text-gray-500 mt-1">
+        <p class="text-xs text-gray-500 dark:text-gray-500 mt-1 font-mono">
           ID: {{ transaction.id }}
         </p>
       </div>
     </div>
 
     <!-- Not Found -->
-    <div v-else class="px-4 py-12 text-center">
-      <Icon name="heroicons:exclamation-circle" class="w-16 h-16 text-gray-400 mx-auto mb-4" />
-      <h2 class="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">Transaction Not Found</h2>
-      <p class="text-gray-600 dark:text-gray-400 mb-6">The transaction you're looking for doesn't exist.</p>
+    <div v-else class="px-5 py-16 text-center">
+      <div class="w-20 h-20 bg-gray-100 dark:bg-gray-800 rounded-2xl flex items-center justify-center mx-auto mb-4">
+        <Icon name="heroicons:exclamation-circle" class="w-10 h-10 text-gray-400" />
+      </div>
+      <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">Transaction Not Found</h2>
+      <p class="text-gray-600 dark:text-gray-400 mb-6 font-medium">The transaction you're looking for doesn't exist.</p>
       <NuxtLink
         to="/transactions"
-        class="inline-block px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors"
+        class="inline-block px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-xl font-bold transition-all hover:scale-105 active:scale-95 shadow-lg"
       >
         Back to Transactions
       </NuxtLink>

@@ -9,38 +9,45 @@ const stats = computed(() => [
     icon: 'heroicons:wallet',
     label: t.value.dashboard.pockets,
     value: mockPockets.length.toString(),
-    color: 'bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400',
+    color: 'from-blue-500 to-blue-600',
+    bgColor: 'bg-blue-50 dark:bg-blue-500/10',
+    textColor: 'text-blue-600 dark:text-blue-400',
   },
   {
     icon: 'heroicons:arrow-path',
     label: t.value.dashboard.transactions,
     value: mockTransactions.length.toString(),
-    color: 'bg-gold-100 text-gold-600 dark:bg-gold-900/30 dark:text-gold-400',
+    color: 'from-gold-500 to-amber-600',
+    bgColor: 'bg-gold-50 dark:bg-gold-500/10',
+    textColor: 'text-gold-600 dark:text-gold-400',
   },
   {
     icon: 'heroicons:chart-bar',
     label: t.value.dashboard.marketPrice,
     value: formatCurrency(currentGoldPrice).replace('Rp', '').trim(),
     suffix: '/g',
-    color: 'bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400',
+    color: 'from-emerald-500 to-green-600',
+    bgColor: 'bg-emerald-50 dark:bg-emerald-500/10',
+    textColor: 'text-emerald-600 dark:text-emerald-400',
   },
 ])
 </script>
 
 <template>
-  <div class="grid grid-cols-3 gap-3">
+  <div class="grid grid-cols-3 gap-3 animate-slide-up">
     <div
-      v-for="stat in stats"
+      v-for="(stat, index) in stats"
       :key="stat.label"
-      class="bg-white dark:bg-gray-800 rounded-xl p-3 shadow-sm dark:shadow-gray-900/10"
+      class="group bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-2xl p-3.5 shadow-glass dark:shadow-glass-dark hover:shadow-premium transition-all duration-300 hover:scale-105 active:scale-95 border border-gray-100/50 dark:border-gray-700/50"
+      :style="{ animationDelay: `${index * 0.1}s`, animationFillMode: 'both' }"
     >
-      <div :class="['w-9 h-9 rounded-lg flex items-center justify-center mb-2', stat.color]">
-        <Icon :name="stat.icon" class="w-5 h-5" />
+      <div :class="['w-10 h-10 rounded-xl flex items-center justify-center mb-2.5 transition-transform group-hover:scale-110', stat.bgColor]">
+        <Icon :name="stat.icon" :class="['w-5 h-5', stat.textColor]" />
       </div>
-      <p class="text-xs text-gray-600 dark:text-gray-400 mb-0.5">{{ stat.label }}</p>
-      <p class="text-sm font-semibold text-gray-900 dark:text-gray-100 tabular-nums truncate">
+      <p class="text-[10px] text-gray-500 dark:text-gray-400 mb-1 font-medium uppercase tracking-wide">{{ stat.label }}</p>
+      <p :class="['text-base font-bold tabular-nums truncate', stat.textColor]">
         {{ stat.value }}
-        <span v-if="stat.suffix" class="text-xs font-normal text-gray-600 dark:text-gray-400">{{ stat.suffix }}</span>
+        <span v-if="stat.suffix" class="text-xs font-medium opacity-70">{{ stat.suffix }}</span>
       </p>
     </div>
   </div>

@@ -62,15 +62,18 @@ const handleCreatePocket = (pocket: IPocketCreate) => {
 </script>
 
 <template>
-  <div class="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors">
-    <!-- Header -->
-    <header class="sticky top-0 z-40 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 safe-top transition-colors">
-      <div class="px-4 py-4">
+  <div class="min-h-screen bg-gradient-to-b from-slate-50 to-white dark:from-slate-950 dark:to-slate-900">
+    <!-- Header with gradient -->
+    <header class="sticky top-0 z-40 safe-top">
+      <div class="absolute inset-0 bg-gradient-to-b from-white/95 to-white/80 dark:from-slate-900/95 dark:to-slate-900/80 backdrop-blur-xl border-b border-gray-200/50 dark:border-gray-700/50"></div>
+      <div class="relative px-5 py-4">
         <div class="flex items-center justify-between mb-4">
-          <h1 class="text-2xl font-bold text-gray-900 dark:text-gray-100">{{ t.pockets.title }}</h1>
+          <h1 class="text-xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 dark:from-white dark:to-gray-300 bg-clip-text text-transparent">
+            {{ t.pockets.title }}
+          </h1>
           <button
             @click="showCreatePocket = true"
-            class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors flex items-center gap-2"
+            class="px-4 py-2.5 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-xl font-bold transition-all hover:scale-105 active:scale-95 flex items-center gap-2 shadow-lg"
           >
             <Icon name="heroicons:plus" class="w-5 h-5" />
             <span>{{ t.pockets.newPocket }}</span>
@@ -78,27 +81,27 @@ const handleCreatePocket = (pocket: IPocketCreate) => {
         </div>
 
         <!-- Search -->
-        <div class="px-4 mb-3">
+        <div class="mb-3">
           <div class="relative">
             <Icon name="heroicons:magnifying-glass" class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 dark:text-gray-500" />
             <input
               v-model="searchQuery"
               type="text"
               :placeholder="t.pockets.searchPlaceholder"
-              class="w-full pl-10 pr-4 py-2.5 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 transition-colors"
+              class="w-full pl-10 pr-4 py-3 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 transition-all shadow-glass dark:shadow-glass-dark"
             />
           </div>
         </div>
 
         <!-- Type Filter -->
-        <div class="flex gap-2 overflow-x-auto pb-3 px-4 scrollbar-hide">
+        <div class="flex gap-2 overflow-x-auto pb-3 scrollbar-hide">
           <button
             @click="selectedType = null"
             :class="[
-              'px-4 py-2 rounded-lg font-medium whitespace-nowrap transition-colors shrink-0',
+              'px-4 py-2 rounded-xl font-semibold whitespace-nowrap transition-all shrink-0',
               !selectedType
-                ? 'bg-gray-900 text-white dark:bg-gray-100 dark:text-gray-900'
-                : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700'
+                ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg scale-105'
+                : 'bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm text-gray-600 dark:text-gray-400 border border-gray-200/50 dark:border-gray-700/50 hover:scale-105'
             ]"
           >
             {{ t.pockets.all }}
@@ -108,10 +111,10 @@ const handleCreatePocket = (pocket: IPocketCreate) => {
             :key="type.id"
             @click="selectedType = type.id"
             :class="[
-              'px-4 py-2 rounded-lg font-medium whitespace-nowrap transition-colors flex items-center gap-2 shrink-0',
+              'px-4 py-2 rounded-xl font-semibold whitespace-nowrap transition-all flex items-center gap-2 shrink-0',
               selectedType === type.id
-                ? 'bg-gray-900 text-white dark:bg-gray-100 dark:text-gray-900'
-                : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700'
+                ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg scale-105'
+                : 'bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm text-gray-600 dark:text-gray-400 border border-gray-200/50 dark:border-gray-700/50 hover:scale-105'
             ]"
           >
             <Icon :name="type.icon" class="w-4 h-4" />
@@ -122,23 +125,23 @@ const handleCreatePocket = (pocket: IPocketCreate) => {
     </header>
 
     <!-- Content -->
-    <div class="px-4 py-6 space-y-6">
+    <div class="px-5 py-6 space-y-6 pb-24">
       <!-- Summary Stats -->
-      <div class="grid grid-cols-3 gap-3">
-        <div class="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm dark:shadow-gray-900/10 transition-colors">
-          <p class="text-xs text-gray-600 dark:text-gray-400 mb-1">{{ t.pockets.totalPockets }}</p>
+      <div class="grid grid-cols-3 gap-3 animate-slide-up">
+        <div class="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-2xl p-4 shadow-glass dark:shadow-glass-dark border border-gray-100/50 dark:border-gray-700/50">
+          <p class="text-[10px] text-gray-500 dark:text-gray-400 mb-1 font-medium uppercase tracking-wide">{{ t.pockets.totalPockets }}</p>
           <p class="text-2xl font-bold text-gray-900 dark:text-gray-100">{{ totalStats.count }}</p>
         </div>
-        <div class="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm dark:shadow-gray-900/10 transition-colors">
-          <p class="text-xs text-gray-600 dark:text-gray-400 mb-1">{{ t.dashboard.totalWeight }}</p>
+        <div class="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-2xl p-4 shadow-glass dark:shadow-glass-dark border border-gray-100/50 dark:border-gray-700/50">
+          <p class="text-[10px] text-gray-500 dark:text-gray-400 mb-1 font-medium uppercase tracking-wide">{{ t.dashboard.totalWeight }}</p>
           <p class="text-lg font-bold text-gold-600 dark:text-gold-400 tabular-nums">
             {{ formatWeight(totalStats.totalWeight) }}
           </p>
         </div>
-        <div class="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm dark:shadow-gray-900/10 transition-colors">
-          <p class="text-xs text-gray-600 dark:text-gray-400 mb-1">{{ t.pockets.value }}</p>
-          <p class="text-lg font-bold text-blue-600 dark:text-blue-400 tabular-nums">
-            {{ formatCurrency(totalStats.totalValue) }}
+        <div class="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-2xl p-4 shadow-glass dark:shadow-glass-dark border border-gray-100/50 dark:border-gray-700/50">
+          <p class="text-[10px] text-gray-500 dark:text-gray-400 mb-1 font-medium uppercase tracking-wide">{{ t.pockets.value }}</p>
+          <p class="text-base font-bold text-blue-600 dark:text-blue-400 tabular-nums">
+            {{ formatCompactCurrency(totalStats.totalValue) }}
           </p>
         </div>
       </div>
@@ -146,51 +149,52 @@ const handleCreatePocket = (pocket: IPocketCreate) => {
       <!-- Pockets Grid -->
       <div v-if="filteredPockets.length > 0" class="grid gap-4">
         <NuxtLink
-          v-for="pocket in filteredPockets"
+          v-for="(pocket, index) in filteredPockets"
           :key="pocket.id"
           :to="`/pockets/${pocket.id}`"
-          class="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm dark:shadow-gray-900/10 hover:shadow-md transition-all active:scale-98 group"
+          class="group bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-2xl p-5 shadow-glass dark:shadow-glass-dark hover:shadow-premium transition-all duration-300 active:scale-[0.98] border border-gray-100/50 dark:border-gray-700/50 animate-slide-up"
+          :style="{ animationDelay: `${index * 0.05}s`, animationFillMode: 'both' }"
         >
           <div class="flex items-start justify-between mb-4">
             <div class="flex items-center gap-3">
-              <div :class="['w-12 h-12 rounded-xl flex items-center justify-center transition-colors', getColorClass(getTypePocket(pocket.typePocketId)?.color || 'blue')]">
-                <Icon :name="getTypePocket(pocket.typePocketId)?.icon || 'heroicons:wallet'" class="w-6 h-6" />
+              <div :class="['w-14 h-14 rounded-2xl flex items-center justify-center transition-transform group-hover:scale-110', getColorClass(getTypePocket(pocket.typePocketId)?.color || 'blue')]">
+                <Icon :name="getTypePocket(pocket.typePocketId)?.icon || 'heroicons:wallet'" class="w-7 h-7" />
               </div>
               <div>
-                <h3 class="font-semibold text-gray-900 dark:text-gray-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">{{ pocket.name }}</h3>
-                <p class="text-xs text-gray-500 dark:text-gray-400">{{ getTypePocket(pocket.typePocketId)?.name }}</p>
+                <h3 class="font-bold text-gray-900 dark:text-gray-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">{{ pocket.name }}</h3>
+                <p class="text-xs text-gray-500 dark:text-gray-400 font-medium">{{ getTypePocket(pocket.typePocketId)?.name }}</p>
               </div>
             </div>
-            <Icon name="heroicons:chevron-right" class="w-5 h-5 text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-300 transition-colors" />
+            <Icon name="heroicons:chevron-right" class="w-5 h-5 text-gray-400 group-hover:translate-x-1 transition-transform" />
           </div>
 
-          <div class="space-y-3">
+          <div class="space-y-4">
             <div class="flex items-end justify-between">
               <div>
-                <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">{{ t.pockets.weight }}</p>
-                <p class="text-xl font-bold text-gray-900 dark:text-gray-100 tabular-nums">{{ formatWeight(pocket.aggregateTotalWeight) }}</p>
+                <p class="text-xs text-gray-500 dark:text-gray-400 mb-1.5 font-medium">{{ t.pockets.weight }}</p>
+                <p class="text-2xl font-bold text-gray-900 dark:text-gray-100 tabular-nums">{{ formatWeight(pocket.aggregateTotalWeight) }}</p>
               </div>
               <div class="text-right">
-                <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">{{ t.pockets.value }}</p>
-                <p class="text-lg font-semibold text-blue-600 dark:text-blue-400 tabular-nums">{{ formatCurrency(pocket.aggregateTotalPrice) }}</p>
+                <p class="text-xs text-gray-500 dark:text-gray-400 mb-1.5 font-medium">{{ t.pockets.value }}</p>
+                <p class="text-xl font-bold text-blue-600 dark:text-blue-400 tabular-nums">{{ formatCurrency(pocket.aggregateTotalPrice) }}</p>
               </div>
             </div>
 
             <!-- Progress Bar -->
             <div v-if="pocket.targetWeight > 0">
-              <div class="flex items-center justify-between text-xs mb-1.5">
-                <span class="text-gray-600 dark:text-gray-400">{{ t.pockets.progress }}</span>
-                <span class="font-medium text-gray-900 dark:text-gray-100 tabular-nums">
+              <div class="flex items-center justify-between text-xs mb-2">
+                <span class="text-gray-600 dark:text-gray-400 font-medium">{{ t.pockets.progress }}</span>
+                <span class="font-bold text-gray-900 dark:text-gray-100 tabular-nums">
                   {{ Math.round((pocket.aggregateTotalWeight / pocket.targetWeight) * 100) }}%
                 </span>
               </div>
-              <div class="h-2 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
+              <div class="h-2.5 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
                 <div
-                  class="h-full bg-blue-600 dark:bg-blue-500 rounded-full transition-all duration-500"
+                  class="h-full bg-gradient-to-r from-blue-500 to-blue-600 dark:from-blue-600 dark:to-blue-700 rounded-full transition-all duration-500"
                   :style="{ width: `${Math.min((pocket.aggregateTotalWeight / pocket.targetWeight) * 100, 100)}%` }"
                 />
               </div>
-              <p class="text-xs text-gray-500 dark:text-gray-400 mt-1.5 text-right">
+              <p class="text-xs text-gray-500 dark:text-gray-400 mt-2 text-right font-medium">
                 Target: {{ formatWeight(pocket.targetWeight) }}
               </p>
             </div>
@@ -199,13 +203,15 @@ const handleCreatePocket = (pocket: IPocketCreate) => {
       </div>
 
       <!-- Empty State -->
-      <div v-else class="text-center py-16 bg-white dark:bg-gray-800 rounded-xl border border-dashed border-gray-200 dark:border-gray-700">
-        <Icon name="heroicons:wallet" class="w-12 h-12 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
-        <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">{{ t.pockets.noPocketsFound }}</h3>
-        <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">{{ t.pockets.noPocketsDescription }}</p>
+      <div v-else class="text-center py-16 bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm rounded-2xl border-2 border-dashed border-gray-200 dark:border-gray-700 animate-slide-up">
+        <div class="w-16 h-16 bg-gray-100 dark:bg-gray-800 rounded-2xl flex items-center justify-center mx-auto mb-4">
+          <Icon name="heroicons:wallet" class="w-8 h-8 text-gray-400 dark:text-gray-600" />
+        </div>
+        <h3 class="text-lg font-bold text-gray-900 dark:text-gray-100 mb-2">{{ t.pockets.noPocketsFound }}</h3>
+        <p class="text-sm text-gray-500 dark:text-gray-400 font-medium mb-6">{{ t.pockets.noPocketsDescription }}</p>
         <button
           @click="showCreatePocket = true"
-          class="mt-6 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors flex items-center gap-2 mx-auto"
+          class="px-5 py-2.5 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-xl font-bold transition-all hover:scale-105 active:scale-95 flex items-center gap-2 mx-auto shadow-lg"
         >
           <Icon name="heroicons:plus" class="w-5 h-5" />
           <span>{{ t.pockets.createFirstPocket }}</span>

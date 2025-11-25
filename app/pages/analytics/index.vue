@@ -75,11 +75,11 @@ const pricePercentageDiff = computed(() => {
 
 const getColorClass = (index: number) => {
   const colors = [
-    'bg-blue-500',
-    'bg-gold-500',
-    'bg-pink-500',
-    'bg-green-500',
-    'bg-purple-500',
+    'bg-gradient-to-r from-blue-500 to-blue-600',
+    'bg-gradient-to-r from-gold-500 to-amber-600',
+    'bg-gradient-to-r from-pink-500 to-rose-600',
+    'bg-gradient-to-r from-emerald-500 to-green-600',
+    'bg-gradient-to-r from-purple-500 to-pink-600',
   ]
   return colors[index % colors.length]
 }
@@ -92,55 +92,69 @@ const formatMonth = (monthStr: string) => {
 </script>
 
 <template>
-  <div>
-    <!-- Header -->
-    <header class="sticky top-0 z-40 bg-gray-50/95 dark:bg-gray-900/95 backdrop-blur-sm safe-top transition-colors border-b border-gray-200 dark:border-gray-800">
-      <div class="flex items-center justify-between px-4 h-16">
-        <h1 class="text-lg font-semibold text-gray-900 dark:text-gray-100">{{ t.analytics.title }}</h1>
-        <button class="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors">
+  <div class="min-h-screen bg-gradient-to-b from-slate-50 to-white dark:from-slate-950 dark:to-slate-900">
+    <!-- Header with gradient -->
+    <header class="sticky top-0 z-40 safe-top">
+      <div class="absolute inset-0 bg-gradient-to-b from-white/95 to-white/80 dark:from-slate-900/95 dark:to-slate-900/80 backdrop-blur-xl border-b border-gray-200/50 dark:border-gray-700/50"></div>
+      <div class="relative flex items-center justify-between px-5 h-16">
+        <h1 class="text-xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 dark:from-white dark:to-gray-300 bg-clip-text text-transparent">
+          {{ t.analytics.title }}
+        </h1>
+        <button class="p-2.5 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition-all active:scale-95">
           <Icon name="heroicons:arrow-down-tray" class="w-5 h-5 text-gray-600 dark:text-gray-400" />
         </button>
       </div>
     </header>
 
     <!-- Content -->
-    <div class="px-4 py-6 space-y-6 pb-24">
-      <!-- Portfolio Value Card -->
-      <div class="bg-gradient-to-br from-blue-600 to-blue-700 dark:from-blue-700 dark:to-blue-800 rounded-2xl p-6 text-white shadow-lg">
-        <p class="text-sm opacity-90 mb-1">{{ t.analytics.portfolioValue }}</p>
-        <h2 class="text-3xl font-bold mb-4 tabular-nums">{{ formatCurrency(portfolioMetrics.totalValue) }}</h2>
-        <div class="grid grid-cols-2 gap-4">
-          <div>
-            <p class="text-xs opacity-75 mb-1">{{ t.dashboard.totalWeight }}</p>
-            <p class="text-lg font-semibold tabular-nums">{{ formatWeight(portfolioMetrics.totalWeight) }}</p>
-          </div>
-          <div>
-            <p class="text-xs opacity-75 mb-1">{{ t.dashboard.avgPrice }}</p>
-            <p class="text-lg font-semibold tabular-nums">{{ formatCurrency(portfolioMetrics.avgPrice) }}</p>
+    <div class="px-5 py-6 space-y-6 pb-24">
+      <!-- Portfolio Value Card with Premium Gradient -->
+      <div class="relative overflow-hidden bg-gradient-to-br from-blue-600 via-purple-600 to-pink-600 dark:from-blue-700 dark:via-purple-700 dark:to-pink-700 rounded-3xl p-6 text-white shadow-premium animate-slide-up">
+        <!-- Animated decorative elements -->
+        <div class="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2 animate-pulse-soft" />
+        <div class="absolute bottom-0 left-0 w-32 h-32 bg-white/10 rounded-full translate-y-1/2 -translate-x-1/2 animate-pulse-soft" style="animation-delay: 1s;" />
+        
+        <div class="relative z-10">
+          <p class="text-sm opacity-90 mb-2 font-semibold">{{ t.analytics.portfolioValue }}</p>
+          <h2 class="text-4xl font-bold mb-5 tabular-nums drop-shadow-lg">{{ formatCurrency(portfolioMetrics.totalValue) }}</h2>
+          <div class="grid grid-cols-2 gap-3">
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-3.5 border border-white/20">
+              <p class="text-xs opacity-80 mb-1.5 font-medium">{{ t.dashboard.totalWeight }}</p>
+              <p class="text-xl font-bold tabular-nums">{{ formatWeight(portfolioMetrics.totalWeight) }}</p>
+            </div>
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-3.5 border border-white/20">
+              <p class="text-xs opacity-80 mb-1.5 font-medium">{{ t.dashboard.avgPrice }}</p>
+              <p class="text-xl font-bold tabular-nums">{{ formatCurrency(portfolioMetrics.avgPrice) }}</p>
+            </div>
           </div>
         </div>
       </div>
 
       <!-- Price Comparison -->
-      <div class="bg-white dark:bg-gray-800 rounded-xl p-5 shadow-sm dark:shadow-gray-900/10">
-        <h3 class="text-base font-semibold text-gray-900 dark:text-gray-100 mb-4">{{ t.analytics.priceComparison }}</h3>
+      <div class="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-2xl p-5 shadow-glass dark:shadow-glass-dark border border-gray-100/50 dark:border-gray-700/50 animate-slide-up" style="animation-delay: 0.1s; animation-fill-mode: both;">
+        <h3 class="text-base font-bold text-gray-900 dark:text-gray-100 mb-4 flex items-center gap-2">
+          <div class="w-8 h-8 bg-blue-50 dark:bg-blue-500/10 rounded-lg flex items-center justify-center">
+            <Icon name="heroicons:scale" class="w-4 h-4 text-blue-600 dark:text-blue-400" />
+          </div>
+          {{ t.analytics.priceComparison }}
+        </h3>
         <div class="space-y-3">
           <div class="flex items-center justify-between">
-            <span class="text-sm text-gray-600 dark:text-gray-400">{{ t.analytics.yourAvgPrice }}</span>
-            <span class="text-sm font-semibold text-gray-900 dark:text-gray-100 tabular-nums">{{ formatCurrency(portfolioMetrics.avgPrice) }}</span>
+            <span class="text-sm text-gray-600 dark:text-gray-400 font-medium">{{ t.analytics.yourAvgPrice }}</span>
+            <span class="text-sm font-bold text-gray-900 dark:text-gray-100 tabular-nums">{{ formatCurrency(portfolioMetrics.avgPrice) }}</span>
           </div>
           <div class="flex items-center justify-between">
-            <span class="text-sm text-gray-600 dark:text-gray-400">{{ t.analytics.marketPrice }}</span>
-            <span class="text-sm font-semibold text-gray-900 dark:text-gray-100 tabular-nums">{{ formatCurrency(marketPrice) }}</span>
+            <span class="text-sm text-gray-600 dark:text-gray-400 font-medium">{{ t.analytics.marketPrice }}</span>
+            <span class="text-sm font-bold text-gray-900 dark:text-gray-100 tabular-nums">{{ formatCurrency(marketPrice) }}</span>
           </div>
           <div class="pt-3 border-t border-gray-200 dark:border-gray-700">
             <div class="flex items-center justify-between">
-              <span class="text-sm font-medium text-gray-700 dark:text-gray-300">{{ t.analytics.priceDifference }}</span>
+              <span class="text-sm font-semibold text-gray-700 dark:text-gray-300">{{ t.analytics.priceDifference }}</span>
               <div class="text-right">
-                <p :class="['text-sm font-bold tabular-nums', priceDifference >= 0 ? 'text-red-600 dark:text-red-400' : 'text-green-600 dark:text-green-400']">
+                <p :class="['text-base font-bold tabular-nums', priceDifference >= 0 ? 'text-red-600 dark:text-red-400' : 'text-emerald-600 dark:text-emerald-400']">
                   {{ priceDifference >= 0 ? '+' : '' }}{{ formatCurrency(priceDifference) }}
                 </p>
-                <p :class="['text-xs tabular-nums', priceDifference >= 0 ? 'text-red-600 dark:text-red-400' : 'text-green-600 dark:text-green-400']">
+                <p :class="['text-xs tabular-nums font-semibold', priceDifference >= 0 ? 'text-red-600 dark:text-red-400' : 'text-emerald-600 dark:text-emerald-400']">
                   {{ pricePercentageDiff >= 0 ? '+' : '' }}{{ pricePercentageDiff.toFixed(2) }}%
                 </p>
               </div>
@@ -150,21 +164,26 @@ const formatMonth = (monthStr: string) => {
       </div>
 
       <!-- Monthly Purchases -->
-      <div class="bg-white dark:bg-gray-800 rounded-xl p-5 shadow-sm dark:shadow-gray-900/10">
-        <h3 class="text-base font-semibold text-gray-900 dark:text-gray-100 mb-4">{{ t.analytics.monthlyPurchases }}</h3>
-        <div class="space-y-3 mb-4">
-          <div v-for="month in monthlyPurchases" :key="month.month" class="space-y-1">
+      <div class="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-2xl p-5 shadow-glass dark:shadow-glass-dark border border-gray-100/50 dark:border-gray-700/50 animate-slide-up" style="animation-delay: 0.2s; animation-fill-mode: both;">
+        <h3 class="text-base font-bold text-gray-900 dark:text-gray-100 mb-4 flex items-center gap-2">
+          <div class="w-8 h-8 bg-gold-50 dark:bg-gold-500/10 rounded-lg flex items-center justify-center">
+            <Icon name="heroicons:chart-bar" class="w-4 h-4 text-gold-600 dark:text-gold-400" />
+          </div>
+          {{ t.analytics.monthlyPurchases }}
+        </h3>
+        <div class="space-y-4 mb-4">
+          <div v-for="month in monthlyPurchases" :key="month.month" class="space-y-2">
             <div class="flex items-center justify-between text-sm">
-              <span class="text-gray-600 dark:text-gray-400">{{ formatMonth(month.month) }}</span>
-              <span class="font-semibold text-gray-900 dark:text-gray-100 tabular-nums">{{ formatCurrency(month.amount) }}</span>
+              <span class="text-gray-600 dark:text-gray-400 font-medium">{{ formatMonth(month.month) }}</span>
+              <span class="font-bold text-gray-900 dark:text-gray-100 tabular-nums">{{ formatCurrency(month.amount) }}</span>
             </div>
-            <div class="h-2 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
+            <div class="h-2.5 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
               <div 
-                class="h-full bg-blue-500 dark:bg-blue-600 rounded-full transition-all"
+                class="h-full bg-gradient-to-r from-blue-500 to-blue-600 dark:from-blue-600 dark:to-blue-700 rounded-full transition-all duration-500"
                 :style="{ width: `${(month.amount / Math.max(...monthlyPurchases.map(m => m.amount))) * 100}%` }"
               />
             </div>
-            <div class="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
+            <div class="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400 font-medium">
               <span>{{ formatWeight(month.weight) }}</span>
               <span>{{ month.count }} {{ month.count === 1 ? 'transaction' : 'transactions' }}</span>
             </div>
@@ -172,28 +191,33 @@ const formatMonth = (monthStr: string) => {
         </div>
         <div class="pt-4 border-t border-gray-200 dark:border-gray-700">
           <div class="flex items-center justify-between">
-            <span class="text-sm text-gray-600 dark:text-gray-400">{{ t.analytics.avgMonthly }}</span>
-            <span class="text-sm font-semibold text-gray-900 dark:text-gray-100 tabular-nums">{{ formatCurrency(avgMonthlyPurchase) }}</span>
+            <span class="text-sm text-gray-600 dark:text-gray-400 font-medium">{{ t.analytics.avgMonthly }}</span>
+            <span class="text-sm font-bold text-gray-900 dark:text-gray-100 tabular-nums">{{ formatCurrency(avgMonthlyPurchase) }}</span>
           </div>
         </div>
       </div>
 
       <!-- Portfolio Distribution -->
-      <div class="bg-white dark:bg-gray-800 rounded-xl p-5 shadow-sm dark:shadow-gray-900/10">
-        <h3 class="text-base font-semibold text-gray-900 dark:text-gray-100 mb-4">{{ t.analytics.portfolioDistribution }}</h3>
-        <div class="space-y-3">
+      <div class="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-2xl p-5 shadow-glass dark:shadow-glass-dark border border-gray-100/50 dark:border-gray-700/50 animate-slide-up" style="animation-delay: 0.3s; animation-fill-mode: both;">
+        <h3 class="text-base font-bold text-gray-900 dark:text-gray-100 mb-4 flex items-center gap-2">
+          <div class="w-8 h-8 bg-purple-50 dark:bg-purple-500/10 rounded-lg flex items-center justify-center">
+            <Icon name="heroicons:chart-pie" class="w-4 h-4 text-purple-600 dark:text-purple-400" />
+          </div>
+          {{ t.analytics.portfolioDistribution }}
+        </h3>
+        <div class="space-y-4">
           <div v-for="(pocket, index) in portfolioDistribution" :key="pocket.id" class="space-y-2">
             <div class="flex items-center justify-between text-sm">
-              <span class="font-medium text-gray-900 dark:text-gray-100 truncate flex-1">{{ pocket.name }}</span>
-              <span class="text-gray-600 dark:text-gray-400 ml-2 tabular-nums">{{ pocket.percentage.toFixed(1) }}%</span>
+              <span class="font-semibold text-gray-900 dark:text-gray-100 truncate flex-1">{{ pocket.name }}</span>
+              <span class="text-gray-600 dark:text-gray-400 ml-2 tabular-nums font-bold">{{ pocket.percentage.toFixed(1) }}%</span>
             </div>
-            <div class="h-2 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
+            <div class="h-2.5 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
               <div 
-                :class="['h-full rounded-full transition-all', getColorClass(index)]"
+                :class="['h-full rounded-full transition-all duration-500', getColorClass(index)]"
                 :style="{ width: `${pocket.percentage}%` }"
               />
             </div>
-            <div class="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
+            <div class="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400 font-medium">
               <span>{{ formatWeight(pocket.aggregateTotalWeight) }}</span>
               <span class="tabular-nums">{{ formatCurrency(pocket.aggregateTotalPrice) }}</span>
             </div>
@@ -202,15 +226,15 @@ const formatMonth = (monthStr: string) => {
       </div>
 
       <!-- Export Data -->
-      <div class="bg-gray-50 dark:bg-gray-800/50 rounded-xl p-5 border border-gray-200 dark:border-gray-700">
+      <div class="bg-gradient-to-br from-blue-50 to-purple-50 dark:from-blue-500/10 dark:to-purple-500/10 backdrop-blur-sm rounded-2xl p-5 border border-blue-200/50 dark:border-blue-700/50 animate-slide-up" style="animation-delay: 0.4s; animation-fill-mode: both;">
         <div class="flex items-start gap-3">
-          <div class="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center shrink-0">
-            <Icon name="heroicons:arrow-down-tray" class="w-5 h-5 text-blue-600 dark:text-blue-400" />
+          <div class="w-12 h-12 bg-gradient-to-br from-blue-600 to-purple-600 rounded-xl flex items-center justify-center shrink-0 shadow-lg">
+            <Icon name="heroicons:arrow-down-tray" class="w-6 h-6 text-white" />
           </div>
           <div class="flex-1">
-            <h4 class="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-1">{{ t.analytics.exportData }}</h4>
-            <p class="text-xs text-gray-600 dark:text-gray-400 mb-3">{{ t.analytics.exportDescription }}</p>
-            <button class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors">
+            <h4 class="text-sm font-bold text-gray-900 dark:text-gray-100 mb-1">{{ t.analytics.exportData }}</h4>
+            <p class="text-xs text-gray-600 dark:text-gray-400 mb-3 font-medium">{{ t.analytics.exportDescription }}</p>
+            <button class="px-5 py-2.5 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white text-sm font-bold rounded-xl transition-all hover:scale-105 active:scale-95 shadow-lg">
               Export CSV
             </button>
           </div>
