@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import { mockTransactions, mockPockets } from '~/utils/mockData'
-import type { ITransaction, ITransactionCreate } from '~/types/transaction'
-import { GOLD_BRAND_LIST } from '~/utils/constants'
+
+import type {ITransactionCreate} from "@/types/transaction";
 
 definePageMeta({
   layout: 'default',
@@ -302,19 +301,8 @@ const clearFilters = () => {
       <div v-else class="text-center py-12">
         <Icon name="heroicons:arrow-path" class="w-16 h-16 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
         <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">{{ t.transactions.noTransactionsFound }}</h3>
-        <p class="text-gray-600 dark:text-gray-400 mb-6">
-          {{ searchQuery || selectedPocketId || selectedBrand || dateRange !== 'all'
-            ? t.transactions.adjustFilters
-            : t.transactions.addFirst
-          }}
-        </p>
-        <button
-          v-if="!searchQuery && !selectedPocketId && !selectedBrand && dateRange === 'all'"
-          @click="showAddTransaction = true"
-          class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors"
-        >
-          {{ t.dashboard.addTransaction }}
-        </button>
+        <p class="text-sm text-gray-500 dark:text-gray-400">{{ t.transactions.noTransactionsFound }}</p>
+        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">{{ t.transactions.tryDifferentFilters }}</p>
       </div>
     </div>
 
@@ -328,11 +316,10 @@ const clearFilters = () => {
     </button>
 
     <!-- Add Transaction Sheet -->
-    <TransactionAddTransactionSheet
+    <PageTransactionAddTransactionSheet
       :open="showAddTransaction"
       @update:open="showAddTransaction = $event"
       @success="handleTransactionSuccess"
     />
   </div>
 </template>
-```

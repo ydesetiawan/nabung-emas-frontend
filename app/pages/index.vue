@@ -1,7 +1,5 @@
 <script setup lang="ts">
-import type { ITransactionCreate } from '~/types/transaction'
-import { mockPockets, mockTransactions, mockTypePockets } from '~/utils/mockData'
-import { GOLD_BRAND_LIST } from '~/utils/constants'
+import type { ITransactionCreate } from '@/types/transaction'
 
 definePageMeta({
   layout: 'default',
@@ -86,9 +84,9 @@ const getBrandColor = (brand: string) => {
 
     <!-- Content -->
     <div class="px-4 py-6 space-y-6">
-      <DashboardPortfolioCard />
-      <DashboardQuickStats />
-      
+      <PageDashboardPortfolioCard />
+      <PageDashboardQuickStats />
+
       <!-- Pockets Section -->
       <div>
         <div class="flex items-center justify-between mb-3">
@@ -185,7 +183,7 @@ const getBrandColor = (brand: string) => {
     </button>
 
     <!-- Add Transaction Sheet -->
-    <TransactionAddTransactionSheet
+    <PageTransactionAddTransactionSheet
       :open="showAddTransaction"
       @update:open="showAddTransaction = $event"
       @success="handleTransactionSuccess"

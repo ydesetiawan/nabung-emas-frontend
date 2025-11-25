@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import { mockPockets, mockTypePockets } from '../../utils/mockData'
-import { GOLD_BRAND_LIST, BUSINESS_RULES } from '../../utils/constants'
-import type { ITransactionCreate } from '../../types/transaction'
+
+import type {ITransactionCreate} from "@/types/transaction";
 
 const props = defineProps<{
   open: boolean

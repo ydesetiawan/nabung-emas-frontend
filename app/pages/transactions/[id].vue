@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { mockTransactions, mockPockets, mockTypePockets } from '~/utils/mockData'
 
 definePageMeta({
   layout: 'default',

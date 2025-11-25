@@ -3,9 +3,9 @@
  * This will be replaced with real API calls
  */
 
-import type { ITypePocket } from '~/types/type-pocket'
-import type { IPocket } from '~/types/pocket'
-import type { ITransaction } from '~/types/transaction'
+import type { ITypePocket } from '../types/type-pocket'
+import type { IPocket } from '../types/pocket'
+import type { ITransaction } from '../types/transaction'
 import { POCKET_TYPES } from './constants'
 
 export const mockTypePockets: ITypePocket[] = [

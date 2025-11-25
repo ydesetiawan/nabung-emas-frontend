@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import { mockTypePockets } from '../../utils/mockData'
-import { BUSINESS_RULES } from '../../utils/constants'
-import type { IPocketCreate } from '../../types/pocket'
+
+import type {IPocketCreate} from "@/types/pocket";
 
 const props = defineProps<{
   open: boolean

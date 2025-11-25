@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { mockPockets, mockTransactions } from '~/utils/mockData'
+import { mockPockets, mockTransactions } from '@/utils/mockData'
 
 const { t } = useI18n()
 const { currentGoldPrice } = useGoldCalculator()

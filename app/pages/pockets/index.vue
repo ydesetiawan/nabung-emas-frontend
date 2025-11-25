@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { mockPockets, mockTypePockets } from '~/utils/mockData'
-import type { IPocket, IPocketCreate } from '~/types/pocket'
+
+import type {IPocketCreate} from "@/types/pocket";
 
 definePageMeta({
   layout: 'default',
@@ -199,27 +199,22 @@ const handleCreatePocket = (pocket: IPocketCreate) => {
       </div>
 
       <!-- Empty State -->
-      <div v-else class="text-center py-12">
-        <Icon name="heroicons:wallet" class="w-16 h-16 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
-        <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">{{ t.pockets.noPocketsFound }}</h3>
-        <p class="text-gray-600 dark:text-gray-400 mb-6">
-          {{ searchQuery || selectedType
-            ? t.pockets.tryAdjusting
-            : t.pockets.createFirst
-          }}
-        </p>
+      <div v-else class="text-center py-16 bg-white dark:bg-gray-800 rounded-xl border border-dashed border-gray-200 dark:border-gray-700">
+        <Icon name="heroicons:wallet" class="w-12 h-12 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
+        <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">{{ t.pockets.noPocketsFound }}</h3>
+        <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">{{ t.pockets.noPocketsDescription }}</p>
         <button
-          v-if="!searchQuery && !selectedType"
           @click="showCreatePocket = true"
-          class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors"
+          class="mt-6 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors flex items-center gap-2 mx-auto"
         >
-          {{ t.pockets.createPocket }}
+          <Icon name="heroicons:plus" class="w-5 h-5" />
+          <span>{{ t.pockets.createFirstPocket }}</span>
         </button>
       </div>
     </div>
 
-    <!-- Add Pocket Sheet -->
-    <PocketAddPocketSheet
+    <!-- Create Pocket Sheet -->
+    <PagePocketAddPocketSheet
       :open="showCreatePocket"
       @update:open="showCreatePocket = $event"
       @success="handleCreatePocket"
