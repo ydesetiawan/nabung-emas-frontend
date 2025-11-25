@@ -289,7 +289,7 @@ export const translations = {
             seeAll: 'Lihat Semua',
         },
     },
-} as const
+}
 
 export type Locale = keyof typeof translations
-export type TranslationKeys = typeof translations.en
+export type TranslationKeys = (typeof translations)[Locale]
