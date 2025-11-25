@@ -215,20 +215,20 @@ const getBrandColor = (brand: string) => {
             <div class="flex items-center justify-between gap-3 pt-3 border-t border-gray-200/50 dark:border-gray-700/50">
               <div class="flex items-center gap-4">
                 <div>
-                  <p class="text-[10px] text-gray-500 dark:text-gray-400 font-medium uppercase tracking-wide mb-0.5">Weight</p>
+                  <p class="text-[10px] text-gray-500 dark:text-gray-400 font-medium uppercase tracking-wide mb-0.5">{{ t.transactions.weight }}</p>
                   <p class="text-sm font-bold text-gray-900 dark:text-gray-100 tabular-nums">
                     {{ formatWeight(transaction.weight) }}
                   </p>
                 </div>
                 <div>
-                  <p class="text-[10px] text-gray-500 dark:text-gray-400 font-medium uppercase tracking-wide mb-0.5">Price/g</p>
+                  <p class="text-[10px] text-gray-500 dark:text-gray-400 font-medium uppercase tracking-wide mb-0.5">{{ t.transactions.pricePerGram }}</p>
                   <p class="text-sm font-bold text-gray-600 dark:text-gray-400 tabular-nums">
                     {{ formatCompactCurrency(transaction.pricePerGram) }}
                   </p>
                 </div>
               </div>
               <div class="text-right">
-                <p class="text-[10px] text-gray-500 dark:text-gray-400 font-medium uppercase tracking-wide mb-0.5">Total</p>
+                <p class="text-[10px] text-gray-500 dark:text-gray-400 font-medium uppercase tracking-wide mb-0.5">{{ t.transactions.total }}</p>
                 <p class="text-lg font-bold text-gold-600 dark:text-gold-400 tabular-nums">
                   {{ formatCompactCurrency(transaction.totalPrice) }}
                 </p>

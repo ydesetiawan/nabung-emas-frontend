@@ -74,6 +74,9 @@ export const translations = {
             tryDifferentFilters: 'Try different filters',
             adjustFilters: 'Try adjusting your filters',
             addFirst: 'Add your first gold purchase to get started',
+            weight: 'Weight',
+            pricePerGram: 'Price/g',
+            total: 'Total',
         },
 
         // Analytics
@@ -235,6 +238,9 @@ export const translations = {
             tryDifferentFilters: 'Coba filter yang berbeda',
             adjustFilters: 'Coba sesuaikan filter Anda',
             addFirst: 'Tambahkan pembelian emas pertama Anda',
+            weight: 'Berat',
+            pricePerGram: 'Harga/g',
+            total: 'Total',
         },
 
         // Analytics
