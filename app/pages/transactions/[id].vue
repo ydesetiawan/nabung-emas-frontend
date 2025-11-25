@@ -18,13 +18,13 @@ const transaction = computed(() => {
 // Find pocket
 const pocket = computed(() => {
   if (!transaction.value) return null
-  return mockPockets.find(p => p.id === transaction.value.pocketId)
+  return mockPockets.find(p => p.id === transaction?.value?.pocketId)
 })
 
 // Find type pocket
 const typePocket = computed(() => {
   if (!pocket.value) return null
-  return mockTypePockets.find(tp => tp.id === pocket.value.typePocketId)
+  return mockTypePockets.find(tp => tp.id === pocket?.value?.typePocketId)
 })
 
 useHead({
