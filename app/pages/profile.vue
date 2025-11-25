@@ -42,8 +42,9 @@ const formatJoinDate = (date: string) => {
 }
 
 const handleLogout = () => {
-  // In real app, this would call logout API
-  alert('Logout functionality will be implemented with backend')
+  // In real app, this would call logout API and clear token
+  // For now, just redirect to login page
+  navigateTo('/login')
 }
 </script>
 
