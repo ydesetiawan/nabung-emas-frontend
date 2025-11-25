@@ -86,7 +86,7 @@ const getColorClass = (index: number) => {
 
 const formatMonth = (monthStr: string) => {
   const [year, month] = monthStr.split('-')
-  const date = new Date(parseInt(year), parseInt(month) - 1)
+  const date = new Date(parseInt(year || '0'), parseInt(month || '1') - 1)
   return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
 }
 </script>
