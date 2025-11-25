@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { mockPockets, mockTypePockets } from '~/utils/mockData'
-import type { IPocket } from '~/types/pocket'
+import type { IPocket, IPocketCreate } from '~/types/pocket'
 
 definePageMeta({
   layout: 'default',
@@ -10,11 +10,6 @@ const { t } = useI18n()
 const searchQuery = ref('')
 const selectedType = ref<string | null>(null)
 const showCreatePocket = ref(false)
-
-// New Pocket Form State
-const newPocketName = ref('')
-const newPocketTarget = ref('')
-const newPocketType = ref('saving')
 
 useHead({
   title: computed(() => `${t.value.pockets.title} - Gold Savings`),
@@ -56,22 +51,14 @@ const getColorClass = (color: string) => {
   return colors[color] || colors.blue
 }
 
-const handleCreatePocket = () => {
+const handleCreatePocket = (pocket: IPocketCreate) => {
   // In a real app, this would call an API
-  console.log('Creating pocket:', {
-    name: newPocketName.value,
-    target: newPocketTarget.value,
-    type: newPocketType.value
-  })
+  console.log('Creating pocket:', pocket)
   
-  alert(`Pocket "${newPocketName.value}" created successfully!`)
-  showCreatePocket.value = false
-  
-  // Reset form
-  newPocketName.value = ''
-  newPocketTarget.value = ''
-  newPocketType.value = 'saving'
+  const typePocket = getTypePocket(pocket.typePocketId)
+  alert(`Pocket "${pocket.name}" (${typePocket?.name}) created successfully!`)
 }
+
 </script>
 
 <template>
@@ -90,23 +77,25 @@ const handleCreatePocket = () => {
           </button>
         </div>
 
-        <!-- Search and Filter -->
-        <div class="flex gap-3 overflow-x-auto pb-2 -mx-4 px-4 scrollbar-hide">
-          <div class="flex-1 min-w-[200px]">
-            <div class="relative">
-              <Icon name="heroicons:magnifying-glass" class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-              <input
-                v-model="searchQuery"
-                type="text"
-                :placeholder="t.pockets.searchPlaceholder"
-                class="w-full pl-10 pr-4 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 transition-colors"
-              />
-            </div>
+        <!-- Search -->
+        <div class="px-4 mb-3">
+          <div class="relative">
+            <Icon name="heroicons:magnifying-glass" class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 dark:text-gray-500" />
+            <input
+              v-model="searchQuery"
+              type="text"
+              :placeholder="t.pockets.searchPlaceholder"
+              class="w-full pl-10 pr-4 py-2.5 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 transition-colors"
+            />
           </div>
+        </div>
+
+        <!-- Type Filter -->
+        <div class="flex gap-2 overflow-x-auto pb-3 px-4 scrollbar-hide">
           <button
             @click="selectedType = null"
             :class="[
-              'px-4 py-2 rounded-lg font-medium whitespace-nowrap transition-colors',
+              'px-4 py-2 rounded-lg font-medium whitespace-nowrap transition-colors shrink-0',
               !selectedType
                 ? 'bg-gray-900 text-white dark:bg-gray-100 dark:text-gray-900'
                 : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700'
@@ -119,7 +108,7 @@ const handleCreatePocket = () => {
             :key="type.id"
             @click="selectedType = type.id"
             :class="[
-              'px-4 py-2 rounded-lg font-medium whitespace-nowrap transition-colors flex items-center gap-2',
+              'px-4 py-2 rounded-lg font-medium whitespace-nowrap transition-colors flex items-center gap-2 shrink-0',
               selectedType === type.id
                 ? 'bg-gray-900 text-white dark:bg-gray-100 dark:text-gray-900'
                 : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700'
@@ -229,74 +218,11 @@ const handleCreatePocket = () => {
       </div>
     </div>
 
-    <!-- Create Pocket Modal/Sheet -->
-    <div v-if="showCreatePocket" class="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 sm:p-6">
-      <!-- Backdrop -->
-      <div class="absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity" @click="showCreatePocket = false" />
-      
-      <!-- Modal Content -->
-      <div class="relative w-full max-w-md bg-white dark:bg-gray-900 rounded-2xl shadow-xl overflow-hidden transition-all transform animate-in slide-in-from-bottom-4 fade-in">
-        <div class="px-6 py-4 border-b border-gray-100 dark:border-gray-800 flex items-center justify-between bg-white dark:bg-gray-900 sticky top-0 z-10">
-          <h2 class="text-lg font-bold text-gray-900 dark:text-gray-100">{{ t.pockets.newPocket }}</h2>
-          <button @click="showCreatePocket = false" class="p-2 -mr-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
-            <Icon name="heroicons:x-mark" class="w-5 h-5" />
-          </button>
-        </div>
-        
-        <div class="p-6 space-y-4">
-          <div>
-            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Pocket Name</label>
-            <input
-              v-model="newPocketName"
-              type="text"
-              placeholder="e.g. Hajj Savings"
-              class="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 dark:text-gray-100 placeholder-gray-400 transition-colors"
-            />
-          </div>
-
-          <div>
-            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Target Weight (grams)</label>
-            <input
-              v-model="newPocketTarget"
-              type="number"
-              placeholder="e.g. 10"
-              class="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 dark:text-gray-100 placeholder-gray-400 transition-colors"
-            />
-          </div>
-
-          <div>
-            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Type</label>
-            <div class="grid grid-cols-2 gap-3">
-              <button
-                v-for="type in mockTypePockets"
-                :key="type.id"
-                @click="newPocketType = type.id"
-                :class="[
-                  'p-3 rounded-xl border text-left transition-all',
-                  newPocketType === type.id
-                    ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 ring-1 ring-blue-500'
-                    : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
-                ]"
-              >
-                <div class="flex items-center gap-2 mb-1">
-                  <Icon :name="type.icon" :class="['w-5 h-5', newPocketType === type.id ? 'text-blue-600 dark:text-blue-400' : 'text-gray-500 dark:text-gray-400']" />
-                  <span :class="['font-medium text-sm', newPocketType === type.id ? 'text-blue-900 dark:text-blue-100' : 'text-gray-900 dark:text-gray-100']">{{ type.name }}</span>
-                </div>
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <div class="p-6 border-t border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-800/50">
-          <button
-            @click="handleCreatePocket"
-            :disabled="!newPocketName"
-            class="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-xl font-semibold shadow-lg shadow-blue-600/20 transition-all active:scale-[0.98]"
-          >
-            Create Pocket
-          </button>
-        </div>
-      </div>
-    </div>
+    <!-- Add Pocket Sheet -->
+    <PocketAddPocketSheet
+      :open="showCreatePocket"
+      @update:open="showCreatePocket = $event"
+      @success="handleCreatePocket"
+    />
   </div>
 </template>
