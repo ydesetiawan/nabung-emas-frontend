@@ -90,22 +90,23 @@ const handleDelete = () => {
 </script>
 
 <template>
-  <div class="min-h-screen bg-gray-50 dark:bg-gray-900">
-    <!-- Header -->
-    <header class="sticky top-0 z-40 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 safe-top">
-      <div class="flex items-center gap-3 px-4 h-16">
+  <div class="min-h-screen bg-gradient-to-b from-slate-50 to-white dark:from-slate-950 dark:to-slate-900">
+    <!-- Header with gradient -->
+    <header class="sticky top-0 z-40 safe-top">
+      <div class="absolute inset-0 bg-gradient-to-b from-white/95 to-white/80 dark:from-slate-900/95 dark:to-slate-900/80 backdrop-blur-xl border-b border-gray-200/50 dark:border-gray-700/50"></div>
+      <div class="relative flex items-center gap-3 px-5 h-16">
         <button
           @click="router.back()"
-          class="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+          class="p-2.5 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition-all active:scale-95"
         >
           <Icon name="heroicons:arrow-left" class="w-6 h-6 text-gray-900 dark:text-gray-100" />
         </button>
-        <h1 class="text-xl font-bold text-gray-900 dark:text-gray-100 flex-1 truncate">
+        <h1 class="text-xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 dark:from-white dark:to-gray-300 bg-clip-text text-transparent flex-1 truncate">
           {{ pocket?.name || 'Pocket Details' }}
         </h1>
         <button
           @click="handleEdit"
-          class="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+          class="p-2.5 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition-all active:scale-95"
         >
           <Icon name="heroicons:pencil" class="w-5 h-5 text-gray-600 dark:text-gray-400" />
         </button>
@@ -113,67 +114,73 @@ const handleDelete = () => {
     </header>
 
     <!-- Content -->
-    <div v-if="pocket && typePocket && stats" class="px-4 py-6 space-y-6 max-w-2xl mx-auto">
-      <!-- Pocket Header Card -->
-      <div class="bg-gradient-to-br from-blue-600 to-blue-700 text-white rounded-2xl p-6 shadow-lg">
-        <div class="flex items-start gap-4 mb-4">
-          <div :class="['w-14 h-14 rounded-xl flex items-center justify-center', getColorClass(typePocket.color)]">
-            <Icon :name="typePocket.icon" class="w-7 h-7" />
+    <div v-if="pocket && typePocket && stats" class="px-5 py-6 space-y-6 max-w-2xl mx-auto pb-24">
+      <!-- Pocket Header Card with Premium Gradient -->
+      <div class="relative overflow-hidden bg-gradient-to-br from-blue-600 via-purple-600 to-pink-600 dark:from-blue-700 dark:via-purple-700 dark:to-pink-700 text-white rounded-3xl p-6 shadow-premium animate-slide-up">
+        <!-- Animated decorative elements -->
+        <div class="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2 animate-pulse-soft" />
+        <div class="absolute bottom-0 left-0 w-24 h-24 bg-white/10 rounded-full translate-y-1/2 -translate-x-1/2 animate-pulse-soft" style="animation-delay: 1s;" />
+        
+        <div class="relative z-10">
+          <div class="flex items-start gap-4 mb-6">
+            <div :class="['w-16 h-16 rounded-2xl flex items-center justify-center backdrop-blur-sm', getColorClass(typePocket.color)]">
+              <Icon :name="typePocket.icon" class="w-8 h-8" />
+            </div>
+            <div class="flex-1">
+              <h2 class="text-3xl font-bold mb-1 drop-shadow-lg">{{ pocket.name }}</h2>
+              <p class="text-sm text-white/90 font-semibold">{{ typePocket.name }}</p>
+            </div>
           </div>
-          <div class="flex-1">
-            <h2 class="text-2xl font-bold mb-1">{{ pocket.name }}</h2>
-            <p class="text-sm text-white/80">{{ typePocket.name }}</p>
-          </div>
-        </div>
 
-        <div class="grid grid-cols-2 gap-4 mt-6">
-          <div>
-            <p class="text-xs text-white/70 mb-1">Total Weight</p>
-            <p class="text-2xl font-bold tabular-nums">{{ formatWeight(pocket.aggregateTotalWeight) }}</p>
-          </div>
-          <div>
-            <p class="text-xs text-white/70 mb-1">Total Value</p>
-            <p class="text-2xl font-bold tabular-nums">{{ formatCurrency(pocket.aggregateTotalPrice) }}</p>
+          <div class="grid grid-cols-2 gap-3">
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-3.5 border border-white/20">
+              <p class="text-xs text-white/80 mb-1.5 font-medium">Total Weight</p>
+              <p class="text-2xl font-bold tabular-nums">{{ formatWeight(pocket.aggregateTotalWeight) }}</p>
+            </div>
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-3.5 border border-white/20">
+              <p class="text-xs text-white/80 mb-1.5 font-medium">Total Value</p>
+              <p class="text-2xl font-bold tabular-nums">{{ formatCurrency(pocket.aggregateTotalPrice) }}</p>
+            </div>
           </div>
         </div>
       </div>
 
       <!-- Stats Grid -->
-      <div class="grid grid-cols-2 gap-3">
-        <div class="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm">
+      <div class="grid grid-cols-2 gap-3 animate-slide-up" style="animation-delay: 0.1s; animation-fill-mode: both;">
+        <div class="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-2xl p-4 shadow-glass dark:shadow-glass-dark border border-gray-100/50 dark:border-gray-700/50">
           <div class="flex items-center gap-2 mb-2">
             <Icon name="heroicons:chart-bar" class="w-5 h-5 text-blue-600 dark:text-blue-400" />
-            <p class="text-sm text-gray-600 dark:text-gray-400">Current Value</p>
+            <p class="text-sm text-gray-600 dark:text-gray-400 font-medium">Current Value</p>
           </div>
           <p class="text-xl font-bold text-gray-900 dark:text-gray-100 tabular-nums">
             {{ formatCurrency(stats.currentValue) }}
           </p>
         </div>
 
-        <div class="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm">
+        <div class="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-2xl p-4 shadow-glass dark:shadow-glass-dark border border-gray-100/50 dark:border-gray-700/50">
           <div class="flex items-center gap-2 mb-2">
-            <Icon name="heroicons:arrow-trending-up" class="w-5 h-5 text-green-600 dark:text-green-400" />
-            <p class="text-sm text-gray-600 dark:text-gray-400">Profit/Loss</p>
+            <Icon name="heroicons:arrow-trending-up" class="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+            <p class="text-sm text-gray-600 dark:text-gray-400 font-medium">Profit/Loss</p>
           </div>
-          <p :class="['text-xl font-bold tabular-nums', stats.profitLoss >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400']">
+          <p :class="['text-xl font-bold tabular-nums', stats.profitLoss >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400']">
             {{ stats.profitLoss >= 0 ? '+' : '' }}{{ formatCurrency(stats.profitLoss) }}
           </p>
         </div>
 
-        <div class="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm">
+        <div class="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-2xl p-4 shadow-glass dark:shadow-glass-dark border border-gray-100/50 dark:border-gray-700/50">
           <div class="flex items-center gap-2 mb-2">
             <Icon name="heroicons:calculator" class="w-5 h-5 text-gold-600 dark:text-gold-400" />
-            <p class="text-sm text-gray-600 dark:text-gray-400">Avg Price/g</p>
+            <p class="text-sm text-gray-600 dark:text-gray-400 font-medium">Avg Price/g</p>
           </div>
           <p class="text-xl font-bold text-gray-900 dark:text-gray-100 tabular-nums">
             {{ formatCurrency(stats.averagePricePerGram) }}
           </p>
         </div>
 
-        <div class="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm">
+        <div class="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-2xl p-4 shadow-glass dark:shadow-glass-dark border border-gray-100/50 dark:border-gray-700/50">
           <div class="flex items-center gap-2 mb-2">
             <Icon name="heroicons:arrow-path" class="w-5 h-5 text-purple-600 dark:text-purple-400" />
-            <p class="text-sm text-gray-600 dark:text-gray-400">Transactions</p>
+            <p class="text-sm text-gray-600 dark:text-gray-400 font-medium">Transactions</p>
           </div>
           <p class="text-xl font-bold text-gray-900 dark:text-gray-100">
             {{ pocketTransactions.length }}
@@ -182,74 +189,76 @@ const handleDelete = () => {
       </div>
 
       <!-- Progress -->
-      <div v-if="pocket.targetWeight" class="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm">
+      <div v-if="pocket.targetWeight" class="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-2xl p-5 shadow-glass dark:shadow-glass-dark border border-gray-100/50 dark:border-gray-700/50 animate-slide-up" style="animation-delay: 0.2s; animation-fill-mode: both;">
         <div class="flex items-center justify-between mb-3">
-          <h3 class="font-semibold text-gray-900 dark:text-gray-100">Target Progress</h3>
-          <span class="text-sm font-medium text-blue-600 dark:text-blue-400">{{ progress?.toFixed(1) }}%</span>
+          <h3 class="font-bold text-gray-900 dark:text-gray-100">Target Progress</h3>
+          <span class="text-sm font-bold text-blue-600 dark:text-blue-400 tabular-nums">{{ progress?.toFixed(1) }}%</span>
         </div>
         <div class="h-3 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden mb-2">
           <div
-            class="h-full bg-blue-600 rounded-full transition-all duration-500"
+            class="h-full bg-gradient-to-r from-blue-500 to-blue-600 dark:from-blue-600 dark:to-blue-700 rounded-full transition-all duration-500"
             :style="{ width: `${Math.min(progress || 0, 100)}%` }"
           />
         </div>
-        <div class="flex items-center justify-between text-sm text-gray-600 dark:text-gray-400">
+        <div class="flex items-center justify-between text-sm text-gray-600 dark:text-gray-400 font-medium">
           <span>{{ formatWeight(pocket.aggregateTotalWeight) }}</span>
           <span>{{ formatWeight(pocket.targetWeight) }}</span>
         </div>
       </div>
 
       <!-- Description -->
-      <div v-if="pocket.description" class="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm">
-        <h3 class="text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">Description</h3>
-        <p class="text-gray-900 dark:text-gray-100">{{ pocket.description }}</p>
+      <div v-if="pocket.description" class="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-2xl p-5 shadow-glass dark:shadow-glass-dark border border-gray-100/50 dark:border-gray-700/50 animate-slide-up" style="animation-delay: 0.3s; animation-fill-mode: both;">
+        <h3 class="text-sm font-bold text-gray-600 dark:text-gray-400 mb-2 uppercase tracking-wide">Description</h3>
+        <p class="text-gray-900 dark:text-gray-100 font-medium">{{ pocket.description }}</p>
       </div>
 
       <!-- Transactions List -->
-      <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm">
-        <div class="p-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
-          <h3 class="font-semibold text-gray-900 dark:text-gray-100">Transactions</h3>
+      <div class="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-2xl shadow-glass dark:shadow-glass-dark border border-gray-100/50 dark:border-gray-700/50 animate-slide-up" style="animation-delay: 0.4s; animation-fill-mode: both;">
+        <div class="p-5 border-b border-gray-200/50 dark:border-gray-700/50 flex items-center justify-between">
+          <h3 class="font-bold text-gray-900 dark:text-gray-100">Transactions</h3>
           <button
             @click="showAddTransaction = true"
-            class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-lg font-medium transition-colors"
+            class="px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white text-sm rounded-xl font-bold transition-all hover:scale-105 active:scale-95 shadow-lg"
           >
             Add
           </button>
         </div>
 
-        <div v-if="pocketTransactions.length > 0" class="divide-y divide-gray-200 dark:divide-gray-700">
+        <div v-if="pocketTransactions.length > 0" class="divide-y divide-gray-200/50 dark:divide-gray-700/50">
           <NuxtLink
             v-for="transaction in pocketTransactions"
             :key="transaction.id"
             :to="`/transactions/${transaction.id}`"
-            class="block p-4 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+            class="block p-4 hover:bg-gray-50/50 dark:hover:bg-gray-700/50 transition-all group"
           >
             <div class="flex items-center justify-between gap-3 mb-2">
-              <span :class="['px-2.5 py-1 rounded-lg text-xs font-semibold', getBrandColor(transaction.brand)]">
+              <span :class="['px-3 py-1 rounded-xl text-xs font-bold', getBrandColor(transaction.brand)]">
                 {{ transaction.brand }}
               </span>
-              <span class="text-xs text-gray-500 dark:text-gray-400">
+              <span class="text-xs text-gray-500 dark:text-gray-400 font-medium">
                 {{ formatRelativeTime(transaction.transactionDate) }}
               </span>
             </div>
             <div class="flex items-center justify-between">
               <div>
-                <p class="text-sm font-medium text-gray-900 dark:text-gray-100">{{ formatWeight(transaction.weight) }}</p>
-                <p class="text-xs text-gray-600 dark:text-gray-400">{{ formatCurrency(transaction.pricePerGram) }}/g</p>
+                <p class="text-sm font-bold text-gray-900 dark:text-gray-100 tabular-nums">{{ formatWeight(transaction.weight) }}</p>
+                <p class="text-xs text-gray-600 dark:text-gray-400 font-medium tabular-nums">{{ formatCurrency(transaction.pricePerGram) }}/g</p>
               </div>
-              <p class="text-lg font-semibold text-gold-600 dark:text-gold-400 tabular-nums">
+              <p class="text-lg font-bold text-gold-600 dark:text-gold-400 tabular-nums">
                 {{ formatCurrency(transaction.totalPrice) }}
               </p>
             </div>
           </NuxtLink>
         </div>
 
-        <div v-else class="p-8 text-center">
-          <Icon name="heroicons:inbox" class="w-12 h-12 text-gray-400 mx-auto mb-3" />
-          <p class="text-gray-600 dark:text-gray-400 mb-4">No transactions yet</p>
+        <div v-else class="p-12 text-center">
+          <div class="w-16 h-16 bg-gray-100 dark:bg-gray-800 rounded-2xl flex items-center justify-center mx-auto mb-3">
+            <Icon name="heroicons:inbox" class="w-8 h-8 text-gray-400" />
+          </div>
+          <p class="text-gray-600 dark:text-gray-400 mb-4 font-medium">No transactions yet</p>
           <button
             @click="showAddTransaction = true"
-            class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors"
+            class="px-5 py-2.5 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-xl font-bold transition-all hover:scale-105 active:scale-95 shadow-lg"
           >
             Add First Transaction
           </button>
@@ -257,11 +266,11 @@ const handleDelete = () => {
       </div>
 
       <!-- Danger Zone -->
-      <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-4">
-        <h3 class="text-sm font-medium text-red-600 dark:text-red-400 mb-3">Danger Zone</h3>
+      <div class="bg-gradient-to-br from-red-50 to-rose-50 dark:from-red-500/10 dark:to-rose-500/10 backdrop-blur-sm rounded-2xl p-5 border border-red-200/50 dark:border-red-700/50 animate-slide-up" style="animation-delay: 0.5s; animation-fill-mode: both;">
+        <h3 class="text-sm font-bold text-red-600 dark:text-red-400 mb-3 uppercase tracking-wide">Danger Zone</h3>
         <button
           @click="handleDelete"
-          class="w-full px-4 py-3 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
+          class="w-full px-5 py-3.5 bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 text-white rounded-xl font-bold transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-2 shadow-lg"
         >
           <Icon name="heroicons:trash" class="w-5 h-5" />
           <span>Delete Pocket</span>
@@ -269,31 +278,33 @@ const handleDelete = () => {
       </div>
 
       <!-- Pocket Info -->
-      <div class="bg-gray-100 dark:bg-gray-800 rounded-xl p-4 text-center">
-        <p class="text-xs text-gray-600 dark:text-gray-400">
+      <div class="bg-gray-100/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-4 text-center border border-gray-200/50 dark:border-gray-700/50 animate-slide-up" style="animation-delay: 0.6s; animation-fill-mode: both;">
+        <p class="text-xs text-gray-600 dark:text-gray-400 font-medium">
           Created {{ formatRelativeTime(pocket.createdAt) }}
         </p>
-        <p class="text-xs text-gray-500 dark:text-gray-500 mt-1">
+        <p class="text-xs text-gray-500 dark:text-gray-500 mt-1 font-mono">
           ID: {{ pocket.id }}
         </p>
       </div>
     </div>
 
     <!-- Not Found -->
-    <div v-else class="px-4 py-12 text-center">
-      <Icon name="heroicons:exclamation-circle" class="w-16 h-16 text-gray-400 mx-auto mb-4" />
-      <h2 class="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">Pocket Not Found</h2>
-      <p class="text-gray-600 dark:text-gray-400 mb-6">The pocket you're looking for doesn't exist.</p>
+    <div v-else class="px-5 py-16 text-center">
+      <div class="w-20 h-20 bg-gray-100 dark:bg-gray-800 rounded-2xl flex items-center justify-center mx-auto mb-4">
+        <Icon name="heroicons:exclamation-circle" class="w-10 h-10 text-gray-400" />
+      </div>
+      <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">Pocket Not Found</h2>
+      <p class="text-gray-600 dark:text-gray-400 mb-6 font-medium">The pocket you're looking for doesn't exist.</p>
       <NuxtLink
         to="/pockets"
-        class="inline-block px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors"
+        class="inline-block px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-xl font-bold transition-all hover:scale-105 active:scale-95 shadow-lg"
       >
         Back to Pockets
       </NuxtLink>
     </div>
 
     <!-- Add Transaction Sheet -->
-    <TransactionAddTransactionSheet
+    <PageTransactionAddTransactionSheet
       :open="showAddTransaction"
       :default-pocket-id="pocketId"
       @update:open="showAddTransaction = $event"
