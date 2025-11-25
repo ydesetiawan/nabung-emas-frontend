@@ -61,8 +61,10 @@ const filteredTransactions = computed(() => {
       '1y': 365,
     }
     const days = ranges[dateRange.value]
-    const cutoff = new Date(now.getTime() - days * 24 * 60 * 60 * 1000)
-    result = result.filter(t => new Date(t.transactionDate) >= cutoff)
+    if (days !== undefined) {
+      const cutoff = new Date(now.getTime() - days * 24 * 60 * 60 * 1000)
+      result = result.filter(t => new Date(t.transactionDate) >= cutoff)
+    }
   }
 
   // Sort
