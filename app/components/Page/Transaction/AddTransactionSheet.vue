@@ -191,42 +191,45 @@ const close = () => {
     >
       <div
         v-if="open"
-        class="fixed inset-0 bg-black/50 dark:bg-black/70 z-50"
+        class="fixed inset-0 bg-black/60 dark:bg-black/80 backdrop-blur-sm z-50"
         @click="close"
       />
     </Transition>
 
     <!-- Sheet -->
     <Transition
-      enter-active-class="transition-transform duration-300"
+      enter-active-class="transition-transform duration-300 ease-out"
       enter-from-class="translate-y-full"
       enter-to-class="translate-y-0"
-      leave-active-class="transition-transform duration-200"
+      leave-active-class="transition-transform duration-200 ease-in"
       leave-from-class="translate-y-0"
       leave-to-class="translate-y-full"
     >
       <div
         v-if="open"
-        class="fixed inset-x-0 bottom-0 z-50 bg-white dark:bg-gray-800 rounded-t-3xl shadow-2xl max-h-[90vh] flex flex-col max-w-md mx-auto transition-colors"
+        class="fixed inset-x-0 bottom-0 z-50 bg-gradient-to-b from-white to-slate-50 dark:from-slate-900 dark:to-slate-950 rounded-t-3xl shadow-premium max-h-[90vh] flex flex-col max-w-md mx-auto"
       >
-        <!-- Header -->
-        <div class="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
-          <h2 class="text-xl font-bold text-gray-900 dark:text-gray-100">
-            {{ editMode ? 'Edit Transaction' : 'Add Transaction' }}
-          </h2>
-          <button
-            @click="close"
-            class="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
-          >
-            <Icon name="heroicons:x-mark" class="w-6 h-6 text-gray-600 dark:text-gray-400" />
-          </button>
+        <!-- Header with gradient -->
+        <div class="relative">
+          <div class="absolute inset-0 bg-gradient-to-r from-gold-500 to-amber-600 dark:from-gold-600 dark:to-amber-700 rounded-t-3xl"></div>
+          <div class="relative flex items-center justify-between p-6 text-white">
+            <h2 class="text-2xl font-bold drop-shadow-lg">
+              {{ editMode ? 'Edit Transaction' : 'Add Transaction' }}
+            </h2>
+            <button
+              @click="close"
+              class="p-2.5 hover:bg-white/20 rounded-xl transition-all active:scale-95 backdrop-blur-sm"
+            >
+              <Icon name="heroicons:x-mark" class="w-6 h-6" />
+            </button>
+          </div>
         </div>
 
         <!-- Form -->
         <form @submit.prevent="handleSubmit" class="flex-1 overflow-y-auto p-6 space-y-5">
           <!-- Pocket Selection -->
           <div>
-            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2 uppercase tracking-wide">
               Pocket <span class="text-red-500">*</span>
             </label>
             
@@ -236,19 +239,19 @@ const close = () => {
               type="button"
               @click="showPocketSelector = true"
               :class="[
-                'w-full p-4 rounded-lg border-2 transition-all text-left',
+                'w-full p-4 rounded-2xl border-2 transition-all text-left shadow-glass dark:shadow-glass-dark',
                 errors.pocketId 
-                  ? 'border-red-500 bg-red-50 dark:bg-red-900/10' 
-                  : 'border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 hover:border-blue-500 dark:hover:border-blue-400'
+                  ? 'border-red-500 bg-red-50/50 dark:bg-red-900/10' 
+                  : 'border-gray-200/50 dark:border-gray-700/50 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm hover:border-blue-500 dark:hover:border-blue-400 hover:scale-105'
               ]"
             >
               <div class="flex items-center gap-3">
-                <div :class="['w-10 h-10 rounded-lg flex items-center justify-center shrink-0', getColorClass(getTypePocket(selectedPocket.typePocketId)?.color || 'blue')]">
-                  <Icon :name="getTypePocket(selectedPocket.typePocketId)?.icon || 'heroicons:wallet'" class="w-5 h-5" />
+                <div :class="['w-12 h-12 rounded-xl flex items-center justify-center shrink-0 shadow-lg', getColorClass(getTypePocket(selectedPocket.typePocketId)?.color || 'blue')]">
+                  <Icon :name="getTypePocket(selectedPocket.typePocketId)?.icon || 'heroicons:wallet'" class="w-6 h-6" />
                 </div>
                 <div class="flex-1 min-w-0">
-                  <p class="text-sm font-medium text-gray-900 dark:text-gray-100">{{ selectedPocket.name }}</p>
-                  <p class="text-xs text-gray-500 dark:text-gray-400">{{ getTypePocket(selectedPocket.typePocketId)?.name }}</p>
+                  <p class="text-sm font-bold text-gray-900 dark:text-gray-100">{{ selectedPocket.name }}</p>
+                  <p class="text-xs text-gray-500 dark:text-gray-400 font-medium">{{ getTypePocket(selectedPocket.typePocketId)?.name }}</p>
                 </div>
                 <Icon name="heroicons:chevron-down" class="w-5 h-5 text-gray-400 dark:text-gray-500" />
               </div>
@@ -263,7 +266,7 @@ const close = () => {
                   v-model="pocketSearchQuery"
                   type="text"
                   placeholder="Search pockets..."
-                  class="w-full pl-10 pr-4 py-2.5 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500"
+                  class="w-full pl-10 pr-4 py-3 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border-2 border-gray-200/50 dark:border-gray-700/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 font-medium shadow-glass dark:shadow-glass-dark"
                 />
               </div>
 
@@ -271,10 +274,10 @@ const close = () => {
               <div class="max-h-64 overflow-y-auto space-y-4">
                 <div v-for="(pockets, typeId) in groupedPockets" :key="typeId">
                   <div class="flex items-center gap-2 mb-2">
-                    <div :class="['w-6 h-6 rounded flex items-center justify-center', getColorClass(getTypePocket(typeId)?.color || 'blue')]">
-                      <Icon :name="getTypePocket(typeId)?.icon || 'heroicons:wallet'" class="w-3.5 h-3.5" />
+                    <div :class="['w-7 h-7 rounded-lg flex items-center justify-center shadow-lg', getColorClass(getTypePocket(typeId)?.color || 'blue')]">
+                      <Icon :name="getTypePocket(typeId)?.icon || 'heroicons:wallet'" class="w-4 h-4" />
                     </div>
-                    <h4 class="text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wide">
+                    <h4 class="text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wide">
                       {{ getTypePocket(typeId)?.name }}
                     </h4>
                   </div>
@@ -284,11 +287,11 @@ const close = () => {
                       :key="pocket.id"
                       type="button"
                       @click="selectPocket(pocket.id)"
-                      class="w-full p-3 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 hover:border-blue-500 dark:hover:border-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all text-left"
+                      class="w-full p-3 rounded-xl border-2 border-gray-200/50 dark:border-gray-700/50 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm hover:border-blue-500 dark:hover:border-blue-400 hover:bg-blue-50/50 dark:hover:bg-blue-900/20 transition-all text-left hover:scale-105 shadow-glass dark:shadow-glass-dark"
                     >
-                      <p class="text-sm font-medium text-gray-900 dark:text-gray-100">{{ pocket.name }}</p>
-                      <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
-                        {{ formatWeight(pocket.aggregateTotalWeight) }} • {{ formatCurrency(pocket.aggregateTotalPrice) }}
+                      <p class="text-sm font-bold text-gray-900 dark:text-gray-100">{{ pocket.name }}</p>
+                      <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5 font-medium">
+                        {{ formatWeight(pocket.aggregateTotalWeight) }} • {{ formatCompactCurrency(pocket.aggregateTotalPrice) }}
                       </p>
                     </button>
                   </div>
@@ -296,32 +299,32 @@ const close = () => {
               </div>
             </div>
             
-            <p v-if="errors.pocketId" class="mt-1 text-sm text-red-500">{{ errors.pocketId }}</p>
+            <p v-if="errors.pocketId" class="mt-2 text-sm text-red-500 font-semibold">{{ errors.pocketId }}</p>
           </div>
 
           <!-- Transaction Date -->
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">
+            <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2 uppercase tracking-wide">
               Transaction Date <span class="text-red-500">*</span>
             </label>
             <input
               v-model="formData.transactionDate"
               type="date"
               :max="new Date().toISOString().split('T')[0]"
-              class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+              class="w-full px-4 py-3.5 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border-2 border-gray-200/50 dark:border-gray-700/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all text-gray-900 dark:text-gray-100 font-medium shadow-glass dark:shadow-glass-dark"
             />
           </div>
 
           <!-- Gold Brand -->
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">
+            <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2 uppercase tracking-wide">
               Gold Brand <span class="text-red-500">*</span>
             </label>
             <select
               v-model="formData.brand"
               :class="[
-                'w-full px-4 py-3 bg-gray-50 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors',
-                errors.brand ? 'border-red-500' : 'border-gray-200'
+                'w-full px-4 py-3.5 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all text-gray-900 dark:text-gray-100 font-medium shadow-glass dark:shadow-glass-dark',
+                errors.brand ? 'border-red-500' : 'border-gray-200/50 dark:border-gray-700/50'
               ]"
             >
               <option value="" disabled>Select brand</option>
@@ -329,12 +332,12 @@ const close = () => {
                 {{ brand }}
               </option>
             </select>
-            <p v-if="errors.brand" class="mt-1 text-sm text-red-500">{{ errors.brand }}</p>
+            <p v-if="errors.brand" class="mt-2 text-sm text-red-500 font-semibold">{{ errors.brand }}</p>
           </div>
 
           <!-- Weight -->
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">
+            <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2 uppercase tracking-wide">
               Weight (grams) <span class="text-red-500">*</span>
             </label>
             <input
@@ -343,19 +346,19 @@ const close = () => {
               step="0.01"
               placeholder="0.00"
               :class="[
-                'w-full px-4 py-3 bg-gray-50 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors',
-                errors.weight ? 'border-red-500' : 'border-gray-200'
+                'w-full px-4 py-3.5 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all text-gray-900 dark:text-gray-100 font-medium shadow-glass dark:shadow-glass-dark',
+                errors.weight ? 'border-red-500' : 'border-gray-200/50 dark:border-gray-700/50'
               ]"
             />
-            <p v-if="errors.weight" class="mt-1 text-sm text-red-500">{{ errors.weight }}</p>
-            <p v-else class="mt-1 text-xs text-gray-500">
+            <p v-if="errors.weight" class="mt-2 text-sm text-red-500 font-semibold">{{ errors.weight }}</p>
+            <p v-else class="mt-2 text-xs text-gray-500 dark:text-gray-400 font-medium">
               Min: {{ BUSINESS_RULES.minTransactionWeight }}g, Max: {{ BUSINESS_RULES.maxTransactionWeight }}g
             </p>
           </div>
 
           <!-- Price per Gram -->
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">
+            <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2 uppercase tracking-wide">
               Price per Gram (IDR) <span class="text-red-500">*</span>
             </label>
             <input
@@ -364,27 +367,27 @@ const close = () => {
               step="1000"
               placeholder="0"
               :class="[
-                'w-full px-4 py-3 bg-gray-50 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors',
-                errors.pricePerGram ? 'border-red-500' : 'border-gray-200'
+                'w-full px-4 py-3.5 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all text-gray-900 dark:text-gray-100 font-medium shadow-glass dark:shadow-glass-dark',
+                errors.pricePerGram ? 'border-red-500' : 'border-gray-200/50 dark:border-gray-700/50'
               ]"
             />
-            <p v-if="errors.pricePerGram" class="mt-1 text-sm text-red-500">{{ errors.pricePerGram }}</p>
+            <p v-if="errors.pricePerGram" class="mt-2 text-sm text-red-500 font-semibold">{{ errors.pricePerGram }}</p>
           </div>
 
           <!-- Total Price (Auto-calculated) -->
-          <div class="p-4 bg-blue-50 rounded-xl border border-blue-200">
+          <div class="p-5 bg-gradient-to-br from-gold-50 to-amber-50 dark:from-gold-500/10 dark:to-amber-500/10 rounded-2xl border-2 border-gold-200/50 dark:border-gold-700/50 shadow-glass dark:shadow-glass-dark">
             <div class="flex items-center justify-between">
-              <span class="text-sm font-medium text-blue-900">Total Price</span>
-              <span class="text-2xl font-bold text-blue-600 tabular-nums">
-                {{ formatCurrency(formData.totalPrice) }}
+              <span class="text-sm font-bold text-gold-900 dark:text-gold-300 uppercase tracking-wide">Total Price</span>
+              <span class="text-3xl font-bold text-gold-600 dark:text-gold-400 tabular-nums">
+                {{ formatCompactCurrency(formData.totalPrice) }}
               </span>
             </div>
-            <p class="text-xs text-blue-600 mt-1">Auto-calculated from weight × price per gram</p>
+            <p class="text-xs text-gold-600 dark:text-gold-400 mt-2 font-medium">Auto-calculated from weight × price per gram</p>
           </div>
 
           <!-- Description -->
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">
+            <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2 uppercase tracking-wide">
               Description (Optional)
             </label>
             <textarea
@@ -392,39 +395,25 @@ const close = () => {
               rows="3"
               placeholder="Add notes about this transaction..."
               :maxlength="BUSINESS_RULES.maxDescriptionLength"
-              class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors resize-none"
+              class="w-full px-4 py-3.5 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border-2 border-gray-200/50 dark:border-gray-700/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all resize-none text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 font-medium shadow-glass dark:shadow-glass-dark"
             />
-            <p class="mt-1 text-xs text-gray-500 text-right">
+            <p class="mt-2 text-xs text-gray-500 dark:text-gray-400 text-right font-medium">
               {{ formData.description?.length || 0 }} / {{ BUSINESS_RULES.maxDescriptionLength }}
             </p>
-          </div>
-
-          <!-- Receipt Upload (Placeholder) -->
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">
-              Receipt Photo (Optional)
-            </label>
-            <button
-              type="button"
-              class="w-full h-24 border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center gap-2 text-gray-500 hover:bg-gray-50 hover:border-gray-400 transition-colors"
-            >
-              <Icon name="heroicons:camera" class="w-8 h-8" />
-              <span class="text-sm">Upload receipt image</span>
-            </button>
           </div>
         </form>
 
         <!-- Footer -->
-        <div class="p-6 border-t border-gray-200 bg-gray-50 space-y-3">
+        <div class="p-6 border-t border-gray-200/50 dark:border-gray-700/50 bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm space-y-3">
           <button
             type="submit"
             @click="handleSubmit"
             :disabled="isSubmitting"
             :class="[
-              'w-full py-3.5 rounded-lg font-semibold text-white transition-all',
+              'w-full py-4 rounded-xl font-bold text-white transition-all shadow-lg',
               isSubmitting
                 ? 'bg-gray-400 cursor-not-allowed'
-                : 'bg-blue-600 hover:bg-blue-700 active:scale-98'
+                : 'bg-gradient-to-r from-gold-500 to-amber-600 hover:from-gold-600 hover:to-amber-700 hover:scale-105 active:scale-95'
             ]"
           >
             <span v-if="isSubmitting" class="flex items-center justify-center gap-2">
@@ -437,7 +426,7 @@ const close = () => {
           <button
             type="button"
             @click="close"
-            class="w-full py-3 text-gray-700 font-medium hover:bg-gray-100 rounded-lg transition-colors"
+            class="w-full py-3.5 text-gray-700 dark:text-gray-300 font-bold hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition-all"
           >
             Cancel
           </button>

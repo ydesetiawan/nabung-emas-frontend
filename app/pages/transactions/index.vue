@@ -268,36 +268,46 @@ const clearFilters = () => {
           class="group block bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-2xl p-4 shadow-glass dark:shadow-glass-dark hover:shadow-premium transition-all duration-300 active:scale-[0.98] border border-gray-100/50 dark:border-gray-700/50 animate-slide-up"
           :style="{ animationDelay: `${index * 0.03}s`, animationFillMode: 'both' }"
         >
-          <div class="flex items-center justify-between gap-3 mb-3">
+          <div class="flex items-start justify-between gap-3 mb-3">
             <div class="flex items-center gap-2 flex-1 min-w-0">
-              <span :class="['px-3 py-1.5 rounded-xl text-[10px] font-bold uppercase tracking-wider', getBrandColor(transaction.brand)]">
-                {{ transaction.brand }}
-              </span>
-              <span class="text-xs text-gray-500 dark:text-gray-400 font-medium">
-                {{ formatRelativeTime(transaction.transactionDate) }}
-              </span>
+              <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-gold-500 to-amber-600 dark:from-gold-600 dark:to-amber-700 flex items-center justify-center shrink-0 shadow-lg">
+                <Icon name="heroicons:arrow-trending-up" class="w-5 h-5 text-white" />
+              </div>
+              <div class="flex-1 min-w-0">
+                <p class="text-sm font-bold text-gray-900 dark:text-gray-100 truncate group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                  {{ getPocketName(transaction.pocketId) }}
+                </p>
+                <div class="flex items-center gap-2 mt-0.5">
+                  <span :class="['px-2 py-0.5 rounded-lg text-[10px] font-bold uppercase tracking-wider', getBrandColor(transaction.brand)]">
+                    {{ transaction.brand }}
+                  </span>
+                  <span class="text-xs text-gray-500 dark:text-gray-400 font-medium">
+                    {{ formatRelativeTime(transaction.transactionDate) }}
+                  </span>
+                </div>
+              </div>
             </div>
             <Icon name="heroicons:chevron-right" class="w-5 h-5 text-gray-400 dark:text-gray-500 shrink-0 group-hover:translate-x-1 transition-transform" />
           </div>
 
-          <div class="flex items-start justify-between gap-3">
-            <div class="flex-1 min-w-0">
-              <p class="text-sm font-bold text-gray-900 dark:text-gray-100 mb-1 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">{{ getPocketName(transaction.pocketId) }}</p>
-              <p v-if="transaction.description" class="text-xs text-gray-500 dark:text-gray-400 truncate font-medium">
-                {{ transaction.description }}
-              </p>
-              <p class="text-xs text-gray-400 dark:text-gray-500 mt-1 font-medium">
-                {{ formatDate(transaction.transactionDate) }}
-              </p>
+          <div class="flex items-center justify-between gap-3 pt-3 border-t border-gray-200/50 dark:border-gray-700/50">
+            <div class="flex items-center gap-4">
+              <div>
+                <p class="text-[10px] text-gray-500 dark:text-gray-400 font-medium uppercase tracking-wide mb-0.5">Weight</p>
+                <p class="text-sm font-bold text-gray-900 dark:text-gray-100 tabular-nums">
+                  {{ formatWeight(transaction.weight) }}
+                </p>
+              </div>
+              <div>
+                <p class="text-[10px] text-gray-500 dark:text-gray-400 font-medium uppercase tracking-wide mb-0.5">Price/g</p>
+                <p class="text-sm font-bold text-gray-600 dark:text-gray-400 tabular-nums">
+                  {{ formatCompactCurrency(transaction.pricePerGram) }}
+                </p>
+              </div>
             </div>
-            <div class="text-right shrink-0">
-              <p class="text-xl font-bold text-gray-900 dark:text-gray-100 tabular-nums">
-                {{ formatWeight(transaction.weight) }}
-              </p>
-              <p class="text-xs text-gray-600 dark:text-gray-400 tabular-nums font-medium">
-                {{ formatCompactCurrency(transaction.pricePerGram) }}/g
-              </p>
-              <p class="text-sm font-bold text-gold-600 dark:text-gold-400 tabular-nums mt-1">
+            <div class="text-right">
+              <p class="text-[10px] text-gray-500 dark:text-gray-400 font-medium uppercase tracking-wide mb-0.5">Total</p>
+              <p class="text-lg font-bold text-gold-600 dark:text-gold-400 tabular-nums">
                 {{ formatCompactCurrency(transaction.totalPrice) }}
               </p>
             </div>

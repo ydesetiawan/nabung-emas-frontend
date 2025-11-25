@@ -130,42 +130,45 @@ const close = () => {
     >
       <div
         v-if="open"
-        class="fixed inset-0 bg-black/50 dark:bg-black/70 z-50"
+        class="fixed inset-0 bg-black/60 dark:bg-black/80 backdrop-blur-sm z-50"
         @click="close"
       />
     </Transition>
 
     <!-- Sheet -->
     <Transition
-      enter-active-class="transition-transform duration-300"
+      enter-active-class="transition-transform duration-300 ease-out"
       enter-from-class="translate-y-full"
       enter-to-class="translate-y-0"
-      leave-active-class="transition-transform duration-200"
+      leave-active-class="transition-transform duration-200 ease-in"
       leave-from-class="translate-y-0"
       leave-to-class="translate-y-full"
     >
       <div
         v-if="open"
-        class="fixed inset-x-0 bottom-0 z-50 bg-white dark:bg-gray-800 rounded-t-3xl shadow-2xl max-h-[90vh] flex flex-col max-w-md mx-auto transition-colors"
+        class="fixed inset-x-0 bottom-0 z-50 bg-gradient-to-b from-white to-slate-50 dark:from-slate-900 dark:to-slate-950 rounded-t-3xl shadow-premium max-h-[90vh] flex flex-col max-w-md mx-auto"
       >
-        <!-- Header -->
-        <div class="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
-          <h2 class="text-xl font-bold text-gray-900 dark:text-gray-100">
-            {{ editMode ? 'Edit Pocket' : 'Create New Pocket' }}
-          </h2>
-          <button
-            @click="close"
-            class="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
-          >
-            <Icon name="heroicons:x-mark" class="w-6 h-6 text-gray-600 dark:text-gray-400" />
-          </button>
+        <!-- Header with gradient -->
+        <div class="relative">
+          <div class="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-700 dark:to-purple-700 rounded-t-3xl"></div>
+          <div class="relative flex items-center justify-between p-6 text-white">
+            <h2 class="text-2xl font-bold drop-shadow-lg">
+              {{ editMode ? 'Edit Pocket' : 'Create New Pocket' }}
+            </h2>
+            <button
+              @click="close"
+              class="p-2.5 hover:bg-white/20 rounded-xl transition-all active:scale-95 backdrop-blur-sm"
+            >
+              <Icon name="heroicons:x-mark" class="w-6 h-6" />
+            </button>
+          </div>
         </div>
 
         <!-- Form -->
-        <form @submit.prevent="handleSubmit" class="flex-1 overflow-y-auto p-6 space-y-5">
+        <form @submit.prevent="handleSubmit" class="flex-1 overflow-y-auto p-6 space-y-6">
           <!-- Pocket Type Selection -->
           <div>
-            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+            <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-3 uppercase tracking-wide">
               Pocket Type <span class="text-red-500">*</span>
             </label>
             <div class="grid grid-cols-1 gap-3">
@@ -175,30 +178,30 @@ const close = () => {
                 type="button"
                 @click="formData.typePocketId = type.id; errors.typePocketId = ''"
                 :class="[
-                  'p-4 rounded-xl border-2 transition-all text-left',
+                  'p-4 rounded-2xl border-2 transition-all text-left shadow-glass dark:shadow-glass-dark',
                   formData.typePocketId === type.id
-                    ? getColorClass(type.color)
-                    : 'border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 hover:border-gray-300 dark:hover:border-gray-500'
+                    ? getColorClass(type.color) + ' scale-105 shadow-premium'
+                    : 'border-gray-200/50 dark:border-gray-700/50 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm hover:border-gray-300 dark:hover:border-gray-600 hover:scale-105'
                 ]"
               >
                 <div class="flex items-center gap-3">
                   <div :class="[
-                    'w-12 h-12 rounded-lg flex items-center justify-center shrink-0',
+                    'w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 shadow-lg',
                     formData.typePocketId === type.id 
                       ? 'bg-white/50 dark:bg-black/20' 
                       : getColorClass(type.color).split(' ')[0] + ' ' + getColorClass(type.color).split(' ')[1]
                   ]">
-                    <Icon :name="type.icon" class="w-6 h-6" />
+                    <Icon :name="type.icon" class="w-7 h-7" />
                   </div>
                   <div class="flex-1 min-w-0">
                     <p :class="[
-                      'text-base font-semibold',
+                      'text-base font-bold',
                       formData.typePocketId === type.id ? '' : 'text-gray-900 dark:text-gray-100'
                     ]">
                       {{ type.name }}
                     </p>
                     <p :class="[
-                      'text-sm mt-0.5',
+                      'text-sm mt-0.5 font-medium',
                       formData.typePocketId === type.id ? 'opacity-90' : 'text-gray-500 dark:text-gray-400'
                     ]">
                       {{ type.description }}
@@ -207,17 +210,17 @@ const close = () => {
                   <Icon 
                     v-if="formData.typePocketId === type.id"
                     name="heroicons:check-circle-solid" 
-                    class="w-6 h-6 shrink-0" 
+                    class="w-7 h-7 shrink-0" 
                   />
                 </div>
               </button>
             </div>
-            <p v-if="errors.typePocketId" class="mt-2 text-sm text-red-500">{{ errors.typePocketId }}</p>
+            <p v-if="errors.typePocketId" class="mt-2 text-sm text-red-500 font-semibold">{{ errors.typePocketId }}</p>
           </div>
 
           <!-- Pocket Name -->
           <div>
-            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2 uppercase tracking-wide">
               Pocket Name <span class="text-red-500">*</span>
             </label>
             <input
@@ -226,19 +229,19 @@ const close = () => {
               placeholder="e.g., Emergency Fund, Dream Wedding"
               maxlength="50"
               :class="[
-                'w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500',
-                errors.name ? 'border-red-500' : 'border-gray-200 dark:border-gray-600'
+                'w-full px-4 py-3.5 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 font-medium shadow-glass dark:shadow-glass-dark',
+                errors.name ? 'border-red-500' : 'border-gray-200/50 dark:border-gray-700/50'
               ]"
             />
-            <div class="flex items-center justify-between mt-1">
-              <p v-if="errors.name" class="text-sm text-red-500">{{ errors.name }}</p>
-              <p class="text-xs text-gray-500 dark:text-gray-400 ml-auto">{{ formData.name.length }}/50</p>
+            <div class="flex items-center justify-between mt-2">
+              <p v-if="errors.name" class="text-sm text-red-500 font-semibold">{{ errors.name }}</p>
+              <p class="text-xs text-gray-500 dark:text-gray-400 ml-auto font-medium">{{ formData.name.length }}/50</p>
             </div>
           </div>
 
           <!-- Description -->
           <div>
-            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2 uppercase tracking-wide">
               Description (Optional)
             </label>
             <textarea
@@ -246,16 +249,16 @@ const close = () => {
               rows="3"
               placeholder="Add notes about this pocket..."
               :maxlength="BUSINESS_RULES.maxDescriptionLength"
-              class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors resize-none text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500"
+              class="w-full px-4 py-3.5 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border-2 border-gray-200/50 dark:border-gray-700/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all resize-none text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 font-medium shadow-glass dark:shadow-glass-dark"
             />
-            <p class="mt-1 text-xs text-gray-500 dark:text-gray-400 text-right">
+            <p class="mt-2 text-xs text-gray-500 dark:text-gray-400 text-right font-medium">
               {{ formData.description?.length || 0 }} / {{ BUSINESS_RULES.maxDescriptionLength }}
             </p>
           </div>
 
           <!-- Target Weight -->
           <div>
-            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2 uppercase tracking-wide">
               Target Weight (Optional)
             </label>
             <div class="relative">
@@ -265,30 +268,30 @@ const close = () => {
                 step="0.1"
                 placeholder="0.0"
                 :class="[
-                  'w-full px-4 py-3 pr-12 bg-gray-50 dark:bg-gray-700 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500',
-                  errors.targetWeight ? 'border-red-500' : 'border-gray-200 dark:border-gray-600'
+                  'w-full px-4 py-3.5 pr-16 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 font-medium shadow-glass dark:shadow-glass-dark',
+                  errors.targetWeight ? 'border-red-500' : 'border-gray-200/50 dark:border-gray-700/50'
                 ]"
               />
-              <span class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400 text-sm">grams</span>
+              <span class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400 text-sm font-bold">grams</span>
             </div>
-            <p v-if="errors.targetWeight" class="mt-1 text-sm text-red-500">{{ errors.targetWeight }}</p>
-            <p v-else class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+            <p v-if="errors.targetWeight" class="mt-2 text-sm text-red-500 font-semibold">{{ errors.targetWeight }}</p>
+            <p v-else class="mt-2 text-xs text-gray-500 dark:text-gray-400 font-medium">
               Set a goal for how much gold you want to save in this pocket
             </p>
           </div>
         </form>
 
         <!-- Footer -->
-        <div class="p-6 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 space-y-3">
+        <div class="p-6 border-t border-gray-200/50 dark:border-gray-700/50 bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm space-y-3">
           <button
             type="submit"
             @click="handleSubmit"
             :disabled="isSubmitting"
             :class="[
-              'w-full py-3.5 rounded-lg font-semibold text-white transition-all',
+              'w-full py-4 rounded-xl font-bold text-white transition-all shadow-lg',
               isSubmitting
                 ? 'bg-gray-400 cursor-not-allowed'
-                : 'bg-blue-600 hover:bg-blue-700 active:scale-98'
+                : 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 hover:scale-105 active:scale-95'
             ]"
           >
             <span v-if="isSubmitting" class="flex items-center justify-center gap-2">
@@ -301,7 +304,7 @@ const close = () => {
           <button
             type="button"
             @click="close"
-            class="w-full py-3 text-gray-700 dark:text-gray-300 font-medium hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+            class="w-full py-3.5 text-gray-700 dark:text-gray-300 font-bold hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition-all"
           >
             Cancel
           </button>
