@@ -102,12 +102,12 @@ const getPocketName = (pocketId: string) => {
 
 const getBrandColor = (brand: string) => {
   const colors: Record<string, string> = {
-    'Antam': 'bg-amber-100 text-amber-700',
-    'UBS': 'bg-blue-100 text-blue-700',
-    'Pegadaian': 'bg-green-100 text-green-700',
-    'King Halim': 'bg-purple-100 text-purple-700',
+    'Antam': 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400',
+    'UBS': 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400',
+    'Pegadaian': 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400',
+    'King Halim': 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400',
   }
-  return colors[brand] || 'bg-gray-100 text-gray-700'
+  return colors[brand] || 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300'
 }
 
 const clearFilters = () => {
@@ -119,17 +119,17 @@ const clearFilters = () => {
 </script>
 
 <template>
-  <div class="min-h-screen bg-gray-50">
+  <div class="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors">
     <!-- Header -->
-    <header class="sticky top-0 z-40 bg-white border-b border-gray-200 safe-top">
+    <header class="sticky top-0 z-40 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 safe-top transition-colors">
       <div class="px-4 py-4">
         <div class="flex items-center justify-between mb-4">
-          <h1 class="text-2xl font-bold text-gray-900">{{ t.transactions.title }}</h1>
+          <h1 class="text-2xl font-bold text-gray-900 dark:text-gray-100">{{ t.transactions.title }}</h1>
           <button
             @click="showFilters = !showFilters"
             :class="[
               'px-4 py-2 rounded-lg font-medium transition-colors flex items-center gap-2',
-              showFilters ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              showFilters ? 'bg-blue-600 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
             ]"
           >
             <Icon name="heroicons:funnel" class="w-5 h-5" />
@@ -139,21 +139,21 @@ const clearFilters = () => {
 
         <!-- Search -->
         <div class="relative">
-          <Icon name="heroicons:magnifying-glass" class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+          <Icon name="heroicons:magnifying-glass" class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 dark:text-gray-500" />
           <input
             v-model="searchQuery"
             type="text"
             :placeholder="t.transactions.searchPlaceholder"
-            class="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            class="w-full pl-10 pr-4 py-2.5 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 transition-colors"
           />
         </div>
       </div>
 
       <!-- Filters Panel -->
-      <div v-if="showFilters" class="px-4 pb-4 border-t border-gray-200 pt-4 space-y-4">
+      <div v-if="showFilters" class="px-4 pb-4 border-t border-gray-200 dark:border-gray-700 pt-4 space-y-4">
         <!-- Date Range -->
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">{{ t.transactions.dateRange }}</label>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{{ t.transactions.dateRange }}</label>
           <div class="grid grid-cols-3 gap-2">
             <button
               v-for="option in [
@@ -169,7 +169,7 @@ const clearFilters = () => {
                 'px-3 py-2 rounded-lg text-sm font-medium transition-colors',
                 dateRange === option.value
                   ? 'bg-blue-600 text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
               ]"
             >
               {{ option.label }}
@@ -179,10 +179,10 @@ const clearFilters = () => {
 
         <!-- Pocket Filter -->
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">{{ t.transactions.pocket }}</label>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{{ t.transactions.pocket }}</label>
           <select
             v-model="selectedPocketId"
-            class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 dark:text-gray-100 transition-colors"
           >
             <option :value="null">{{ t.transactions.allPockets }}</option>
             <option v-for="pocket in mockPockets" :key="pocket.id" :value="pocket.id">
@@ -193,10 +193,10 @@ const clearFilters = () => {
 
         <!-- Brand Filter -->
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">{{ t.transactions.brand }}</label>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{{ t.transactions.brand }}</label>
           <select
             v-model="selectedBrand"
-            class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 dark:text-gray-100 transition-colors"
           >
             <option :value="null">{{ t.transactions.allBrands }}</option>
             <option v-for="brand in GOLD_BRAND_LIST" :key="brand" :value="brand">
@@ -207,10 +207,10 @@ const clearFilters = () => {
 
         <!-- Sort By -->
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">{{ t.transactions.sortBy }}</label>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{{ t.transactions.sortBy }}</label>
           <select
             v-model="sortBy"
-            class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 dark:text-gray-100 transition-colors"
           >
             <option value="date-desc">{{ t.transactions.newestFirst }}</option>
             <option value="date-asc">{{ t.transactions.oldestFirst }}</option>
@@ -224,7 +224,7 @@ const clearFilters = () => {
         <!-- Clear Filters -->
         <button
           @click="clearFilters"
-          class="w-full px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg font-medium transition-colors"
+          class="w-full px-4 py-2 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-lg font-medium transition-colors"
         >
           {{ t.transactions.clearFilters }}
         </button>
@@ -235,20 +235,20 @@ const clearFilters = () => {
     <div class="px-4 py-6 space-y-6">
       <!-- Summary Stats -->
       <div class="grid grid-cols-3 gap-3">
-        <div class="bg-white rounded-xl p-4 shadow-sm">
-          <p class="text-xs text-gray-600 mb-1">{{ t.transactions.totalTransactions }}</p>
-          <p class="text-2xl font-bold text-gray-900">{{ totalStats.count }}</p>
+        <div class="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm dark:shadow-gray-900/10 transition-colors">
+          <p class="text-xs text-gray-600 dark:text-gray-400 mb-1">{{ t.transactions.totalTransactions }}</p>
+          <p class="text-2xl font-bold text-gray-900 dark:text-gray-100">{{ totalStats.count }}</p>
         </div>
-        <div class="bg-white rounded-xl p-4 shadow-sm">
-          <p class="text-xs text-gray-600 mb-1">{{ t.dashboard.totalWeight }}</p>
-          <p class="text-lg font-bold text-gold-600 tabular-nums">
+        <div class="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm dark:shadow-gray-900/10 transition-colors">
+          <p class="text-xs text-gray-600 dark:text-gray-400 mb-1">{{ t.dashboard.totalWeight }}</p>
+          <p class="text-lg font-bold text-gold-600 dark:text-gold-400 tabular-nums">
             {{ formatWeight(totalStats.totalWeight) }}
           </p>
         </div>
-        <div class="bg-white rounded-xl p-4 shadow-sm">
-          <p class="text-xs text-gray-600 mb-1">{{ t.pockets.value }}</p>
-          <p class="text-lg font-bold text-blue-600 tabular-nums">
-            {{ formatCurrency(totalStats.totalValue) }}
+        <div class="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm dark:shadow-gray-900/10 transition-colors">
+          <p class="text-xs text-gray-600 dark:text-gray-400 mb-1">{{ t.pockets.value }}</p>
+          <p class="text-lg font-bold text-blue-600 dark:text-blue-400 tabular-nums">
+            {{ formatCompactCurrency(totalStats.totalValue) }}
           </p>
         </div>
       </div>
@@ -259,39 +259,39 @@ const clearFilters = () => {
           v-for="transaction in filteredTransactions"
           :key="transaction.id"
           :to="`/transactions/${transaction.id}`"
-          class="block bg-white rounded-xl p-4 shadow-sm hover:shadow-md transition-all active:scale-98"
+          class="block bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm dark:shadow-gray-900/10 hover:shadow-md transition-all active:scale-98"
         >
           <div class="flex items-center justify-between gap-3 mb-3">
             <div class="flex items-center gap-2 flex-1 min-w-0">
               <span :class="['px-2.5 py-1 rounded-lg text-xs font-semibold', getBrandColor(transaction.brand)]">
                 {{ transaction.brand }}
               </span>
-              <span class="text-xs text-gray-500">
+              <span class="text-xs text-gray-500 dark:text-gray-400">
                 {{ formatRelativeTime(transaction.transactionDate) }}
               </span>
             </div>
-            <Icon name="heroicons:chevron-right" class="w-5 h-5 text-gray-400 shrink-0" />
+            <Icon name="heroicons:chevron-right" class="w-5 h-5 text-gray-400 dark:text-gray-500 shrink-0" />
           </div>
 
           <div class="flex items-start justify-between gap-3">
             <div class="flex-1 min-w-0">
-              <p class="text-sm font-medium text-gray-900 mb-1">{{ getPocketName(transaction.pocketId) }}</p>
-              <p v-if="transaction.description" class="text-xs text-gray-500 truncate">
+              <p class="text-sm font-medium text-gray-900 dark:text-gray-100 mb-1">{{ getPocketName(transaction.pocketId) }}</p>
+              <p v-if="transaction.description" class="text-xs text-gray-500 dark:text-gray-400 truncate">
                 {{ transaction.description }}
               </p>
-              <p class="text-xs text-gray-400 mt-1">
+              <p class="text-xs text-gray-400 dark:text-gray-500 mt-1">
                 {{ formatDate(transaction.transactionDate) }}
               </p>
             </div>
             <div class="text-right shrink-0">
-              <p class="text-lg font-semibold text-gray-900 tabular-nums">
+              <p class="text-lg font-semibold text-gray-900 dark:text-gray-100 tabular-nums">
                 {{ formatWeight(transaction.weight) }}
               </p>
-              <p class="text-xs text-gray-600 tabular-nums">
-                {{ formatCurrency(transaction.pricePerGram) }}/g
+              <p class="text-xs text-gray-600 dark:text-gray-400 tabular-nums">
+                {{ formatCompactCurrency(transaction.pricePerGram) }}/g
               </p>
-              <p class="text-sm font-medium text-gold-600 tabular-nums mt-1">
-                {{ formatCurrency(transaction.totalPrice) }}
+              <p class="text-sm font-medium text-gold-600 dark:text-gold-400 tabular-nums mt-1">
+                {{ formatCompactCurrency(transaction.totalPrice) }}
               </p>
             </div>
           </div>
@@ -300,9 +300,9 @@ const clearFilters = () => {
 
       <!-- Empty State -->
       <div v-else class="text-center py-12">
-        <Icon name="heroicons:arrow-path" class="w-16 h-16 text-gray-300 mx-auto mb-4" />
-        <h3 class="text-lg font-semibold text-gray-900 mb-2">{{ t.transactions.noTransactionsFound }}</h3>
-        <p class="text-gray-600 mb-6">
+        <Icon name="heroicons:arrow-path" class="w-16 h-16 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">{{ t.transactions.noTransactionsFound }}</h3>
+        <p class="text-gray-600 dark:text-gray-400 mb-6">
           {{ searchQuery || selectedPocketId || selectedBrand || dateRange !== 'all'
             ? t.transactions.adjustFilters
             : t.transactions.addFirst
@@ -310,6 +310,7 @@ const clearFilters = () => {
         </p>
         <button
           v-if="!searchQuery && !selectedPocketId && !selectedBrand && dateRange === 'all'"
+          @click="showAddTransaction = true"
           class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors"
         >
           {{ t.dashboard.addTransaction }}

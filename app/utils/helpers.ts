@@ -18,6 +18,22 @@ export function formatCurrency(amount: number): string {
 }
 
 /**
+ * Format currency in compact form (K, M, B)
+ */
+export function formatCompactCurrency(amount: number): string {
+    if (amount >= 1000000000) {
+        return `Rp${(amount / 1000000000).toFixed(1)}B`
+    }
+    if (amount >= 1000000) {
+        return `Rp${(amount / 1000000).toFixed(1)}M`
+    }
+    if (amount >= 1000) {
+        return `Rp${(amount / 1000).toFixed(1)}K`
+    }
+    return formatCurrency(amount)
+}
+
+/**
  * Format weight in grams
  */
 export function formatWeight(weight: number): string {
