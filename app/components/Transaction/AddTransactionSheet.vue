@@ -1,20 +1,69 @@
 <script setup lang="ts">
-import { mockPockets } from '../../utils/mockData'
+import { mockPockets, mockTypePockets } from '../../utils/mockData'
 import { GOLD_BRAND_LIST, BUSINESS_RULES } from '../../utils/constants'
 import type { ITransactionCreate } from '../../types/transaction'
 
 const props = defineProps<{
   open: boolean
   defaultPocketId?: string
+  editMode?: boolean
+  editData?: ITransactionCreate & { id: string }
 }>()
 
 const emit = defineEmits<{
   'update:open': [value: boolean]
   'success': [transaction: ITransactionCreate]
+  'update': [transaction: ITransactionCreate & { id: string }]
 }>()
 
 const transactionStore = useTransactionStore()
 const { calculateTotalPrice } = useGoldCalculator()
+
+// Pocket search and grouping
+const pocketSearchQuery = ref('')
+const showPocketSelector = ref(false)
+
+const groupedPockets = computed(() => {
+  const query = pocketSearchQuery.value.toLowerCase()
+  const filtered = mockPockets.filter(p => 
+    p.name.toLowerCase().includes(query) ||
+    getTypePocket(p.typePocketId)?.name.toLowerCase().includes(query)
+  )
+  
+  const groups: Record<string, typeof mockPockets> = {}
+  filtered.forEach(pocket => {
+    const typeId = pocket.typePocketId
+    if (!groups[typeId]) groups[typeId] = []
+    groups[typeId].push(pocket)
+  })
+  
+  return groups
+})
+
+const getTypePocket = (id: string) => {
+  return mockTypePockets.find(t => t.id === id)
+}
+
+const getColorClass = (color: string) => {
+  const colors: Record<string, string> = {
+    blue: 'bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400',
+    gold: 'bg-gold-100 text-gold-600 dark:bg-gold-900/30 dark:text-gold-400',
+    pink: 'bg-pink-100 text-pink-600 dark:bg-pink-900/30 dark:text-pink-400',
+    green: 'bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400',
+    purple: 'bg-purple-100 text-purple-600 dark:bg-purple-900/30 dark:text-purple-400',
+  }
+  return colors[color] || colors.blue
+}
+
+const selectedPocket = computed(() => {
+  return mockPockets.find(p => p.id === formData.value.pocketId)
+})
+
+const selectPocket = (pocketId: string) => {
+  formData.value.pocketId = pocketId
+  showPocketSelector.value = false
+  errors.value.pocketId = ''
+}
 
 // Form state
 const formData = ref<ITransactionCreate>({
@@ -29,6 +78,25 @@ const formData = ref<ITransactionCreate>({
 
 const isSubmitting = ref(false)
 const errors = ref<Record<string, string>>({})
+
+// Initialize form with edit data
+watch(() => props.open, (isOpen) => {
+  if (isOpen) {
+    if (props.editMode && props.editData) {
+      formData.value = {
+        pocketId: props.editData.pocketId,
+        transactionDate: new Date(props.editData.transactionDate).toISOString().split('T')[0],
+        brand: props.editData.brand,
+        weight: props.editData.weight,
+        pricePerGram: props.editData.pricePerGram,
+        totalPrice: props.editData.totalPrice,
+        description: props.editData.description || '',
+      }
+    } else if (props.defaultPocketId) {
+      formData.value.pocketId = props.defaultPocketId
+    }
+  }
+})
 
 // Auto-calculate total price
 watch([() => formData.value.weight, () => formData.value.pricePerGram], ([weight, price]) => {
@@ -74,13 +142,17 @@ const handleSubmit = async () => {
     // In real app, this would call the API
     await new Promise(resolve => setTimeout(resolve, 500)) // Simulate API call
     
-    emit('success', formData.value)
+    if (props.editMode && props.editData) {
+      emit('update', { ...formData.value, id: props.editData.id })
+    } else {
+      emit('success', formData.value)
+    }
     emit('update:open', false)
     
     // Reset form
     resetForm()
   } catch (error) {
-    console.error('Failed to create transaction:', error)
+    console.error('Failed to save transaction:', error)
   } finally {
     isSubmitting.value = false
   }
@@ -97,19 +169,14 @@ const resetForm = () => {
     description: '',
   }
   errors.value = {}
+  pocketSearchQuery.value = ''
+  showPocketSelector.value = false
 }
 
 const close = () => {
   emit('update:open', false)
   resetForm()
 }
-
-// Watch for open state changes
-watch(() => props.open, (isOpen) => {
-  if (isOpen && props.defaultPocketId) {
-    formData.value.pocketId = props.defaultPocketId
-  }
-})
 </script>
 
 <template>
@@ -125,7 +192,7 @@ watch(() => props.open, (isOpen) => {
     >
       <div
         v-if="open"
-        class="fixed inset-0 bg-black/50 z-50"
+        class="fixed inset-0 bg-black/50 dark:bg-black/70 z-50"
         @click="close"
       />
     </Transition>
@@ -141,16 +208,18 @@ watch(() => props.open, (isOpen) => {
     >
       <div
         v-if="open"
-        class="fixed inset-x-0 bottom-0 z-50 bg-white rounded-t-3xl shadow-2xl max-h-[90vh] flex flex-col max-w-md mx-auto"
+        class="fixed inset-x-0 bottom-0 z-50 bg-white dark:bg-gray-800 rounded-t-3xl shadow-2xl max-h-[90vh] flex flex-col max-w-md mx-auto transition-colors"
       >
         <!-- Header -->
-        <div class="flex items-center justify-between p-6 border-b border-gray-200">
-          <h2 class="text-xl font-bold text-gray-900">Add Transaction</h2>
+        <div class="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
+          <h2 class="text-xl font-bold text-gray-900 dark:text-gray-100">
+            {{ editMode ? 'Edit Transaction' : 'Add Transaction' }}
+          </h2>
           <button
             @click="close"
-            class="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            class="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
           >
-            <Icon name="heroicons:x-mark" class="w-6 h-6 text-gray-600" />
+            <Icon name="heroicons:x-mark" class="w-6 h-6 text-gray-600 dark:text-gray-400" />
           </button>
         </div>
 
@@ -158,21 +227,76 @@ watch(() => props.open, (isOpen) => {
         <form @submit.prevent="handleSubmit" class="flex-1 overflow-y-auto p-6 space-y-5">
           <!-- Pocket Selection -->
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Pocket <span class="text-red-500">*</span>
             </label>
-            <select
-              v-model="formData.pocketId"
+            
+            <!-- Selected Pocket Display -->
+            <button
+              v-if="selectedPocket && !showPocketSelector"
+              type="button"
+              @click="showPocketSelector = true"
               :class="[
-                'w-full px-4 py-3 bg-gray-50 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors',
-                errors.pocketId ? 'border-red-500' : 'border-gray-200'
+                'w-full p-4 rounded-lg border-2 transition-all text-left',
+                errors.pocketId 
+                  ? 'border-red-500 bg-red-50 dark:bg-red-900/10' 
+                  : 'border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 hover:border-blue-500 dark:hover:border-blue-400'
               ]"
             >
-              <option value="" disabled>Select a pocket</option>
-              <option v-for="pocket in mockPockets" :key="pocket.id" :value="pocket.id">
-                {{ pocket.name }}
-              </option>
-            </select>
+              <div class="flex items-center gap-3">
+                <div :class="['w-10 h-10 rounded-lg flex items-center justify-center shrink-0', getColorClass(getTypePocket(selectedPocket.typePocketId)?.color || 'blue')]">
+                  <Icon :name="getTypePocket(selectedPocket.typePocketId)?.icon || 'heroicons:wallet'" class="w-5 h-5" />
+                </div>
+                <div class="flex-1 min-w-0">
+                  <p class="text-sm font-medium text-gray-900 dark:text-gray-100">{{ selectedPocket.name }}</p>
+                  <p class="text-xs text-gray-500 dark:text-gray-400">{{ getTypePocket(selectedPocket.typePocketId)?.name }}</p>
+                </div>
+                <Icon name="heroicons:chevron-down" class="w-5 h-5 text-gray-400 dark:text-gray-500" />
+              </div>
+            </button>
+
+            <!-- Pocket Selector -->
+            <div v-else class="space-y-3">
+              <!-- Search -->
+              <div class="relative">
+                <Icon name="heroicons:magnifying-glass" class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 dark:text-gray-500" />
+                <input
+                  v-model="pocketSearchQuery"
+                  type="text"
+                  placeholder="Search pockets..."
+                  class="w-full pl-10 pr-4 py-2.5 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500"
+                />
+              </div>
+
+              <!-- Grouped Pockets -->
+              <div class="max-h-64 overflow-y-auto space-y-4">
+                <div v-for="(pockets, typeId) in groupedPockets" :key="typeId">
+                  <div class="flex items-center gap-2 mb-2">
+                    <div :class="['w-6 h-6 rounded flex items-center justify-center', getColorClass(getTypePocket(typeId)?.color || 'blue')]">
+                      <Icon :name="getTypePocket(typeId)?.icon || 'heroicons:wallet'" class="w-3.5 h-3.5" />
+                    </div>
+                    <h4 class="text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wide">
+                      {{ getTypePocket(typeId)?.name }}
+                    </h4>
+                  </div>
+                  <div class="space-y-2 pl-2">
+                    <button
+                      v-for="pocket in pockets"
+                      :key="pocket.id"
+                      type="button"
+                      @click="selectPocket(pocket.id)"
+                      class="w-full p-3 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 hover:border-blue-500 dark:hover:border-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all text-left"
+                    >
+                      <p class="text-sm font-medium text-gray-900 dark:text-gray-100">{{ pocket.name }}</p>
+                      <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                        {{ formatWeight(pocket.aggregateTotalWeight) }} • {{ formatCurrency(pocket.aggregateTotalPrice) }}
+                      </p>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
             <p v-if="errors.pocketId" class="mt-1 text-sm text-red-500">{{ errors.pocketId }}</p>
           </div>
 
