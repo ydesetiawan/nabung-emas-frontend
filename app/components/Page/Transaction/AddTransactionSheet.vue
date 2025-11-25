@@ -227,116 +227,98 @@ const close = () => {
 
         <!-- Form -->
         <form @submit.prevent="handleSubmit" class="flex-1 overflow-y-auto p-6 space-y-5">
-          <!-- Pocket Selection -->
+          <!-- Pocket Selection - Premium Banking UI -->
           <div>
             <label class="block text-xs font-bold text-gray-500 dark:text-gray-400 mb-3 uppercase tracking-wider">
-              Pocket <span class="text-red-500">*</span>
+              Select Pocket <span class="text-red-500">*</span>
             </label>
             
-            <!-- Selected Pocket Display -->
-            <button
-              v-if="selectedPocket && !showPocketSelector"
-              type="button"
-              @click="showPocketSelector = true"
-              :class="[
-                'w-full p-4 rounded-2xl border-2 transition-all text-left shadow-glass dark:shadow-glass-dark',
-                errors.pocketId 
-                  ? 'border-red-500 bg-red-50/50 dark:bg-red-900/10' 
-                  : 'border-gray-200/50 dark:border-gray-700/50 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm hover:border-gold-500 dark:hover:border-gold-400 hover:scale-105'
-              ]"
-            >
-              <div class="flex items-center gap-3">
-                <div :class="['w-12 h-12 rounded-xl flex items-center justify-center shrink-0 shadow-lg', getColorClass(getTypePocket(selectedPocket.typePocketId)?.color || 'blue')]">
-                  <Icon :name="getTypePocket(selectedPocket.typePocketId)?.icon || 'heroicons:wallet'" class="w-6 h-6" />
-                </div>
-                <div class="flex-1 min-w-0">
-                  <p class="text-sm font-bold text-gray-900 dark:text-gray-100">{{ selectedPocket.name }}</p>
-                  <p class="text-xs text-gray-500 dark:text-gray-400 font-medium">{{ getTypePocket(selectedPocket.typePocketId)?.name }}</p>
-                </div>
-                <Icon name="heroicons:chevron-down" class="w-5 h-5 text-gray-400 dark:text-gray-500" />
-              </div>
-            </button>
+            <!-- Search -->
+            <div class="relative mb-4">
+              <Icon name="heroicons:magnifying-glass" class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 dark:text-gray-500" />
+              <input
+                v-model="pocketSearchQuery"
+                type="text"
+                placeholder="Search pockets..."
+                class="w-full pl-12 pr-4 py-3.5 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border-2 border-gray-200/50 dark:border-gray-700/50 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gold-500 focus:border-transparent text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 font-medium shadow-glass dark:shadow-glass-dark transition-all"
+              />
+            </div>
 
-            <!-- Apple-Style Pocket Selector -->
-            <div v-else class="space-y-3">
-              <!-- Search -->
-              <div class="relative">
-                <Icon name="heroicons:magnifying-glass" class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 dark:text-gray-500" />
-                <input
-                  v-model="pocketSearchQuery"
-                  type="text"
-                  placeholder="Search pockets..."
-                  class="w-full pl-10 pr-4 py-3 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border-2 border-gray-200/50 dark:border-gray-700/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-gold-500 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 font-medium shadow-glass dark:shadow-glass-dark"
-                />
-              </div>
-
-              <!-- Grouped Pockets - Apple Style -->
-              <div class="max-h-80 overflow-y-auto space-y-4">
-                <div v-for="(pockets, typeId) in groupedPockets" :key="typeId">
-                  <!-- Type Header -->
-                  <div class="flex items-center gap-2 mb-2 px-2">
-                    <div :class="['w-7 h-7 rounded-lg flex items-center justify-center shadow-lg', getColorClass(getTypePocket(typeId)?.color || 'blue')]">
-                      <Icon :name="getTypePocket(typeId)?.icon || 'heroicons:wallet'" class="w-4 h-4" />
-                    </div>
-                    <h4 class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                      {{ getTypePocket(typeId)?.name }}
-                    </h4>
+            <!-- Pocket Grid - Premium Cards -->
+            <div class="grid grid-cols-2 gap-3 max-h-96 overflow-y-auto pr-1">
+              <button
+                v-for="pocket in mockPockets.filter(p => 
+                  !pocketSearchQuery || 
+                  p.name.toLowerCase().includes(pocketSearchQuery.toLowerCase()) ||
+                  getTypePocket(p.typePocketId)?.name.toLowerCase().includes(pocketSearchQuery.toLowerCase())
+                )"
+                :key="pocket.id"
+                type="button"
+                @click="selectPocket(pocket.id)"
+                :class="[
+                  'relative p-4 rounded-2xl transition-all text-left group',
+                  formData.pocketId === pocket.id
+                    ? 'bg-gradient-to-br from-gold-500 to-amber-600 dark:from-gold-600 dark:to-amber-700 text-white shadow-premium scale-105 ring-2 ring-gold-400 dark:ring-gold-500'
+                    : 'bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border-2 border-gray-200/50 dark:border-gray-700/50 hover:border-gold-300 dark:hover:border-gold-600 hover:scale-105 shadow-glass dark:shadow-glass-dark'
+                ]"
+              >
+                <!-- Selection Indicator (Radio Style) -->
+                <div class="absolute top-3 right-3">
+                  <div :class="[
+                    'w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all',
+                    formData.pocketId === pocket.id
+                      ? 'border-white bg-white'
+                      : 'border-gray-300 dark:border-gray-600 group-hover:border-gold-400'
+                  ]">
+                    <div v-if="formData.pocketId === pocket.id" class="w-2.5 h-2.5 rounded-full bg-gold-600"></div>
                   </div>
+                </div>
+
+                <!-- Pocket Icon -->
+                <div :class="[
+                  'w-12 h-12 rounded-2xl flex items-center justify-center mb-3 transition-all',
+                  formData.pocketId === pocket.id 
+                    ? 'bg-white/20' 
+                    : getColorClass(getTypePocket(pocket.typePocketId)?.color || 'blue')
+                ]">
+                  <Icon 
+                    :name="getTypePocket(pocket.typePocketId)?.icon || 'heroicons:wallet'" 
+                    :class="[
+                      'w-6 h-6',
+                      formData.pocketId === pocket.id ? 'text-white' : ''
+                    ]"
+                  />
+                </div>
+
+                <!-- Pocket Info -->
+                <div>
+                  <p :class="[
+                    'font-bold text-sm mb-1 line-clamp-1',
+                    formData.pocketId === pocket.id ? 'text-white' : 'text-gray-900 dark:text-gray-100'
+                  ]">{{ pocket.name }}</p>
                   
-                  <!-- Pocket Cards - Apple List Style -->
-                  <div class="space-y-2">
-                    <button
-                      v-for="pocket in pockets"
-                      :key="pocket.id"
-                      type="button"
-                      @click="selectPocket(pocket.id)"
-                      :class="[
-                        'w-full p-4 rounded-2xl transition-all text-left group',
-                        formData.pocketId === pocket.id
-                          ? 'bg-gradient-to-r from-gold-500 to-amber-600 text-white shadow-premium scale-105'
-                          : 'bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50 hover:scale-105 shadow-glass dark:shadow-glass-dark'
-                      ]"
-                    >
-                      <div class="flex items-center gap-3">
-                        <div :class="[
-                          'w-10 h-10 rounded-xl flex items-center justify-center shrink-0',
-                          formData.pocketId === pocket.id 
-                            ? 'bg-white/20' 
-                            : getColorClass(getTypePocket(pocket.typePocketId)?.color || 'blue')
-                        ]">
-                          <Icon 
-                            :name="getTypePocket(pocket.typePocketId)?.icon || 'heroicons:wallet'" 
-                            :class="[
-                              'w-5 h-5',
-                              formData.pocketId === pocket.id ? 'text-white' : ''
-                            ]"
-                          />
-                        </div>
-                        <div class="flex-1 min-w-0">
-                          <p :class="[
-                            'font-bold text-sm',
-                            formData.pocketId === pocket.id ? 'text-white' : 'text-gray-900 dark:text-gray-100'
-                          ]">{{ pocket.name }}</p>
-                          <p :class="[
-                            'text-xs font-medium mt-0.5',
-                            formData.pocketId === pocket.id ? 'text-white/80' : 'text-gray-500 dark:text-gray-400'
-                          ]">
-                            {{ formatWeight(pocket.aggregateTotalWeight) }} • {{ formatCompactCurrency(pocket.aggregateTotalPrice) }}
-                          </p>
-                        </div>
-                        <Icon 
-                          v-if="formData.pocketId === pocket.id"
-                          name="heroicons:check-circle-solid" 
-                          class="w-6 h-6 text-white" 
-                        />
-                      </div>
-                    </button>
+                  <p :class="[
+                    'text-xs font-medium mb-2',
+                    formData.pocketId === pocket.id ? 'text-white/80' : 'text-gray-500 dark:text-gray-400'
+                  ]">
+                    {{ getTypePocket(pocket.typePocketId)?.name }}
+                  </p>
+
+                  <!-- Stats -->
+                  <div :class="[
+                    'text-xs font-bold',
+                    formData.pocketId === pocket.id ? 'text-white' : 'text-gray-700 dark:text-gray-300'
+                  ]">
+                    <div class="flex items-center justify-between">
+                      <span class="tabular-nums">{{ formatWeight(pocket.aggregateTotalWeight) }}</span>
+                      <span class="tabular-nums">{{ formatCompactCurrency(pocket.aggregateTotalPrice) }}</span>
+                    </div>
                   </div>
                 </div>
-              </div>
+              </button>
             </div>
             
-            <p v-if="errors.pocketId" class="mt-2 text-sm text-red-500 font-semibold">{{ errors.pocketId }}</p>
+            <p v-if="errors.pocketId" class="mt-3 text-sm text-red-500 font-semibold">{{ errors.pocketId }}</p>
           </div>
 
           <!-- Transaction Date -->

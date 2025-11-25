@@ -13,6 +13,21 @@ useHead({
 
 const showAddTransaction = ref(false)
 
+// Mock user data
+const user = ref({
+  name: 'John Doe',
+  email: 'john.doe@example.com',
+})
+
+const getInitials = (name: string) => {
+  return name
+    .split(' ')
+    .map(n => n[0])
+    .join('')
+    .toUpperCase()
+    .slice(0, 2)
+}
+
 const handleTransactionSuccess = (transaction: ITransactionCreate) => {
   console.log('Transaction created:', transaction)
   // In real app, this would refresh the data
@@ -67,13 +82,25 @@ const getBrandColor = (brand: string) => {
     <!-- Header with gradient -->
     <header class="sticky top-0 z-40 safe-top">
       <div class="absolute inset-0 bg-gradient-to-b from-white/95 to-white/80 dark:from-slate-900/95 dark:to-slate-900/80 backdrop-blur-xl border-b border-gray-200/50 dark:border-gray-700/50"></div>
-      <div class="relative flex items-center justify-between px-5 h-16">
-        <div>
-          <p class="text-xs text-gray-500 dark:text-gray-400 font-medium">{{ t.dashboard.welcomeBack }}</p>
-          <h1 class="text-xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 dark:from-white dark:to-gray-300 bg-clip-text text-transparent">
-            {{ t.dashboard.goldSavings }}
-          </h1>
+      <div class="relative flex items-center justify-between px-5 py-4">
+        <div class="flex items-center gap-3">
+          <!-- User Avatar -->
+          <NuxtLink 
+            to="/profile"
+            class="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-600 to-purple-600 dark:from-blue-700 dark:to-purple-700 flex items-center justify-center text-white font-bold shadow-lg hover:scale-110 transition-transform active:scale-95"
+          >
+            {{ getInitials(user.name) }}
+          </NuxtLink>
+          
+          <!-- Welcome Text -->
+          <div>
+            <p class="text-xs text-gray-500 dark:text-gray-400 font-medium">{{ t.dashboard.welcomeBack }}</p>
+            <h1 class="text-lg font-bold bg-gradient-to-r from-gray-900 to-gray-700 dark:from-white dark:to-gray-300 bg-clip-text text-transparent">
+              {{ user.name }}
+            </h1>
+          </div>
         </div>
+        
         <div class="flex items-center gap-2">
           <button class="relative p-2.5 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition-all active:scale-95">
             <Icon name="heroicons:bell" class="w-5 h-5 text-gray-600 dark:text-gray-400" />
