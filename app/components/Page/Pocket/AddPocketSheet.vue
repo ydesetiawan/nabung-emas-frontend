@@ -42,8 +42,11 @@ onMounted(async () => {
 // Initialize form with edit data
 watch(() => props.open, (isOpen) => {
   if (isOpen && props.editMode && props.editData) {
+    // Handle both camelCase and snake_case from API
+    const typePocketId = (props.editData as any).typePocketId || (props.editData as any).type_pocket_id
+    
     formData.value = {
-      typePocketId: props.editData.typePocketId,
+      typePocketId: typePocketId,
       name: props.editData.name,
       description: props.editData.description || '',
       targetWeight: props.editData.targetWeight,
