@@ -37,7 +37,7 @@ export const usePocketStore = defineStore('pocket', () => {
         error.value = null
 
         try {
-            const response = await $api<IAPIResponse<IPocket[]>>(API_ENDPOINTS.pockets)
+            const response = await $api<IAPIResponse<IPocket[]>>(API_ENDPOINTS.pockets.list)
             pockets.value = response.data
         } catch (err: any) {
             error.value = err.message || 'Failed to fetch pockets'
@@ -51,7 +51,7 @@ export const usePocketStore = defineStore('pocket', () => {
     async function fetchPocketById(id: string): Promise<IPocketWithRelations | null> {
         try {
             const response = await $api<IAPIResponse<IPocketWithRelations>>(
-                `${API_ENDPOINTS.pockets}/${id}`
+                API_ENDPOINTS.pockets.getById(id)
             )
             return response.data
         } catch (err: any) {
@@ -62,7 +62,7 @@ export const usePocketStore = defineStore('pocket', () => {
 
     async function createPocket(data: IPocketCreate): Promise<IPocket | null> {
         try {
-            const response = await $api<IAPIResponse<IPocket>>(API_ENDPOINTS.pockets, {
+            const response = await $api<IAPIResponse<IPocket>>(API_ENDPOINTS.pockets.create, {
                 method: 'POST',
                 body: data,
             })
@@ -79,7 +79,7 @@ export const usePocketStore = defineStore('pocket', () => {
     async function updatePocket(id: string, data: Partial<IPocketCreate>): Promise<IPocket | null> {
         try {
             const response = await $api<IAPIResponse<IPocket>>(
-                `${API_ENDPOINTS.pockets}/${id}`,
+                API_ENDPOINTS.pockets.update(id),
                 {
                     method: 'PATCH',
                     body: data,
@@ -101,7 +101,7 @@ export const usePocketStore = defineStore('pocket', () => {
 
     async function deletePocket(id: string): Promise<boolean> {
         try {
-            await $api(`${API_ENDPOINTS.pockets}/${id}`, {
+            await $api(API_ENDPOINTS.pockets.delete(id), {
                 method: 'DELETE',
             })
 

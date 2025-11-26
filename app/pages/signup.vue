@@ -1,25 +1,29 @@
 <script setup lang="ts">
+import type { IRegisterRequest } from '~/types/auth'
 
 definePageMeta({
   layout: 'default',
   showNav: false, // Hide bottom navigation on signup page
+  middleware: 'guest', // Redirect if already logged in
 })
 
 const { t } = useI18n()
+const { register, isLoading, error } = useAuth()
 
 useHead({
-  title: computed(() => `Sign Up - Gold Savings`),
+  title: computed(() => `Sign Up - EmasGo`),
 })
 
 // Form state
-const formData = ref({
+const formData = ref<IRegisterRequest>({
   fullName: '',
   email: '',
   phone: '',
   password: '',
   confirmPassword: '',
-  agreeToTerms: false,
 })
+
+const agreeToTerms = ref(false)
 
 const errors = ref({
   fullName: '',
@@ -30,9 +34,10 @@ const errors = ref({
   agreeToTerms: '',
 })
 
-const isLoading = ref(false)
 const showPassword = ref(false)
 const showConfirmPassword = ref(false)
+const showError = ref(false)
+const errorMessage = ref('')
 
 // Validation
 const validateForm = () => {
@@ -88,7 +93,7 @@ const validateForm = () => {
   }
 
   // Terms validation
-  if (!formData.value.agreeToTerms) {
+  if (!agreeToTerms.value) {
     errors.value.agreeToTerms = 'You must agree to the terms and conditions'
     isValid = false
   }
@@ -100,15 +105,19 @@ const validateForm = () => {
 const handleSignup = async () => {
   if (!validateForm()) return
 
-  isLoading.value = true
+  showError.value = false
+  errorMessage.value = ''
 
-  // Simulate API call
-  setTimeout(() => {
-    isLoading.value = false
-    // In real app, this would call signup API and store token
-    // For now, just redirect to dashboard
-    navigateTo('/')
-  }, 2000)
+  const success = await register(formData.value)
+
+  if (success) {
+    // Redirect to home after successful registration
+    await navigateTo('/')
+  } else {
+    // Show error message
+    showError.value = true
+    errorMessage.value = error.value || 'Registration failed. Please try again.'
+  }
 }
 </script>
 
@@ -139,6 +148,16 @@ const handleSignup = async () => {
       <!-- Signup Form Card -->
       <div class="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl rounded-3xl p-8 shadow-premium border border-gray-200/50 dark:border-gray-700/50 animate-slide-up" style="animation-delay: 0.1s; animation-fill-mode: both;">
         <form @submit.prevent="handleSignup" class="space-y-4">
+          <!-- Error Alert -->
+          <div v-if="showError" class="p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl">
+            <div class="flex items-start gap-3">
+              <Icon name="heroicons:exclamation-circle" class="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0 mt-0.5" />
+              <div class="flex-1">
+                <p class="text-sm font-semibold text-red-800 dark:text-red-200">{{ errorMessage }}</p>
+              </div>
+            </div>
+          </div>
+
           <!-- Full Name -->
           <div>
             <label class="block text-xs font-bold text-gray-500 dark:text-gray-400 mb-2 uppercase tracking-wider">
@@ -258,7 +277,7 @@ const handleSignup = async () => {
           <div>
             <label class="flex items-start gap-3 cursor-pointer group">
               <input
-                v-model="formData.agreeToTerms"
+                v-model="agreeToTerms"
                 type="checkbox"
                 class="mt-0.5 w-4 h-4 rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-2 focus:ring-blue-500 cursor-pointer"
               />

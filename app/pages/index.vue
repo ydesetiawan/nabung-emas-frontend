@@ -3,20 +3,36 @@ import type { ITransactionCreate } from '@/types/transaction'
 
 definePageMeta({
   layout: 'default',
+  middleware: 'auth', // Require authentication
 })
 
 const { t } = useI18n()
+const { user } = useAuth()
+const pocketStore = usePocketStore()
+const transactionStore = useTransactionStore()
+const typePocketStore = useTypePocketStore()
 
 useHead({
   title: computed(() => `${t.value.dashboard.goldSavings} - EmasGo`),
 })
 
 const showAddTransaction = ref(false)
+const isLoading = ref(true)
 
-// Mock user data
-const user = ref({
-  name: 'John Doe',
-  email: 'john.doe@example.com',
+// Fetch data on mount
+onMounted(async () => {
+  try {
+    isLoading.value = true
+    await Promise.all([
+      pocketStore.fetchPockets(),
+      transactionStore.fetchTransactions(),
+      typePocketStore.fetchTypePockets(),
+    ])
+  } catch (error) {
+    console.error('Failed to fetch data:', error)
+  } finally {
+    isLoading.value = false
+  }
 })
 
 const getInitials = (name: string) => {
@@ -28,31 +44,32 @@ const getInitials = (name: string) => {
     .slice(0, 2)
 }
 
-const handleTransactionSuccess = (transaction: ITransactionCreate) => {
+const handleTransactionSuccess = async (transaction: ITransactionCreate) => {
   console.log('Transaction created:', transaction)
-  // In real app, this would refresh the data
-  // For now, just show a success message
-  alert(`Transaction added successfully!\n${transaction.weight}g of ${transaction.brand} gold`)
+  showAddTransaction.value = false
+  // Refresh data
+  await Promise.all([
+    pocketStore.fetchPockets(),
+    transactionStore.fetchTransactions(),
+  ])
 }
 
 // Get recent transactions (limit 5)
 const recentTransactions = computed(() => {
-  return [...mockTransactions]
-    .sort((a, b) => new Date(b.transactionDate).getTime() - new Date(a.transactionDate).getTime())
-    .slice(0, 5)
+  return transactionStore.recentTransactions || []
 })
 
 // Get top pockets (limit 3)
 const topPockets = computed(() => {
-  return mockPockets.slice(0, 3)
+  return pocketStore.pockets.slice(0, 3)
 })
 
 const getTypePocket = (id: string) => {
-  return mockTypePockets.find(t => t.id === id)
+  return typePocketStore.getTypePocketById(id)
 }
 
 const getPocketName = (pocketId: string) => {
-  return mockPockets.find(p => p.id === pocketId)?.name || 'Unknown'
+  return pocketStore.pockets.find(p => p.id === pocketId)?.name || 'Unknown'
 }
 
 const getColorClass = (color: string) => {
@@ -96,7 +113,7 @@ const getBrandColor = (brand: string) => {
               </h1>
               <span class="text-[10px] text-gray-400 dark:text-gray-500 font-medium">•</span>
               <p class="text-xs text-gray-600 dark:text-gray-400 font-semibold">
-                {{ user.name }}
+                {{ user?.fullName || 'User' }}
               </p>
             </div>
             <p class="text-[10px] text-gray-500 dark:text-gray-500 font-medium tracking-wide">

@@ -4,19 +4,39 @@ import type {IPocketCreate} from "@/types/pocket";
 
 definePageMeta({
   layout: 'default',
+  middleware: 'auth', // Require authentication
 })
 
 const { t } = useI18n()
+const pocketStore = usePocketStore()
+const typePocketStore = useTypePocketStore()
+
 const searchQuery = ref('')
 const selectedType = ref<string | null>(null)
 const showCreatePocket = ref(false)
+const isLoading = ref(true)
 
 useHead({
-  title: computed(() => `${t.value.pockets.title} - Gold Savings`),
+  title: computed(() => `${t.value.pockets.title} - EmasGo`),
+})
+
+// Fetch data on mount
+onMounted(async () => {
+  try {
+    isLoading.value = true
+    await Promise.all([
+      pocketStore.fetchPockets(),
+      typePocketStore.fetchTypePockets(),
+    ])
+  } catch (error) {
+    console.error('Failed to fetch data:', error)
+  } finally {
+    isLoading.value = false
+  }
 })
 
 const filteredPockets = computed(() => {
-  let result = mockPockets
+  let result = pocketStore.pockets
 
   if (searchQuery.value) {
     const query = searchQuery.value.toLowerCase()
@@ -37,7 +57,7 @@ const totalStats = computed(() => ({
 }))
 
 const getTypePocket = (id: string) => {
-  return mockTypePockets.find(t => t.id === id)
+  return typePocketStore.getTypePocketById(id)
 }
 
 const getColorClass = (color: string) => {
@@ -51,12 +71,15 @@ const getColorClass = (color: string) => {
   return colors[color] || colors.blue
 }
 
-const handleCreatePocket = (pocket: IPocketCreate) => {
-  // In a real app, this would call an API
-  console.log('Creating pocket:', pocket)
-  
-  const typePocket = getTypePocket(pocket.typePocketId)
-  alert(`Pocket "${pocket.name}" (${typePocket?.name}) created successfully!`)
+const handleCreatePocket = async (pocket: IPocketCreate) => {
+  try {
+    await pocketStore.createPocket(pocket)
+    showCreatePocket.value = false
+    // Refresh pockets
+    await pocketStore.fetchPockets()
+  } catch (error) {
+    console.error('Failed to create pocket:', error)
+  }
 }
 
 </script>
@@ -107,7 +130,7 @@ const handleCreatePocket = (pocket: IPocketCreate) => {
             {{ t.pockets.all }}
           </button>
           <button
-            v-for="type in mockTypePockets"
+            v-for="type in typePocketStore.typePocketList"
             :key="type.id"
             @click="selectedType = type.id"
             :class="[

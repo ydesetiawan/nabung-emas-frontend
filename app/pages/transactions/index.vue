@@ -4,12 +4,16 @@ import type {ITransactionCreate} from "@/types/transaction";
 
 definePageMeta({
   layout: 'default',
+  middleware: 'auth', // Require authentication
 })
 
 const { t } = useI18n()
+const pocketStore = usePocketStore()
+const transactionStore = useTransactionStore()
+const typePocketStore = useTypePocketStore()
 
 useHead({
-  title: computed(() => `${t.value.transactions.title} - Gold Savings`),
+  title: computed(() => `${t.value.transactions.title} - EmasGo`),
 })
 
 const showAddTransaction = ref(false)
@@ -19,17 +23,37 @@ const selectedBrand = ref<string | null>(null)
 const dateRange = ref<'all' | '7d' | '30d' | '3m' | '1y'>('all')
 const sortBy = ref<'date-desc' | 'date-asc' | 'amount-desc' | 'amount-asc' | 'weight-desc' | 'weight-asc'>('date-desc')
 const showFilters = ref(false)
+const isLoading = ref(true)
 
-const handleTransactionSuccess = (transaction: ITransactionCreate) => {
+// Fetch data on mount
+onMounted(async () => {
+  try {
+    isLoading.value = true
+    await Promise.all([
+      pocketStore.fetchPockets(),
+      transactionStore.fetchTransactions(),
+      typePocketStore.fetchTypePockets(),
+    ])
+  } catch (error) {
+    console.error('Failed to fetch data:', error)
+  } finally {
+    isLoading.value = false
+  }
+})
+
+const handleTransactionSuccess = async (transaction: ITransactionCreate) => {
   console.log('Transaction created:', transaction)
   showAddTransaction.value = false
-  // In real app, this would refresh the transaction list
-  alert(`Transaction added successfully!\n${transaction.weight}g of ${transaction.brand} gold`)
+  // Refresh data
+  await Promise.all([
+    pocketStore.fetchPockets(),
+    transactionStore.fetchTransactions(),
+  ])
 }
 
 // Filter transactions
 const filteredTransactions = computed(() => {
-  let result = [...mockTransactions]
+  let result = [...transactionStore.transactions]
 
   // Filter by search
   if (searchQuery.value) {
@@ -98,7 +122,7 @@ const totalStats = computed(() => ({
 }))
 
 const getPocketName = (pocketId: string) => {
-  return mockPockets.find(p => p.id === pocketId)?.name || 'Unknown'
+  return pocketStore.pockets.find(p => p.id === pocketId)?.name || 'Unknown'
 }
 
 const getBrandColor = (brand: string) => {
@@ -112,7 +136,7 @@ const getBrandColor = (brand: string) => {
 }
 
 const getTypePocket = (id: string) => {
-  return mockTypePockets.find(t => t.id === id)
+  return typePocketStore.getTypePocketById(id)
 }
 
 const getColorClass = (color: string) => {
@@ -244,7 +268,7 @@ const clearFilters = () => {
 
               <!-- Individual Pockets -->
               <button
-                v-for="pocket in mockPockets.slice(0, 5)"
+                v-for="pocket in pocketStore.pockets.slice(0, 5)"
                 :key="pocket.id"
                 @click="selectedPocketId = pocket.id"
                 :class="[

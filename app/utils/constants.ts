@@ -96,6 +96,7 @@ export const CHART_COLORS = {
 
 // Storage keys (namespaced)
 export const STORAGE_KEYS = {
+    user: 'gold.user',
     pockets: 'gold.pockets',
     transactions: 'gold.transactions',
     selectedPocketId: 'gold.selectedPocketId',

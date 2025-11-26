@@ -1,18 +1,22 @@
 <script setup lang="ts">
+import type { ILoginRequest } from '~/types/auth'
 
 definePageMeta({
   layout: 'default',
   showNav: false, // Hide bottom navigation on login page
+  middleware: 'guest', // Redirect if already logged in
 })
 
 const { t } = useI18n()
+const route = useRoute()
+const { login, isLoading, error } = useAuth()
 
 useHead({
   title: computed(() => `Login - EmasGo`),
 })
 
 // Form state
-const formData = ref({
+const formData = ref<ILoginRequest>({
   email: '',
   password: '',
   rememberMe: false,
@@ -23,7 +27,8 @@ const errors = ref({
   password: '',
 })
 
-const isLoading = ref(false)
+const showError = ref(false)
+const errorMessage = ref('')
 
 // Validation
 const validateForm = () => {
@@ -55,15 +60,20 @@ const validateForm = () => {
 const handleLogin = async () => {
   if (!validateForm()) return
 
-  isLoading.value = true
+  showError.value = false
+  errorMessage.value = ''
 
-  // Simulate API call
-  setTimeout(() => {
-    isLoading.value = false
-    // In real app, this would call login API and store token
-    // For now, just redirect to dashboard
-    navigateTo('/')
-  }, 1500)
+  const success = await login(formData.value)
+
+  if (success) {
+    // Get redirect path from query or default to home
+    const redirectPath = (route.query.redirect as string) || '/'
+    await navigateTo(redirectPath)
+  } else {
+    // Show error message
+    showError.value = true
+    errorMessage.value = error.value || 'Login failed. Please check your credentials.'
+  }
 }
 
 // Demo credentials hint
@@ -100,6 +110,16 @@ const useDemoCredentials = () => {
       <!-- Login Form Card -->
       <div class="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl rounded-3xl p-8 shadow-premium border border-gray-200/50 dark:border-gray-700/50 animate-slide-up" style="animation-delay: 0.1s; animation-fill-mode: both;">
         <form @submit.prevent="handleLogin" class="space-y-5">
+          <!-- Error Alert -->
+          <div v-if="showError" class="p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl">
+            <div class="flex items-start gap-3">
+              <Icon name="heroicons:exclamation-circle" class="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0 mt-0.5" />
+              <div class="flex-1">
+                <p class="text-sm font-semibold text-red-800 dark:text-red-200">{{ errorMessage }}</p>
+              </div>
+            </div>
+          </div>
+
           <!-- Email -->
           <div>
             <label class="block text-xs font-bold text-gray-500 dark:text-gray-400 mb-2 uppercase tracking-wider">

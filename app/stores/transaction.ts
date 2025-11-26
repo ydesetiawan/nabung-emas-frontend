@@ -43,8 +43,8 @@ export const useTransactionStore = defineStore('transaction', () => {
 
         try {
             const url = pocketId
-                ? `${API_ENDPOINTS.transactions}?pocketId=${pocketId}`
-                : API_ENDPOINTS.transactions
+                ? `${API_ENDPOINTS.transactions.list}?pocket_id=${pocketId}`
+                : API_ENDPOINTS.transactions.list
 
             const response = await $api<IAPIResponse<ITransaction[]>>(url)
             transactions.value = response.data
@@ -60,7 +60,7 @@ export const useTransactionStore = defineStore('transaction', () => {
     async function fetchTransactionById(id: string): Promise<ITransactionWithPocket | null> {
         try {
             const response = await $api<IAPIResponse<ITransactionWithPocket>>(
-                `${API_ENDPOINTS.transactions}/${id}`
+                API_ENDPOINTS.transactions.getById(id)
             )
             return response.data
         } catch (err: any) {
@@ -72,7 +72,7 @@ export const useTransactionStore = defineStore('transaction', () => {
     async function createTransaction(data: ITransactionCreate): Promise<ITransaction | null> {
         try {
             const response = await $api<IAPIResponse<ITransaction>>(
-                API_ENDPOINTS.transactions,
+                API_ENDPOINTS.transactions.create,
                 {
                     method: 'POST',
                     body: data,
@@ -98,7 +98,7 @@ export const useTransactionStore = defineStore('transaction', () => {
     ): Promise<ITransaction | null> {
         try {
             const response = await $api<IAPIResponse<ITransaction>>(
-                `${API_ENDPOINTS.transactions}/${id}`,
+                API_ENDPOINTS.transactions.update(id),
                 {
                     method: 'PATCH',
                     body: data,
@@ -123,7 +123,7 @@ export const useTransactionStore = defineStore('transaction', () => {
 
     async function deleteTransaction(id: string): Promise<boolean> {
         try {
-            await $api(`${API_ENDPOINTS.transactions}/${id}`, {
+            await $api(API_ENDPOINTS.transactions.delete(id), {
                 method: 'DELETE',
             })
 
