@@ -105,11 +105,56 @@ export const STORAGE_KEYS = {
     darkMode: 'gold.darkMode',
 } as const
 
-// API endpoints
+// API endpoints (matching EmasGo backend structure)
 export const API_ENDPOINTS = {
-    pockets: '/api/pockets',
-    transactions: '/api/transactions',
-    typePockets: '/api/type-pockets',
-    analytics: '/api/analytics',
-    goldPrice: '/api/gold-price/current',
+    // Authentication
+    auth: {
+        register: '/auth/register',
+        login: '/auth/login',
+        logout: '/auth/logout',
+        me: '/auth/me',
+        refresh: '/auth/refresh',
+        forgotPassword: '/auth/forgot-password',
+    },
+    // Profile
+    profile: {
+        get: '/profile',
+        update: '/profile',
+        changePassword: '/profile/change-password',
+    },
+    // Type Pockets (Categories)
+    typePockets: {
+        list: '/type-pockets',
+        getById: (id: string) => `/type-pockets/${id}`,
+    },
+    // Pockets
+    pockets: {
+        list: '/pockets',
+        create: '/pockets',
+        getById: (id: string) => `/pockets/${id}`,
+        update: (id: string) => `/pockets/${id}`,
+        delete: (id: string) => `/pockets/${id}`,
+        stats: (id: string) => `/pockets/${id}/stats`,
+    },
+    // Transactions
+    transactions: {
+        list: '/transactions',
+        create: '/transactions',
+        getById: (id: string) => `/transactions/${id}`,
+        update: (id: string) => `/transactions/${id}`,
+        delete: (id: string) => `/transactions/${id}`,
+    },
+    // Analytics
+    analytics: {
+        dashboard: '/analytics/dashboard',
+        portfolio: '/analytics/portfolio',
+        monthlyPurchases: '/analytics/monthly-purchases',
+        brandDistribution: '/analytics/brand-distribution',
+        trends: '/analytics/trends',
+    },
+    // Settings
+    settings: {
+        get: '/settings',
+        update: '/settings',
+    },
 } as const
