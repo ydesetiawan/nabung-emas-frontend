@@ -4,15 +4,13 @@
  */
 
 import type { IPocket, IPocketCreate, IPocketUpdate, IPocketWithRelations } from '~/types/pocket'
-import type { IAPIResponse } from '~/types/api'
-import { STORAGE_KEYS, API_ENDPOINTS } from '~/utils/constants'
 
 export const usePocketStore = defineStore('pocket', () => {
-    const { $api } = useNuxtApp()
+    const pocketApi = usePocketApi()
 
-    // State with localStorage persistence
-    const pockets = useLocalStorage<IPocket[]>(STORAGE_KEYS.pockets, [])
-    const selectedPocketId = useLocalStorage<string | null>(STORAGE_KEYS.selectedPocketId, null)
+    // State - no localStorage persistence
+    const pockets = ref<IPocket[]>([])
+    const selectedPocketId = ref<string | null>(null)
     const isLoading = ref(false)
     const error = ref<string | null>(null)
 
@@ -37,8 +35,7 @@ export const usePocketStore = defineStore('pocket', () => {
         error.value = null
 
         try {
-            const response = await $api<IAPIResponse<IPocket[]>>(API_ENDPOINTS.pockets.list)
-            pockets.value = response.data
+            pockets.value = await pocketApi.fetchPockets()
         } catch (err: any) {
             error.value = err.message || 'Failed to fetch pockets'
             console.error('Failed to fetch pockets:', err)
@@ -50,10 +47,7 @@ export const usePocketStore = defineStore('pocket', () => {
 
     async function fetchPocketById(id: string): Promise<IPocketWithRelations | null> {
         try {
-            const response = await $api<IAPIResponse<IPocketWithRelations>>(
-                API_ENDPOINTS.pockets.getById(id)
-            )
-            return response.data
+            return await pocketApi.fetchPocketById(id)
         } catch (err: any) {
             console.error('Failed to fetch pocket:', err)
             return null
@@ -62,13 +56,9 @@ export const usePocketStore = defineStore('pocket', () => {
 
     async function createPocket(data: IPocketCreate): Promise<IPocket | null> {
         try {
-            const response = await $api<IAPIResponse<IPocket>>(API_ENDPOINTS.pockets.create, {
-                method: 'POST',
-                body: data,
-            })
-
-            pockets.value.push(response.data)
-            return response.data
+            const newPocket = await pocketApi.createPocket(data)
+            pockets.value.push(newPocket)
+            return newPocket
         } catch (err: any) {
             error.value = err.message || 'Failed to create pocket'
             console.error('Failed to create pocket:', err)
@@ -78,20 +68,14 @@ export const usePocketStore = defineStore('pocket', () => {
 
     async function updatePocket(id: string, data: Partial<IPocketCreate>): Promise<IPocket | null> {
         try {
-            const response = await $api<IAPIResponse<IPocket>>(
-                API_ENDPOINTS.pockets.update(id),
-                {
-                    method: 'PATCH',
-                    body: data,
-                }
-            )
+            const updatedPocket = await pocketApi.updatePocket(id, data)
 
             const index = pockets.value.findIndex(p => p.id === id)
             if (index !== -1) {
-                pockets.value[index] = response.data
+                pockets.value[index] = updatedPocket
             }
 
-            return response.data
+            return updatedPocket
         } catch (err: any) {
             error.value = err.message || 'Failed to update pocket'
             console.error('Failed to update pocket:', err)
@@ -101,10 +85,7 @@ export const usePocketStore = defineStore('pocket', () => {
 
     async function deletePocket(id: string): Promise<boolean> {
         try {
-            await $api(API_ENDPOINTS.pockets.delete(id), {
-                method: 'DELETE',
-            })
-
+            await pocketApi.deletePocket(id)
             pockets.value = pockets.value.filter(p => p.id !== id)
 
             if (selectedPocketId.value === id) {

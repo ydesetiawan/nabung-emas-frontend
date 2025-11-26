@@ -4,15 +4,13 @@
  */
 
 import type { ITransaction, ITransactionCreate, ITransactionWithPocket } from '~/types/transaction'
-import type { IAPIResponse } from '~/types/api'
-import { STORAGE_KEYS, API_ENDPOINTS } from '~/utils/constants'
 
 export const useTransactionStore = defineStore('transaction', () => {
-    const { $api } = useNuxtApp()
+    const transactionApi = useTransactionApi()
     const pocketStore = usePocketStore()
 
-    // State
-    const transactions = useLocalStorage<ITransaction[]>(STORAGE_KEYS.transactions, [])
+    // State - no localStorage persistence
+    const transactions = ref<ITransaction[]>([])
     const isLoading = ref(false)
     const error = ref<string | null>(null)
 
@@ -42,12 +40,7 @@ export const useTransactionStore = defineStore('transaction', () => {
         error.value = null
 
         try {
-            const url = pocketId
-                ? `${API_ENDPOINTS.transactions.list}?pocket_id=${pocketId}`
-                : API_ENDPOINTS.transactions.list
-
-            const response = await $api<IAPIResponse<ITransaction[]>>(url)
-            transactions.value = response.data
+            transactions.value = await transactionApi.fetchTransactions(pocketId)
         } catch (err: any) {
             error.value = err.message || 'Failed to fetch transactions'
             console.error('Failed to fetch transactions:', err)
@@ -59,10 +52,7 @@ export const useTransactionStore = defineStore('transaction', () => {
 
     async function fetchTransactionById(id: string): Promise<ITransactionWithPocket | null> {
         try {
-            const response = await $api<IAPIResponse<ITransactionWithPocket>>(
-                API_ENDPOINTS.transactions.getById(id)
-            )
-            return response.data
+            return await transactionApi.fetchTransactionById(id)
         } catch (err: any) {
             console.error('Failed to fetch transaction:', err)
             return null
@@ -71,20 +61,13 @@ export const useTransactionStore = defineStore('transaction', () => {
 
     async function createTransaction(data: ITransactionCreate): Promise<ITransaction | null> {
         try {
-            const response = await $api<IAPIResponse<ITransaction>>(
-                API_ENDPOINTS.transactions.create,
-                {
-                    method: 'POST',
-                    body: data,
-                }
-            )
-
-            transactions.value.push(response.data)
+            const newTransaction = await transactionApi.createTransaction(data)
+            transactions.value.push(newTransaction)
 
             // Refresh pocket to update aggregates
             await pocketStore.fetchPockets()
 
-            return response.data
+            return newTransaction
         } catch (err: any) {
             error.value = err.message || 'Failed to create transaction'
             console.error('Failed to create transaction:', err)
@@ -97,23 +80,17 @@ export const useTransactionStore = defineStore('transaction', () => {
         data: Partial<ITransactionCreate>
     ): Promise<ITransaction | null> {
         try {
-            const response = await $api<IAPIResponse<ITransaction>>(
-                API_ENDPOINTS.transactions.update(id),
-                {
-                    method: 'PATCH',
-                    body: data,
-                }
-            )
+            const updatedTransaction = await transactionApi.updateTransaction(id, data)
 
             const index = transactions.value.findIndex(t => t.id === id)
             if (index !== -1) {
-                transactions.value[index] = response.data
+                transactions.value[index] = updatedTransaction
             }
 
             // Refresh pocket aggregates
             await pocketStore.fetchPockets()
 
-            return response.data
+            return updatedTransaction
         } catch (err: any) {
             error.value = err.message || 'Failed to update transaction'
             console.error('Failed to update transaction:', err)
@@ -123,10 +100,7 @@ export const useTransactionStore = defineStore('transaction', () => {
 
     async function deleteTransaction(id: string): Promise<boolean> {
         try {
-            await $api(API_ENDPOINTS.transactions.delete(id), {
-                method: 'DELETE',
-            })
-
+            await transactionApi.deleteTransaction(id)
             transactions.value = transactions.value.filter(t => t.id !== id)
 
             // Refresh pocket aggregates
