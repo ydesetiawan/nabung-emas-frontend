@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import type { IPocket } from '@/types/pocket'
+import type { ITransaction } from '@/types/transaction'
+
 
 definePageMeta({
   layout: 'default',
@@ -11,12 +14,14 @@ const { calculatePocketStats } = useGoldCalculator()
 
 // Use composables directly
 const pocketApi = usePocketApi()
+const transactionApi = useTransactionApi()
 const typePocketStore = useTypePocketStore()
 
 const pocketId = route.params.id as string
 
 const isLoading = ref(true)
-const pocket = ref<any>(null)
+const pocket = ref<IPocket>()
+const transactions = ref<ITransaction[]>([])
 
 // Fetch pocket data on mount
 onMounted(async () => {
@@ -24,7 +29,8 @@ onMounted(async () => {
     isLoading.value = true
     await Promise.all([
       typePocketStore.fetchTypePockets(),
-      fetchPocketData()
+      fetchPocketData(),
+      fetchTransactionsData()
     ])
   } catch (error) {
     console.error('Failed to fetch pocket data:', error)
@@ -35,6 +41,10 @@ onMounted(async () => {
 
 const fetchPocketData = async () => {
   pocket.value = await pocketApi.fetchPocketById(pocketId)
+}
+
+const fetchTransactionsData = async () => {
+  transactions.value = await transactionApi.fetchTransactions(pocketId)
 }
 
 // Find type pocket
@@ -250,9 +260,9 @@ const handleDelete = async () => {
           </button>
         </div>
 
-        <div v-if="pocketTransactions.length > 0" class="divide-y divide-gray-200/50 dark:divide-gray-700/50">
+        <div v-if="transactions.length > 0" class="divide-y divide-gray-200/50 dark:divide-gray-700/50">
           <NuxtLink
-            v-for="transaction in pocketTransactions"
+            v-for="transaction in transactions"
             :key="transaction.id"
             :to="`/transactions/${transaction.id}`"
             class="block p-4 hover:bg-gray-50/50 dark:hover:bg-gray-700/50 transition-all group"

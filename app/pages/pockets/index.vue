@@ -8,13 +8,18 @@ definePageMeta({
 })
 
 const { t } = useI18n()
-const pocketStore = usePocketStore()
+
+// Use composables directly
+const pocketApi = usePocketApi()
 const typePocketStore = useTypePocketStore()
 
 const searchQuery = ref('')
 const selectedType = ref<string | null>(null)
 const showCreatePocket = ref(false)
 const isLoading = ref(true)
+
+// Local state
+const pockets = ref<any[]>([])
 
 useHead({
   title: computed(() => `${t.value.pockets.title} - EmasGo`),
@@ -24,10 +29,11 @@ useHead({
 onMounted(async () => {
   try {
     isLoading.value = true
-    await Promise.all([
-      pocketStore.fetchPockets(),
+    const [pocketsData] = await Promise.all([
+      pocketApi.fetchPockets(),
       typePocketStore.fetchTypePockets(),
     ])
+    pockets.value = pocketsData
   } catch (error) {
     console.error('Failed to fetch data:', error)
   } finally {
@@ -36,7 +42,7 @@ onMounted(async () => {
 })
 
 const filteredPockets = computed(() => {
-  let result = pocketStore.pockets
+  let result = pockets.value
 
   if (searchQuery.value) {
     const query = searchQuery.value.toLowerCase()
@@ -71,12 +77,12 @@ const getColorClass = (color: string) => {
   return colors[color] || colors.blue
 }
 
-const handleCreatePocket = async (pocket: IPocketCreate) => {
+const handlePocketCreated = async (pocket: IPocketCreate) => {
   try {
-    await pocketStore.createPocket(pocket)
+    await pocketApi.createPocket(pocket)
     showCreatePocket.value = false
     // Refresh pockets
-    await pocketStore.fetchPockets()
+    pockets.value = await pocketApi.fetchPockets()
   } catch (error) {
     console.error('Failed to create pocket:', error)
   }
@@ -246,7 +252,7 @@ const handleCreatePocket = async (pocket: IPocketCreate) => {
     <PagePocketAddPocketSheet
       :open="showCreatePocket"
       @update:open="showCreatePocket = $event"
-      @success="handleCreatePocket"
+      @success="handlePocketCreated"
     />
   </div>
 </template>

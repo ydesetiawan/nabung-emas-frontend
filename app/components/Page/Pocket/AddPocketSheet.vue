@@ -14,8 +14,8 @@ const emit = defineEmits<{
   'update': [pocket: any]
 }>()
 
-// Stores
-const pocketStore = usePocketStore()
+// Use composables
+const pocketApi = usePocketApi()
 const typePocketStore = useTypePocketStore()
 
 // Form state
@@ -106,7 +106,7 @@ const handleSubmit = async () => {
   try {
     if (props.editMode && props.editData) {
       // Update existing pocket
-      const updated = await pocketStore.updatePocket(props.editData.id, formData.value)
+      const updated = await pocketApi.updatePocket(props.editData.id, formData.value)
       
       if (updated) {
         emit('update', updated)
@@ -115,7 +115,7 @@ const handleSubmit = async () => {
       }
     } else {
       // Create new pocket
-      const created = await pocketStore.createPocket(formData.value)
+      const created = await pocketApi.createPocket(formData.value)
       
       if (created) {
         emit('success', created)

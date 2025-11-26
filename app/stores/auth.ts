@@ -106,16 +106,6 @@ export const useAuthStore = defineStore('auth', () => {
         const refreshToken = useCookie('refresh_token')
         refreshToken.value = null
 
-        // Clear all stores
-        try {
-            const pocketStore = usePocketStore()
-            const transactionStore = useTransactionStore()
-            pocketStore.clear()
-            transactionStore.clear()
-        } catch (err) {
-            console.error('Error clearing stores:', err)
-        }
-
         // Clear any sensitive data from localStorage
         if (process.client) {
             try {

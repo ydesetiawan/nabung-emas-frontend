@@ -15,11 +15,14 @@ const emit = defineEmits<{
   'update': [transaction: any]
 }>()
 
-// Stores
-const transactionStore = useTransactionStore()
-const pocketStore = usePocketStore()
+// Use composables directly
+const transactionApi = useTransactionApi()
+const pocketApi = usePocketApi()
 const typePocketStore = useTypePocketStore()
 const { calculateTotalPrice } = useGoldCalculator()
+
+// Local state for pockets
+const pockets = ref<any[]>([])
 
 // Pocket search and selection
 const pocketSearchQuery = ref('')
@@ -27,10 +30,11 @@ const pocketSearchQuery = ref('')
 // Fetch data on mount
 onMounted(async () => {
   try {
-    await Promise.all([
-      pocketStore.fetchPockets(),
+    const [pocketsData] = await Promise.all([
+      pocketApi.fetchPockets(),
       typePocketStore.fetchTypePockets()
     ])
+    pockets.value = pocketsData
   } catch (err) {
     console.error('Failed to load data:', err)
   }
@@ -39,9 +43,9 @@ onMounted(async () => {
 // Filtered pockets based on search
 const filteredPockets = computed(() => {
   const query = pocketSearchQuery.value.toLowerCase()
-  if (!query) return pocketStore.pockets
+  if (!query) return pockets.value
   
-  return pocketStore.pockets.filter(p => {
+  return pockets.value.filter(p => {
     const typePocket = typePocketStore.getTypePocketById(p.typePocketId)
     return p.name.toLowerCase().includes(query) ||
            typePocket?.name.toLowerCase().includes(query)
@@ -69,7 +73,7 @@ const getColorClass = (color: string) => {
 }
 
 const selectedPocket = computed(() => {
-  return pocketStore.pockets.find(p => p.id === formData.value.pocketId)
+  return pockets.value.find(p => p.id === formData.value.pocketId)
 })
 
 const selectPocket = (pocketId: string) => {
@@ -177,7 +181,7 @@ const handleSubmit = async () => {
   try {
     if (props.editMode && props.editData) {
       // Update existing transaction
-      const updated = await transactionStore.updateTransaction(props.editData.id, formData.value)
+      const updated = await transactionApi.updateTransaction(props.editData.id, formData.value)
       
       if (updated) {
         emit('update', updated)
@@ -186,7 +190,7 @@ const handleSubmit = async () => {
       }
     } else {
       // Create new transaction
-      const created = await transactionStore.createTransaction(formData.value)
+      const created = await transactionApi.createTransaction(formData.value)
       
       if (created) {
         emit('success', created)
@@ -307,10 +311,9 @@ const close = () => {
             </div>
           </div>
 
-          <!-- Loading State for Pockets -->
-          <div v-if="pocketStore.isLoading" class="text-center py-8">
-            <Icon name="heroicons:arrow-path" class="w-8 h-8 animate-spin text-blue-600 dark:text-blue-400 mx-auto mb-2" />
-            <p class="text-sm text-gray-600 dark:text-gray-400 font-medium">Loading pockets...</p>
+          <!-- Empty pockets state -->
+          <div v-if="pockets.length === 0" class="text-center py-8">
+            <p class="text-sm text-gray-600 dark:text-gray-400 font-medium">No pockets available. Create one first!</p>
           </div>
 
           <!-- Pocket Selection - Premium Banking UI -->

@@ -8,8 +8,10 @@ definePageMeta({
 })
 
 const { t } = useI18n()
-const pocketStore = usePocketStore()
-const transactionStore = useTransactionStore()
+
+// Use composables directly
+const pocketApi = usePocketApi()
+const transactionApi = useTransactionApi()
 const typePocketStore = useTypePocketStore()
 
 useHead({
@@ -25,15 +27,21 @@ const sortBy = ref<'date-desc' | 'date-asc' | 'amount-desc' | 'amount-asc' | 'we
 const showFilters = ref(false)
 const isLoading = ref(true)
 
+// Local state
+const pockets = ref<any[]>([])
+const transactions = ref<any[]>([])
+
 // Fetch data on mount
 onMounted(async () => {
   try {
     isLoading.value = true
-    await Promise.all([
-      pocketStore.fetchPockets(),
-      transactionStore.fetchTransactions(),
+    const [pocketsData, transactionsData] = await Promise.all([
+      pocketApi.fetchPockets(),
+      transactionApi.fetchTransactions(),
       typePocketStore.fetchTypePockets(),
     ])
+    pockets.value = pocketsData
+    transactions.value = transactionsData
   } catch (error) {
     console.error('Failed to fetch data:', error)
   } finally {
@@ -45,15 +53,17 @@ const handleTransactionSuccess = async (transaction: ITransactionCreate) => {
   console.log('Transaction created:', transaction)
   showAddTransaction.value = false
   // Refresh data
-  await Promise.all([
-    pocketStore.fetchPockets(),
-    transactionStore.fetchTransactions(),
+  const [pocketsData, transactionsData] = await Promise.all([
+    pocketApi.fetchPockets(),
+    transactionApi.fetchTransactions(),
   ])
+  pockets.value = pocketsData
+  transactions.value = transactionsData
 }
 
 // Filter transactions
 const filteredTransactions = computed(() => {
-  let result = [...transactionStore.transactions]
+  let result = [...transactions.value]
 
   // Filter by search
   if (searchQuery.value) {
@@ -85,9 +95,9 @@ const filteredTransactions = computed(() => {
       '1y': 365,
     }
     const days = ranges[dateRange.value]
-    if (days !== undefined) {
-      const cutoff = new Date(now.getTime() - days * 24 * 60 * 60 * 1000)
-      result = result.filter(t => new Date(t.transactionDate) >= cutoff)
+    if (days) {
+      const cutoffDate = new Date(now.getTime() - days * 24 * 60 * 60 * 1000)
+      result = result.filter(t => new Date(t.transactionDate) >= cutoffDate)
     }
   }
 
@@ -121,8 +131,13 @@ const totalStats = computed(() => ({
   totalValue: filteredTransactions.value.reduce((sum, t) => sum + t.totalPrice, 0),
 }))
 
+const uniqueBrands = computed(() => {
+  const brands = new Set(transactions.value.map(t => t.brand))
+  return Array.from(brands).sort()
+})
+
 const getPocketName = (pocketId: string) => {
-  return pocketStore.pockets.find(p => p.id === pocketId)?.name || 'Unknown'
+  return pockets.value.find(p => p.id === pocketId)?.name || 'Unknown'
 }
 
 const getBrandColor = (brand: string) => {
@@ -263,12 +278,13 @@ const clearFilters = () => {
                     name="heroicons:check-circle-solid" 
                     class="w-6 h-6 text-white ml-auto" 
                   />
+```
                 </div>
               </button>
 
               <!-- Individual Pockets -->
               <button
-                v-for="pocket in pocketStore.pockets.slice(0, 5)"
+                v-for="pocket in pockets.slice(0, 5)"
                 :key="pocket.id"
                 @click="selectedPocketId = pocket.id"
                 :class="[

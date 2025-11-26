@@ -18,23 +18,48 @@ export interface IPortfolioSummary {
     profitLossPercentage: number
 }
 
-export interface IDashboardData {
-    portfolio: IPortfolioSummary
-    recentTransactions: Array<{
+export interface ITopPockets {
+    id: string
+    user_id: string
+    type_pocket_id: string
+    name: string
+    description: string
+    aggregate_total_price: number
+    aggregate_total_weight: number
+    target_weight: number
+    type_pocket: {
         id: string
-        pocketId: string
-        transactionDate: string
-        brand: string
-        weight: number
-        totalPrice: number
-        pocket: {
-            id: string
-            name: string
-            typePocket: {
-                color: string
-            }
+        name: string
+        description: string
+        icon: string
+        color: string
+        created_at: string
+        updated_at: string
+    }
+    created_at: string
+    updated_at: string
+}
+
+export interface IRecentTransactions {
+    id: string
+    pocketId: string
+    transactionDate: string
+    brand: string
+    weight: number
+    totalPrice: number
+    pocket: {
+        id: string
+        name: string
+        typePocket: {
+            color: string
         }
-    }>
+    }
+}
+
+export interface IDashboardData {
+    portfolio: IPortfolioSummary,
+    topPockets: ITopPockets[],
+    recentTransactions: IRecentTransactions[]
 }
 
 /**

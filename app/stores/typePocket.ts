@@ -5,7 +5,7 @@
 
 import type { ITypePocket } from '~/types/type-pocket'
 import type { IAPIResponse } from '~/types/api'
-import { API_ENDPOINTS, STORAGE_KEYS } from '~/utils/constants'
+import { API_ENDPOINTS } from '~/utils/constants'
 
 export const useTypePocketStore = defineStore('typePocket', () => {
     const { $publicApi } = useNuxtApp()

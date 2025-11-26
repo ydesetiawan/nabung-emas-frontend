@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { IDashboardData, IRecentTransactions, ITopPockets } from '@/types/analytics'
 import type { ITransactionCreate } from '@/types/transaction'
 
 definePageMeta({
@@ -8,10 +9,10 @@ definePageMeta({
 
 const { t } = useI18n()
 const { user } = useAuth()
-const pocketStore = usePocketStore()
-const transactionStore = useTransactionStore()
+
+// Use composables directly
+const analyticsApi = useAnalyticsApi()
 const typePocketStore = useTypePocketStore()
-const analyticsStore = useAnalyticsStore()
 const { currentGoldPrice } = useGoldCalculator()
 
 useHead({
@@ -21,16 +22,19 @@ useHead({
 const showAddTransaction = ref(false)
 const isLoading = ref(true)
 
+// Local state
+const pockets = ref<ITopPockets[]>([])
+const transactions = ref<IRecentTransactions[]>([])
+const dashboard = ref<IDashboardData>()
+
 // Fetch data on mount
 onMounted(async () => {
   try {
     isLoading.value = true
-    await Promise.all([
-      pocketStore.fetchPockets(),
-      transactionStore.fetchTransactions(),
-      typePocketStore.fetchTypePockets(),
-      analyticsStore.fetchDashboard(currentGoldPrice.value),
-    ])
+    const dashboardData =  await analyticsApi.fetchDashboard(currentGoldPrice.value)
+    dashboard.value = dashboardData
+    pockets.value = dashboardData.topPockets
+    transactions.value = dashboardData.recentTransactions
   } catch (error) {
     console.error('Failed to fetch data:', error)
   } finally {
@@ -51,21 +55,20 @@ const handleTransactionSuccess = async (transaction: ITransactionCreate) => {
   console.log('Transaction created:', transaction)
   showAddTransaction.value = false
   // Refresh data
-  await Promise.all([
-    pocketStore.fetchPockets(),
-    transactionStore.fetchTransactions(),
-    analyticsStore.fetchDashboard(currentGoldPrice.value, true), // Force refresh dashboard
-  ])
+  const dashboardData = await analyticsApi.fetchDashboard(currentGoldPrice.value)
+  pockets.value = dashboardData.topPockets
+  transactions.value = dashboardData.recentTransactions
+  dashboard.value = dashboardData
 }
 
 // Get recent transactions (limit 5)
 const recentTransactions = computed(() => {
-  return transactionStore.recentTransactions || []
+  return transactions.value
 })
 
 // Get top pockets (limit 3)
 const topPockets = computed(() => {
-  return pocketStore.pockets.slice(0, 3)
+  return pockets.value.slice(0, 3)
 })
 
 const getTypePocket = (id: string) => {
@@ -73,7 +76,7 @@ const getTypePocket = (id: string) => {
 }
 
 const getPocketName = (pocketId: string) => {
-  return pocketStore.pockets.find(p => p.id === pocketId)?.name || 'Unknown'
+  return pockets.value.find(p => p.id === pocketId)?.name || 'Unknown'
 }
 
 const getColorClass = (color: string) => {
@@ -150,15 +153,15 @@ const getBrandColor = (brand: string) => {
       <!-- Portfolio Card with Premium Gradient -->
       <div class="relative overflow-hidden">
         <PageDashboardPortfolioCard 
-          :portfolio="analyticsStore.dashboard?.portfolio"
-          :is-loading="analyticsStore.isLoading"
+          :portfolio="dashboard?.portfolio"
+          :is-loading="isLoading"
         />
       </div>
 
       <!-- Quick Stats -->
       <PageDashboardQuickStats 
-        :portfolio="analyticsStore.dashboard?.portfolio"
-        :is-loading="analyticsStore.isLoading"
+        :portfolio="dashboard?.portfolio"
+        :is-loading="isLoading"
       />
 
       <!-- Pockets Section -->
