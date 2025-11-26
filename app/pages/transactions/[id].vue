@@ -109,9 +109,15 @@ const handleEdit = () => {
         >
           <Icon name="heroicons:arrow-left" class="w-6 h-6 text-gray-900 dark:text-gray-100" />
         </button>
-        <h1 class="text-xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 dark:from-white dark:to-gray-300 bg-clip-text text-transparent">
+        <h1 class="text-xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 dark:from-white dark:to-gray-300 bg-clip-text text-transparent flex-1 truncate">
           Transaction Details
         </h1>
+        <button
+          @click="handleEdit"
+          class="p-2.5 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition-all active:scale-95"
+        >
+          <Icon name="heroicons:pencil" class="w-6 h-6 text-gray-900 dark:text-gray-100" />
+        </button>
       </div>
     </header>
 
@@ -218,26 +224,20 @@ const handleEdit = () => {
         />
       </div>
 
-      <!-- Actions -->
-      <div class="grid grid-cols-2 gap-3 animate-slide-up" style="animation-delay: 0.4s; animation-fill-mode: both;">
-        <button
-          @click="handleEdit"
-          class="px-5 py-3.5 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-xl font-bold transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-2 shadow-lg"
-        >
-          <Icon name="heroicons:pencil" class="w-5 h-5" />
-          <span>Edit</span>
-        </button>
+      <!-- Danger Zone -->
+      <div class="bg-gradient-to-br from-red-50 to-rose-50 dark:from-red-500/10 dark:to-rose-500/10 backdrop-blur-sm rounded-2xl p-5 border border-red-200/50 dark:border-red-700/50 animate-slide-up" style="animation-delay: 0.4s; animation-fill-mode: both;">
+        <h3 class="text-sm font-bold text-red-600 dark:text-red-400 mb-3 uppercase tracking-wide">Danger Zone</h3>
         <button
           @click="openDeleteModal"
-          class="px-5 py-3.5 bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 text-white rounded-xl font-bold transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-2 shadow-lg"
+          class="w-full px-5 py-3.5 bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 text-white rounded-xl font-bold transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-2 shadow-lg"
         >
           <Icon name="heroicons:trash" class="w-5 h-5" />
-          <span>Delete</span>
+          <span>Delete Transaction</span>
         </button>
       </div>
 
       <!-- Transaction Info -->
-      <div class="bg-gray-100/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-4 text-center border border-gray-200/50 dark:border-gray-700/50 animate-slide-up" style="animation-delay: 0.5s; animation-fill-mode: both;">
+      <div class="bg-gray-100/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-4 text-center border border-gray-200/50 dark:border-gray-700/50 animate-slide-up" style="animation-delay: 0.6s; animation-fill-mode: both;">
         <p class="text-xs text-gray-600 dark:text-gray-400 font-medium">
           Created {{ formatRelativeTime(transaction.createdAt) }}
         </p>
