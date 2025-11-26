@@ -86,13 +86,7 @@ const getBrandColor = (brand: string) => {
         <!-- Left: Logo + User Info -->
         <div class="flex items-center gap-3">
           <!-- Logo -->
-          <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-gold-500 via-amber-500 to-amber-600 dark:from-gold-600 dark:via-amber-600 dark:to-amber-700 flex items-center justify-center shadow-lg shadow-gold-500/20 dark:shadow-gold-600/30 ring-1 ring-white/20">
-            <svg class="w-5 h-5 text-white drop-shadow-sm" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M3 7L3 17L9 17L9 7L3 7Z" fill="currentColor" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
-              <path d="M12 3L12 21M12 3L17 8M12 3L7 8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              <path d="M15 10C17.7614 10 20 12.2386 20 15C20 17.7614 17.7614 20 15 20C12.2386 20 10 17.7614 10 15" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-            </svg>
-          </div>
+          <BaseLogo size="md" />
           
           <!-- App Name & User Info -->
           <div class="flex flex-col">

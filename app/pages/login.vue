@@ -8,7 +8,7 @@ definePageMeta({
 const { t } = useI18n()
 
 useHead({
-  title: computed(() => `Login - Gold Savings`),
+  title: computed(() => `Login - EmasGo`),
 })
 
 // Form state
@@ -86,11 +86,11 @@ const useDemoCredentials = () => {
     <div class="relative w-full max-w-md">
       <!-- Logo & Title -->
       <div class="text-center mb-8 animate-slide-up">
-        <div class="w-20 h-20 mx-auto mb-4 rounded-3xl bg-gradient-to-br from-gold-500 to-amber-600 dark:from-gold-600 dark:to-amber-700 flex items-center justify-center shadow-premium">
-          <Icon name="heroicons:sparkles" class="w-10 h-10 text-white" />
+        <div class="flex justify-center mb-4">
+          <BaseLogo size="xl" />
         </div>
-        <h1 class="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 dark:from-white dark:to-gray-300 bg-clip-text text-transparent mb-2">
-          Gold Savings
+        <h1 class="text-3xl font-bold bg-gradient-to-r from-gold-600 via-amber-600 to-gold-700 dark:from-gold-400 dark:via-amber-400 dark:to-gold-500 bg-clip-text text-transparent mb-2">
+          EmasGo
         </h1>
         <p class="text-gray-600 dark:text-gray-400 font-medium">
           Welcome back! Please login to continue
