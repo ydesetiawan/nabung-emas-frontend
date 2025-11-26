@@ -15,8 +15,11 @@ export const useAuthStore = defineStore('auth', () => {
     const isLoading = ref(false)
     const error = ref<string | null>(null)
 
+    // Access token cookie for authentication check
+    const accessToken = useCookie('access_token')
+
     // Computed
-    const isAuthenticated = computed(() => !!user.value)
+    const isAuthenticated = computed(() => !!user.value && !!accessToken.value)
     const userFullName = computed(() => user.value?.fullName || '')
     const userEmail = computed(() => user.value?.email || '')
 
@@ -84,25 +87,55 @@ export const useAuthStore = defineStore('auth', () => {
      * Logout user
      */
     async function logout(): Promise<void> {
-        try {
-            await $api(API_ENDPOINTS.auth.logout, {
-                method: 'POST',
-            })
-        } catch (err) {
-            console.error('Logout error:', err)
-        } finally {
-            // Clear user data and tokens
-            user.value = null
+        // Store the current token for API call
+        const currentToken = accessToken.value
 
-            // Clear all stores
+        // Clear local state immediately to ensure user is logged out
+        // even if the API call fails
+        user.value = null
+        accessToken.value = null
+
+        // Clear refresh token cookie
+        const refreshToken = useCookie('refresh_token')
+        refreshToken.value = null
+
+        // Clear all stores
+        try {
             const pocketStore = usePocketStore()
             const transactionStore = useTransactionStore()
             pocketStore.clear()
             transactionStore.clear()
-
-            // Redirect to login
-            await navigateTo('/login')
+        } catch (err) {
+            console.error('Error clearing stores:', err)
         }
+
+        // Clear any sensitive data from localStorage
+        if (process.client) {
+            try {
+                localStorage.removeItem('vueuse-local-storage:user')
+            } catch (err) {
+                console.error('Error clearing localStorage:', err)
+            }
+        }
+
+        // Attempt to notify backend (non-blocking)
+        if (currentToken) {
+            try {
+                await $fetch(API_ENDPOINTS.auth.logout, {
+                    method: 'POST',
+                    baseURL: useRuntimeConfig().public.apiBaseURL,
+                    headers: {
+                        'Authorization': `Bearer ${currentToken}`
+                    },
+                })
+            } catch (err) {
+                // Silently fail - user is already logged out locally
+                console.error('Backend logout error:', err)
+            }
+        }
+
+        // Redirect to login
+        await navigateTo('/login')
     }
 
     /**
@@ -214,6 +247,7 @@ export const useAuthStore = defineStore('auth', () => {
      */
     function clear() {
         user.value = null
+        accessToken.value = null
         isLoading.value = false
         error.value = null
     }

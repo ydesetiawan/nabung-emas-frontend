@@ -60,26 +60,43 @@ const validateForm = () => {
 const handleLogin = async () => {
   if (!validateForm()) return
 
+  // Clear previous errors
   showError.value = false
   errorMessage.value = ''
 
   const success = await login(formData.value)
 
   if (success) {
+    // Clear form for security
+    formData.value.password = ''
+    
     // Get redirect path from query or default to home
     const redirectPath = (route.query.redirect as string) || '/'
-    await navigateTo(redirectPath)
+    
+    // Small delay to ensure state is updated
+    await nextTick()
+    
+    // Navigate to destination
+    await navigateTo(redirectPath, { replace: true })
   } else {
-    // Show error message
+    // Show error message with more context
     showError.value = true
-    errorMessage.value = error.value || 'Login failed. Please check your credentials.'
+    const apiError = error.value
+    
+    if (apiError?.includes('401') || apiError?.includes('Unauthorized')) {
+      errorMessage.value = 'Invalid email or password. Please try again.'
+    } else if (apiError?.includes('Network') || apiError?.includes('fetch')) {
+      errorMessage.value = 'Unable to connect to server. Please check your internet connection.'
+    } else {
+      errorMessage.value = apiError || 'Login failed. Please check your credentials and try again.'
+    }
   }
 }
 
 // Demo credentials hint
 const useDemoCredentials = () => {
-  formData.value.email = 'demo@goldsavings.com'
-  formData.value.password = 'demo123'
+  formData.value.email = 'john.doe@example.com'
+  formData.value.password = 'SecurePass123'
 }
 </script>
 

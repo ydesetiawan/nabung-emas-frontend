@@ -127,6 +127,13 @@ export default defineNuxtPlugin((_nuxtApp) => {
             // Transform response data to camelCase
             if (response._data?.data) {
                 response._data.data = transformResponse(response._data.data)
+
+                // Auto-save tokens from login/register responses
+                const data = response._data.data
+                if (data.accessToken && data.refreshToken) {
+                    accessToken.value = data.accessToken
+                    refreshToken.value = data.refreshToken
+                }
             }
         },
         async onResponseError({ response }) {

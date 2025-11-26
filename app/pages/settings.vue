@@ -6,6 +6,7 @@ definePageMeta({
 
 const { t, locale, setLocale } = useI18n()
 const { isDark, toggleDarkMode } = useDarkMode()
+const { logout } = useAuth()
 
 useHead({
   title: computed(() => `${t.value.settings.title} - Gold Savings`),
@@ -23,6 +24,22 @@ const handleLanguageChange = (newLocale: 'en' | 'id') => {
 }
 
 const appVersion = '1.0.0'
+
+// Logout functionality
+const showLogoutConfirm = ref(false)
+const isLoggingOut = ref(false)
+
+const handleLogout = async () => {
+  isLoggingOut.value = true
+  try {
+    await logout()
+  } catch (err) {
+    console.error('Logout error:', err)
+  } finally {
+    isLoggingOut.value = false
+    showLogoutConfirm.value = false
+  }
+}
 </script>
 
 <template>
@@ -123,8 +140,33 @@ const appVersion = '1.0.0'
         </div>
       </section>
 
-      <!-- About Section -->
+      <!-- Account Section -->
       <section class="animate-slide-up" style="animation-delay: 0.2s; animation-fill-mode: both;">
+        <h2 class="text-sm font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-3">
+          Account
+        </h2>
+        
+        <div class="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-2xl shadow-glass dark:shadow-glass-dark border border-gray-100/50 dark:border-gray-700/50">
+          <button 
+            @click="showLogoutConfirm = true"
+            class="w-full p-5 flex items-center justify-between hover:bg-gray-50/50 dark:hover:bg-gray-700/50 transition-all rounded-2xl group"
+          >
+            <div class="flex items-center gap-3">
+              <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                <Icon name="heroicons:arrow-right-on-rectangle" class="w-6 h-6 text-white" />
+              </div>
+              <div class="text-left">
+                <p class="font-bold text-gray-900 dark:text-gray-100">Logout</p>
+                <p class="text-sm text-gray-600 dark:text-gray-400 font-medium">Sign out of your account</p>
+              </div>
+            </div>
+            <Icon name="heroicons:chevron-right" class="w-5 h-5 text-gray-400 group-hover:translate-x-1 transition-transform" />
+          </button>
+        </div>
+      </section>
+
+      <!-- About Section -->
+      <section class="animate-slide-up" style="animation-delay: 0.3s; animation-fill-mode: both;">
         <h2 class="text-sm font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-3">
           {{ t.settings.about }}
         </h2>
@@ -158,7 +200,7 @@ const appVersion = '1.0.0'
       </section>
 
       <!-- Danger Zone -->
-      <section class="animate-slide-up" style="animation-delay: 0.3s; animation-fill-mode: both;">
+      <section class="animate-slide-up" style="animation-delay: 0.4s; animation-fill-mode: both;">
         <h2 class="text-sm font-bold text-red-500 dark:text-red-400 uppercase tracking-wide mb-3">
           Danger Zone
         </h2>
@@ -179,5 +221,62 @@ const appVersion = '1.0.0'
         </div>
       </section>
     </div>
+
+    <!-- Logout Confirmation Modal -->
+    <Teleport to="body">
+      <Transition
+        enter-active-class="transition-opacity duration-200"
+        enter-from-class="opacity-0"
+        enter-to-class="opacity-100"
+        leave-active-class="transition-opacity duration-200"
+        leave-from-class="opacity-100"
+        leave-to-class="opacity-0"
+      >
+        <div
+          v-if="showLogoutConfirm"
+          class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-5"
+          @click.self="showLogoutConfirm = false"
+        >
+          <div
+            class="bg-white dark:bg-slate-800 rounded-3xl shadow-premium max-w-sm w-full p-6 space-y-4 animate-scale-in"
+            @click.stop
+          >
+            <!-- Icon -->
+            <div class="w-16 h-16 mx-auto bg-gradient-to-br from-orange-500 to-red-500 rounded-2xl flex items-center justify-center shadow-lg">
+              <Icon name="heroicons:arrow-right-on-rectangle" class="w-8 h-8 text-white" />
+            </div>
+
+            <!-- Title & Message -->
+            <div class="text-center">
+              <h3 class="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">
+                Logout Confirmation
+              </h3>
+              <p class="text-gray-600 dark:text-gray-400 font-medium">
+                Are you sure you want to logout? You'll need to login again to access your account.
+              </p>
+            </div>
+
+            <!-- Actions -->
+            <div class="flex gap-3 pt-2">
+              <button
+                @click="showLogoutConfirm = false"
+                :disabled="isLoggingOut"
+                class="flex-1 px-5 py-3 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-900 dark:text-gray-100 rounded-xl font-bold transition-all hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+              >
+                Cancel
+              </button>
+              <button
+                @click="handleLogout"
+                :disabled="isLoggingOut"
+                class="flex-1 px-5 py-3 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white rounded-xl font-bold transition-all hover:scale-105 active:scale-95 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 flex items-center justify-center gap-2"
+              >
+                <Icon v-if="isLoggingOut" name="heroicons:arrow-path" class="w-5 h-5 animate-spin" />
+                <span>{{ isLoggingOut ? 'Logging out...' : 'Logout' }}</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </Transition>
+    </Teleport>
   </div>
 </template>
