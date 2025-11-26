@@ -10,9 +10,13 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   'update:open': [value: boolean]
-  'success': [pocket: IPocketCreate]
-  'update': [pocket: IPocketCreate & { id: string }]
+  'success': [pocket: any]
+  'update': [pocket: any]
 }>()
+
+// Stores
+const pocketStore = usePocketStore()
+const typePocketStore = useTypePocketStore()
 
 // Form state
 const formData = ref<IPocketCreate>({
@@ -24,6 +28,16 @@ const formData = ref<IPocketCreate>({
 
 const isSubmitting = ref(false)
 const errors = ref<Record<string, string>>({})
+const apiError = ref<string>('')
+
+// Fetch type pockets on mount
+onMounted(async () => {
+  try {
+    await typePocketStore.fetchTypePockets()
+  } catch (err) {
+    console.error('Failed to load pocket types:', err)
+  }
+})
 
 // Initialize form with edit data
 watch(() => props.open, (isOpen) => {
@@ -34,6 +48,9 @@ watch(() => props.open, (isOpen) => {
       description: props.editData.description || '',
       targetWeight: props.editData.targetWeight,
     }
+  } else if (isOpen) {
+    // Reset form when opening in create mode
+    resetForm()
   }
 })
 
@@ -60,8 +77,12 @@ const validateForm = (): boolean => {
     errors.value.name = 'Name must be at least 3 characters'
   }
 
-  if (formData.value.name.length > 50) {
-    errors.value.name = 'Name cannot exceed 50 characters'
+  if (formData.value.name.length > 100) {
+    errors.value.name = 'Name cannot exceed 100 characters'
+  }
+
+  if (formData.value.description && formData.value.description.length > 500) {
+    errors.value.description = 'Description cannot exceed 500 characters'
   }
 
   if (formData.value.targetWeight && formData.value.targetWeight < 0) {
@@ -80,22 +101,45 @@ const handleSubmit = async () => {
   if (!validateForm()) return
 
   isSubmitting.value = true
+  apiError.value = ''
 
   try {
-    // In real app, this would call the API
-    await new Promise(resolve => setTimeout(resolve, 500)) // Simulate API call
-    
     if (props.editMode && props.editData) {
-      emit('update', { ...formData.value, id: props.editData.id })
+      // Update existing pocket
+      const updated = await pocketStore.updatePocket(props.editData.id, formData.value)
+      
+      if (updated) {
+        emit('update', updated)
+        emit('update:open', false)
+        resetForm()
+      }
     } else {
-      emit('success', formData.value)
+      // Create new pocket
+      const created = await pocketStore.createPocket(formData.value)
+      
+      if (created) {
+        emit('success', created)
+        emit('update:open', false)
+        resetForm()
+      }
     }
-    emit('update:open', false)
-    
-    // Reset form
-    resetForm()
-  } catch (error) {
+  } catch (error: any) {
     console.error('Failed to save pocket:', error)
+    
+    // Parse error message for user-friendly display
+    if (error.message?.includes('type_pocket_id')) {
+      apiError.value = 'Invalid pocket type selected. Please try again.'
+    } else if (error.message?.includes('name')) {
+      apiError.value = 'Invalid pocket name. Please check your input.'
+    } else if (error.message?.includes('Network') || error.message?.includes('fetch')) {
+      apiError.value = 'Unable to connect to server. Please check your internet connection.'
+    } else if (error.message?.includes('401') || error.message?.includes('Unauthorized')) {
+      apiError.value = 'Your session has expired. Please login again.'
+      // Optionally redirect to login
+      await navigateTo('/login')
+    } else {
+      apiError.value = error.message || 'Failed to save pocket. Please try again.'
+    }
   } finally {
     isSubmitting.value = false
   }
@@ -109,6 +153,7 @@ const resetForm = () => {
     targetWeight: undefined,
   }
   errors.value = {}
+  apiError.value = ''
 }
 
 const close = () => {
@@ -166,14 +211,36 @@ const close = () => {
 
         <!-- Form -->
         <form @submit.prevent="handleSubmit" class="flex-1 overflow-y-auto p-6 space-y-6">
+          <!-- API Error Alert -->
+          <div v-if="apiError" class="p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl">
+            <div class="flex items-start gap-3">
+              <Icon name="heroicons:exclamation-circle" class="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0 mt-0.5" />
+              <div class="flex-1">
+                <p class="text-sm font-semibold text-red-800 dark:text-red-200">{{ apiError }}</p>
+              </div>
+              <button 
+                @click="apiError = ''" 
+                class="p-1 hover:bg-red-100 dark:hover:bg-red-800 rounded-lg transition-colors"
+              >
+                <Icon name="heroicons:x-mark" class="w-4 h-4 text-red-600 dark:text-red-400" />
+              </button>
+            </div>
+          </div>
+
+          <!-- Loading State for Type Pockets -->
+          <div v-if="typePocketStore.isLoading" class="text-center py-8">
+            <Icon name="heroicons:arrow-path" class="w-8 h-8 animate-spin text-blue-600 dark:text-blue-400 mx-auto mb-2" />
+            <p class="text-sm text-gray-600 dark:text-gray-400 font-medium">Loading pocket types...</p>
+          </div>
+
           <!-- Pocket Type Selection -->
-          <div>
+          <div v-else>
             <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-3 uppercase tracking-wide">
               Pocket Type <span class="text-red-500">*</span>
             </label>
             <div class="grid grid-cols-1 gap-3">
               <button
-                v-for="type in mockTypePockets"
+                v-for="type in typePocketStore.typePocketList"
                 :key="type.id"
                 type="button"
                 @click="formData.typePocketId = type.id; errors.typePocketId = ''"
@@ -227,7 +294,7 @@ const close = () => {
               v-model="formData.name"
               type="text"
               placeholder="e.g., Emergency Fund, Dream Wedding"
-              maxlength="50"
+              maxlength="100"
               :class="[
                 'w-full px-4 py-3.5 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 font-medium shadow-glass dark:shadow-glass-dark',
                 errors.name ? 'border-red-500' : 'border-gray-200/50 dark:border-gray-700/50'
@@ -235,7 +302,7 @@ const close = () => {
             />
             <div class="flex items-center justify-between mt-2">
               <p v-if="errors.name" class="text-sm text-red-500 font-semibold">{{ errors.name }}</p>
-              <p class="text-xs text-gray-500 dark:text-gray-400 ml-auto font-medium">{{ formData.name.length }}/50</p>
+              <p class="text-xs text-gray-500 dark:text-gray-400 ml-auto font-medium">{{ formData.name.length }}/100</p>
             </div>
           </div>
 
@@ -248,12 +315,15 @@ const close = () => {
               v-model="formData.description"
               rows="3"
               placeholder="Add notes about this pocket..."
-              :maxlength="BUSINESS_RULES.maxDescriptionLength"
+              maxlength="500"
               class="w-full px-4 py-3.5 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border-2 border-gray-200/50 dark:border-gray-700/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all resize-none text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 font-medium shadow-glass dark:shadow-glass-dark"
             />
-            <p class="mt-2 text-xs text-gray-500 dark:text-gray-400 text-right font-medium">
-              {{ formData.description?.length || 0 }} / {{ BUSINESS_RULES.maxDescriptionLength }}
-            </p>
+            <div class="flex items-center justify-between mt-2">
+              <p v-if="errors.description" class="text-sm text-red-500 font-semibold">{{ errors.description }}</p>
+              <p class="mt-2 text-xs text-gray-500 dark:text-gray-400 ml-auto font-medium">
+                {{ formData.description?.length || 0 }} / 500
+              </p>
+            </div>
           </div>
 
           <!-- Target Weight -->
