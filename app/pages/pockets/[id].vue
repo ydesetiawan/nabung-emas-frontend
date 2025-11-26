@@ -102,6 +102,8 @@ const getBrandColor = (brand: string) => {
 }
 
 const showAddTransaction = ref(false)
+const showDeleteModal = ref(false)
+const isDeleting = ref(false)
 
 const handleTransactionSuccess = async () => {
   showAddTransaction.value = false
@@ -112,15 +114,21 @@ const handleEdit = () => {
   alert('Edit pocket (coming soon)')
 }
 
+const openDeleteModal = () => {
+  showDeleteModal.value = true
+}
+
 const handleDelete = async () => {
-  if (confirm('Are you sure you want to delete this pocket and all its transactions?')) {
-    try {
-      await pocketApi.deletePocket(pocketId)
-      router.push('/pockets')
-    } catch (error) {
-      console.error('Failed to delete pocket:', error)
-      alert('Failed to delete pocket. Please try again.')
-    }
+  isDeleting.value = true
+  try {
+    await pocketApi.deletePocket(pocketId)
+    showDeleteModal.value = false
+    router.push('/pockets')
+  } catch (error) {
+    console.error('Failed to delete pocket:', error)
+    alert('Failed to delete pocket. Please try again.')
+  } finally {
+    isDeleting.value = false
   }
 }
 </script>
@@ -305,7 +313,7 @@ const handleDelete = async () => {
       <div class="bg-gradient-to-br from-red-50 to-rose-50 dark:from-red-500/10 dark:to-rose-500/10 backdrop-blur-sm rounded-2xl p-5 border border-red-200/50 dark:border-red-700/50 animate-slide-up" style="animation-delay: 0.5s; animation-fill-mode: both;">
         <h3 class="text-sm font-bold text-red-600 dark:text-red-400 mb-3 uppercase tracking-wide">Danger Zone</h3>
         <button
-          @click="handleDelete"
+          @click="openDeleteModal"
           class="w-full px-5 py-3.5 bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 text-white rounded-xl font-bold transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-2 shadow-lg"
         >
           <Icon name="heroicons:trash" class="w-5 h-5" />
@@ -346,5 +354,77 @@ const handleDelete = async () => {
       @update:open="showAddTransaction = $event"
       @success="handleTransactionSuccess"
     />
+
+    <!-- Delete Confirmation Modal -->
+    <Teleport to="body">
+      <Transition
+        enter-active-class="transition-all duration-300 ease-out"
+        enter-from-class="opacity-0"
+        enter-to-class="opacity-100"
+        leave-active-class="transition-all duration-200 ease-in"
+        leave-from-class="opacity-100"
+        leave-to-class="opacity-0"
+      >
+        <div
+          v-if="showDeleteModal"
+          class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+          @click.self="showDeleteModal = false"
+        >
+          <Transition
+            enter-active-class="transition-all duration-300 ease-out"
+            enter-from-class="opacity-0 scale-95 translate-y-4"
+            enter-to-class="opacity-100 scale-100 translate-y-0"
+            leave-active-class="transition-all duration-200 ease-in"
+            leave-from-class="opacity-100 scale-100 translate-y-0"
+            leave-to-class="opacity-0 scale-95 translate-y-4"
+          >
+            <div
+              v-if="showDeleteModal"
+              class="relative w-full max-w-md bg-white dark:bg-gray-900 rounded-3xl shadow-2xl overflow-hidden"
+            >
+              <!-- Gradient Header -->
+              <div class="relative bg-gradient-to-br from-red-600 via-rose-600 to-pink-600 p-6 text-center">
+                <div class="absolute inset-0 bg-black/10"></div>
+                <div class="relative">
+                  <div class="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center mx-auto mb-3 ring-4 ring-white/30">
+                    <Icon name="heroicons:exclamation-triangle" class="w-8 h-8 text-white" />
+                  </div>
+                  <h3 class="text-xl font-bold text-white mb-1">Delete Pocket?</h3>
+                  <p class="text-white/80 text-sm font-medium">This action cannot be undone</p>
+                </div>
+              </div>
+
+              <!-- Content -->
+              <div class="p-6 space-y-4">
+                <div class="bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-700/50 rounded-xl p-4">
+                  <p class="text-sm text-red-800 dark:text-red-300 font-medium text-center">
+                    This will permanently delete <span class="font-bold">"{{ pocket?.name }}"</span> and all its transactions.
+                  </p>
+                </div>
+
+                <div class="flex gap-3">
+                  <button
+                    @click="showDeleteModal = false"
+                    :disabled="isDeleting"
+                    class="flex-1 px-4 py-3 bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-xl font-bold transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    @click="handleDelete"
+                    :disabled="isDeleting"
+                    class="flex-1 px-4 py-3 bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 text-white rounded-xl font-bold transition-all hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 flex items-center justify-center gap-2"
+                  >
+                    <Icon v-if="isDeleting" name="heroicons:arrow-path" class="w-5 h-5 animate-spin" />
+                    <Icon v-else name="heroicons:trash" class="w-5 h-5" />
+                    <span>{{ isDeleting ? 'Deleting...' : 'Delete' }}</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </Transition>
+        </div>
+      </Transition>
+    </Teleport>
   </div>
 </template>
