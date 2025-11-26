@@ -8,7 +8,7 @@ definePageMeta({
 const { t } = useI18n()
 
 useHead({
-  title: computed(() => `${t.value.dashboard.goldSavings} - Gold Savings`),
+  title: computed(() => `${t.value.dashboard.goldSavings} - EmasGo`),
 })
 
 const showAddTransaction = ref(false)
@@ -81,14 +81,34 @@ const getBrandColor = (brand: string) => {
   <div class="min-h-screen bg-gradient-to-b from-slate-50 to-white dark:from-slate-950 dark:to-slate-900">
     <!-- Header with gradient -->
     <header class="sticky top-0 z-40 safe-top">
-      <div class="absolute inset-0 bg-gradient-to-b from-white/95 to-white/80 dark:from-slate-900/95 dark:to-slate-900/80 backdrop-blur-xl border-b border-gray-200/50 dark:border-gray-700/50"></div>
-      <div class="relative flex items-center justify-between px-5 py-4">
-        <!-- Welcome Text (Left) -->
-        <div>
-          <p class="text-xs text-gray-500 dark:text-gray-400 font-medium">{{ t.dashboard.welcomeBack }}</p>
-          <h1 class="text-lg font-bold bg-gradient-to-r from-gray-900 to-gray-700 dark:from-white dark:to-gray-300 bg-clip-text text-transparent">
-            {{ user.name }}
-          </h1>
+      <div class="absolute inset-0 bg-gradient-to-b from-white/98 to-white/95 dark:from-slate-900/98 dark:to-slate-900/95 backdrop-blur-2xl border-b border-gray-200/80 dark:border-gray-700/50"></div>
+      <div class="relative flex items-center justify-between px-5 py-3">
+        <!-- Left: Logo + User Info -->
+        <div class="flex items-center gap-3">
+          <!-- Logo -->
+          <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-gold-500 via-amber-500 to-amber-600 dark:from-gold-600 dark:via-amber-600 dark:to-amber-700 flex items-center justify-center shadow-lg shadow-gold-500/20 dark:shadow-gold-600/30 ring-1 ring-white/20">
+            <svg class="w-5 h-5 text-white drop-shadow-sm" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M3 7L3 17L9 17L9 7L3 7Z" fill="currentColor" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+              <path d="M12 3L12 21M12 3L17 8M12 3L7 8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M15 10C17.7614 10 20 12.2386 20 15C20 17.7614 17.7614 20 15 20C12.2386 20 10 17.7614 10 15" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+          </div>
+          
+          <!-- App Name & User Info -->
+          <div class="flex flex-col">
+            <div class="flex items-baseline gap-2">
+              <h1 class="text-base font-bold bg-gradient-to-r from-gold-600 via-amber-600 to-gold-700 dark:from-gold-400 dark:via-amber-400 dark:to-gold-500 bg-clip-text text-transparent tracking-tight">
+                EmasGo
+              </h1>
+              <span class="text-[10px] text-gray-400 dark:text-gray-500 font-medium">•</span>
+              <p class="text-xs text-gray-600 dark:text-gray-400 font-semibold">
+                {{ user.name }}
+              </p>
+            </div>
+            <p class="text-[10px] text-gray-500 dark:text-gray-500 font-medium tracking-wide">
+              {{ t.dashboard.welcomeBack }}
+            </p>
+          </div>
         </div>
         
         <!-- Right Icons -->
