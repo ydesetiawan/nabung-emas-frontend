@@ -67,6 +67,7 @@ const getBrandColor = (brand: string) => {
 
 const showDeleteModal = ref(false)
 const isDeleting = ref(false)
+const showEditTransaction = ref(false)
 
 const openDeleteModal = () => {
   showDeleteModal.value = true
@@ -86,9 +87,13 @@ const handleDelete = async () => {
   }
 }
 
+const handleTransactionUpdate = async () => {
+  showEditTransaction.value = false
+  await fetchTransactionData()
+}
+
 const handleEdit = () => {
-  // In real app, would open edit modal
-  alert('Edit transaction (coming soon)')
+  showEditTransaction.value = true
 }
 </script>
 
@@ -256,6 +261,15 @@ const handleEdit = () => {
         Back to Transactions
       </NuxtLink>
     </div>
+
+    <!-- Edit Transaction Sheet -->
+    <PageTransactionAddTransactionSheet
+      :open="showEditTransaction"
+      :edit-mode="true"
+      :edit-data="transaction"
+      @update:open="showEditTransaction = $event"
+      @update="handleTransactionUpdate"
+    />
 
     <!-- Delete Confirmation Modal -->
     <Teleport to="body">

@@ -104,14 +104,21 @@ const getBrandColor = (brand: string) => {
 const showAddTransaction = ref(false)
 const showDeleteModal = ref(false)
 const isDeleting = ref(false)
+const showEditPocket = ref(false)
 
 const handleTransactionSuccess = async () => {
   showAddTransaction.value = false
   await fetchPocketData()
+  await fetchTransactionsData()
+}
+
+const handlePocketUpdate = async () => {
+  showEditPocket.value = false
+  await fetchPocketData()
 }
 
 const handleEdit = () => {
-  alert('Edit pocket (coming soon)')
+  showEditPocket.value = true
 }
 
 const openDeleteModal = () => {
@@ -353,6 +360,15 @@ const handleDelete = async () => {
       :default-pocket-id="pocketId"
       @update:open="showAddTransaction = $event"
       @success="handleTransactionSuccess"
+    />
+
+    <!-- Edit Pocket Sheet -->
+    <PagePocketAddPocketSheet
+      :open="showEditPocket"
+      :edit-mode="true"
+      :edit-data="pocket"
+      @update:open="showEditPocket = $event"
+      @update="handlePocketUpdate"
     />
 
     <!-- Delete Confirmation Modal -->
