@@ -81,7 +81,7 @@ const handleDelete = async () => {
     router.push('/transactions')
   } catch (error) {
     console.error('Failed to delete transaction:', error)
-    alert('Failed to delete transaction. Please try again.')
+    alert(t.value.transactions.deleteFailed)
   } finally {
     isDeleting.value = false
   }
@@ -110,7 +110,7 @@ const handleEdit = () => {
           <Icon name="heroicons:arrow-left" class="w-6 h-6 text-gray-900 dark:text-gray-100" />
         </button>
         <h1 class="text-xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 dark:from-white dark:to-gray-300 bg-clip-text text-transparent flex-1 truncate">
-          Transaction Details
+          {{ t.transactions.transactionDetails }}
         </h1>
         <button
           @click="handleEdit"
@@ -140,7 +140,7 @@ const handleEdit = () => {
           </div>
           
           <div class="space-y-2">
-            <p class="text-sm text-white/90 font-semibold">Total Price</p>
+            <p class="text-sm text-white/90 font-semibold">{{ t.transactions.totalPrice }}</p>
             <p class="text-5xl font-bold drop-shadow-lg tabular-nums">{{ formatCurrency(transaction.totalPrice) }}</p>
           </div>
         </div>
@@ -155,7 +155,7 @@ const handleEdit = () => {
               <Icon name="heroicons:scale" class="w-6 h-6 text-gold-600 dark:text-gold-400" />
             </div>
             <div>
-              <p class="text-sm text-gray-600 dark:text-gray-400 font-medium">Weight</p>
+              <p class="text-sm text-gray-600 dark:text-gray-400 font-medium">{{ t.transactions.weightLabel }}</p>
               <p class="font-bold text-gray-900 dark:text-gray-100 tabular-nums text-lg">{{ formatWeight(transaction.weight) }}</p>
             </div>
           </div>
@@ -168,7 +168,7 @@ const handleEdit = () => {
               <Icon name="heroicons:currency-dollar" class="w-6 h-6 text-blue-600 dark:text-blue-400" />
             </div>
             <div>
-              <p class="text-sm text-gray-600 dark:text-gray-400 font-medium">Price per Gram</p>
+              <p class="text-sm text-gray-600 dark:text-gray-400 font-medium">{{ t.transactions.pricePerGramLabel }}</p>
               <p class="font-bold text-gray-900 dark:text-gray-100 tabular-nums text-lg">{{ formatCurrency(transaction.pricePerGram) }}</p>
             </div>
           </div>
@@ -185,7 +185,7 @@ const handleEdit = () => {
               <Icon name="heroicons:wallet" class="w-6 h-6 text-purple-600 dark:text-purple-400" />
             </div>
             <div>
-              <p class="text-sm text-gray-600 dark:text-gray-400 font-medium">Pocket</p>
+              <p class="text-sm text-gray-600 dark:text-gray-400 font-medium">{{ t.transactions.pocketLabel }}</p>
               <p class="font-bold text-gray-900 dark:text-gray-100">{{ pocket.name }}</p>
               <p class="text-xs text-gray-500 dark:text-gray-400 font-medium">{{ typePocket?.name }}</p>
             </div>
@@ -200,7 +200,7 @@ const handleEdit = () => {
               <Icon name="heroicons:calendar" class="w-6 h-6 text-emerald-600 dark:text-emerald-400" />
             </div>
             <div>
-              <p class="text-sm text-gray-600 dark:text-gray-400 font-medium">Transaction Date</p>
+              <p class="text-sm text-gray-600 dark:text-gray-400 font-medium">{{ t.transactions.transactionDateLabel }}</p>
               <p class="font-bold text-gray-900 dark:text-gray-100">{{ formatDate(transaction.transactionDate, 'long') }}</p>
               <p class="text-xs text-gray-500 dark:text-gray-400 font-medium">{{ formatRelativeTime(transaction.transactionDate) }}</p>
             </div>
@@ -210,36 +210,36 @@ const handleEdit = () => {
 
       <!-- Description -->
       <div v-if="transaction.description" class="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-2xl shadow-glass dark:shadow-glass-dark p-5 border border-gray-100/50 dark:border-gray-700/50 animate-slide-up" style="animation-delay: 0.2s; animation-fill-mode: both;">
-        <h3 class="text-sm font-bold text-gray-600 dark:text-gray-400 mb-2 uppercase tracking-wide">Description</h3>
+        <h3 class="text-sm font-bold text-gray-600 dark:text-gray-400 mb-2 uppercase tracking-wide">{{ t.transactions.descriptionLabel }}</h3>
         <p class="text-gray-900 dark:text-gray-100 font-medium">{{ transaction.description }}</p>
       </div>
 
       <!-- Receipt Image -->
       <div v-if="transaction.receiptImage" class="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-2xl shadow-glass dark:shadow-glass-dark p-5 border border-gray-100/50 dark:border-gray-700/50 animate-slide-up" style="animation-delay: 0.3s; animation-fill-mode: both;">
-        <h3 class="text-sm font-bold text-gray-600 dark:text-gray-400 mb-3 uppercase tracking-wide">Receipt</h3>
+        <h3 class="text-sm font-bold text-gray-600 dark:text-gray-400 mb-3 uppercase tracking-wide">{{ t.transactions.receiptLabel }}</h3>
         <img
           :src="transaction.receiptImage"
-          alt="Receipt"
+          :alt="t.transactions.receiptLabel"
           class="w-full rounded-xl border border-gray-200/50 dark:border-gray-700/50"
         />
       </div>
 
       <!-- Danger Zone -->
       <div class="bg-gradient-to-br from-red-50 to-rose-50 dark:from-red-500/10 dark:to-rose-500/10 backdrop-blur-sm rounded-2xl p-5 border border-red-200/50 dark:border-red-700/50 animate-slide-up" style="animation-delay: 0.4s; animation-fill-mode: both;">
-        <h3 class="text-sm font-bold text-red-600 dark:text-red-400 mb-3 uppercase tracking-wide">Danger Zone</h3>
+        <h3 class="text-sm font-bold text-red-600 dark:text-red-400 mb-3 uppercase tracking-wide">{{ t.transactions.dangerZone }}</h3>
         <button
           @click="openDeleteModal"
           class="w-full px-5 py-3.5 bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 text-white rounded-xl font-bold transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-2 shadow-lg"
         >
           <Icon name="heroicons:trash" class="w-5 h-5" />
-          <span>Delete Transaction</span>
+          <span>{{ t.transactions.deleteTransaction }}</span>
         </button>
       </div>
 
       <!-- Transaction Info -->
       <div class="bg-gray-100/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-4 text-center border border-gray-200/50 dark:border-gray-700/50 animate-slide-up" style="animation-delay: 0.6s; animation-fill-mode: both;">
         <p class="text-xs text-gray-600 dark:text-gray-400 font-medium">
-          Created {{ formatRelativeTime(transaction.createdAt) }}
+          {{ t.transactions.created }} {{ formatRelativeTime(transaction.createdAt) }}
         </p>
         <p class="text-xs text-gray-500 dark:text-gray-500 mt-1 font-mono">
           ID: {{ transaction.id }}
@@ -252,13 +252,13 @@ const handleEdit = () => {
       <div class="w-20 h-20 bg-gray-100 dark:bg-gray-800 rounded-2xl flex items-center justify-center mx-auto mb-4">
         <Icon name="heroicons:exclamation-circle" class="w-10 h-10 text-gray-400" />
       </div>
-      <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">Transaction Not Found</h2>
-      <p class="text-gray-600 dark:text-gray-400 mb-6 font-medium">The transaction you're looking for doesn't exist.</p>
+      <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">{{ t.transactions.transactionNotFound }}</h2>
+      <p class="text-gray-600 dark:text-gray-400 mb-6 font-medium">{{ t.transactions.transactionNotFoundMessage }}</p>
       <NuxtLink
         to="/transactions"
         class="inline-block px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-xl font-bold transition-all hover:scale-105 active:scale-95 shadow-lg"
       >
-        Back to Transactions
+        {{ t.transactions.backToTransactions }}
       </NuxtLink>
     </div>
 
@@ -305,8 +305,8 @@ const handleEdit = () => {
                   <div class="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center mx-auto mb-3 ring-4 ring-white/30">
                     <Icon name="heroicons:exclamation-triangle" class="w-8 h-8 text-white" />
                   </div>
-                  <h3 class="text-xl font-bold text-white mb-1">Delete Transaction?</h3>
-                  <p class="text-white/80 text-sm font-medium">This action cannot be undone</p>
+                  <h3 class="text-xl font-bold text-white mb-1">{{ t.transactions.deleteTransactionTitle }}</h3>
+                  <p class="text-white/80 text-sm font-medium">{{ t.transactions.deleteCannotUndo }}</p>
                 </div>
               </div>
 
@@ -314,7 +314,7 @@ const handleEdit = () => {
               <div class="p-6 space-y-4">
                 <div class="bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-700/50 rounded-xl p-4">
                   <p class="text-sm text-red-800 dark:text-red-300 font-medium text-center">
-                    This will permanently delete this <span class="font-bold">{{ transaction?.brand }}</span> transaction of <span class="font-bold">{{ transaction?.weight }}g</span>.
+                    {{ t.transactions.deleteTransactionMessage }} <span class="font-bold">{{ transaction?.brand }}</span> {{ t.transactions.transactionOf }} <span class="font-bold">{{ transaction?.weight }}g</span>.
                   </p>
                 </div>
 
@@ -324,7 +324,7 @@ const handleEdit = () => {
                     :disabled="isDeleting"
                     class="flex-1 px-4 py-3 bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-xl font-bold transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    Cancel
+                    {{ t.common.cancel }}
                   </button>
                   <button
                     @click="handleDelete"
@@ -333,7 +333,7 @@ const handleEdit = () => {
                   >
                     <Icon v-if="isDeleting" name="heroicons:arrow-path" class="w-5 h-5 animate-spin" />
                     <Icon v-else name="heroicons:trash" class="w-5 h-5" />
-                    <span>{{ isDeleting ? 'Deleting...' : 'Delete' }}</span>
+                    <span>{{ isDeleting ? t.transactions.deleting : t.transactions.deleteButton }}</span>
                   </button>
                 </div>
               </div>

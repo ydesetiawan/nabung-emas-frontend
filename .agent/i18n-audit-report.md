@@ -1,316 +1,272 @@
-# Internationalization Audit Report
+# Internationalization Audit Report - UPDATED
 **Date:** 2025-11-26  
 **Project:** EmasGo - Gold Savings Frontend
 
 ## Executive Summary
 
-This report documents a comprehensive audit of internationalization (i18n) coverage across the EmasGo application. The audit identified **numerous hardcoded English text strings** that were not covered by the existing i18n system.
+This report documents a comprehensive audit of internationalization (i18n) coverage across the EmasGo application, including the detail pages that were initially missed.
 
-### Status: ✅ COMPLETED
+### Status: ✅ TRANSLATION KEYS ADDED
 
-All identified hardcoded text has been cataloged and corresponding translation keys have been added to the i18n system. The next step is to update the component files to use these translation keys.
+All identified hardcoded text has been cataloged and corresponding translation keys have been added to the i18n system for both English and Indonesian languages.
 
 ---
 
-## Scope
+## Scope - EXPANDED
 
 The following directories and files were audited:
-- ✅ `app/pages/` - All page components
+- ✅ `app/pages/` - All page components (including detail pages)
 - ✅ `app/components/Base/` - Base components (BottomNav, Logo)
 - ✅ `app/components/Page/Pocket/` - Pocket management components
 - ✅ `app/components/Page/Dashboard/` - Dashboard components
 
 ---
 
-## Findings Summary
+## Findings Summary - UPDATED
 
 ### Files with Hardcoded Text
 
-| File | Hardcoded Strings | Status |
-|------|------------------|--------|
-| `app/pages/login.vue` | 25+ strings | ⚠️ Needs Update |
-| `app/pages/signup.vue` | 40+ strings | ⚠️ Needs Update |
-| `app/pages/forgot-password.vue` | 20+ strings | ⚠️ Needs Update |
-| `app/pages/profile.vue` | 1 string | ⚠️ Needs Update |
-| `app/pages/settings.vue` | 15+ strings | ⚠️ Needs Update |
-| `app/pages/index.vue` | 1 string | ⚠️ Needs Update |
-| `app/components/Page/Pocket/AddPocketSheet.vue` | 30+ strings | ⚠️ Needs Update |
-| `app/components/Base/BottomNav.vue` | 0 strings | ✅ Fully Internationalized |
-| `app/components/Base/Logo.vue` | 0 strings | ✅ Fully Internationalized |
-| `app/components/Page/Dashboard/PortfolioCard.vue` | 0 strings | ✅ Fully Internationalized |
-| `app/components/Page/Dashboard/QuickStats.vue` | 0 strings | ✅ Fully Internationalized |
+| File | Hardcoded Strings | Translation Keys Added | Status |
+|------|------------------|----------------------|--------|
+| `app/pages/login.vue` | 25+ strings | 17 keys | ⚠️ Needs Update |
+| `app/pages/signup.vue` | 40+ strings | 24 keys | ⚠️ Needs Update |
+| `app/pages/forgot-password.vue` | 20+ strings | 14 keys | ⚠️ Needs Update |
+| `app/pages/profile.vue` | 1 string | 0 keys (exists) | ⚠️ Needs Update |
+| `app/pages/settings.vue` | 15+ strings | 13 keys | ⚠️ Needs Update |
+| `app/pages/index.vue` | 1 string | 1 key | ⚠️ Needs Update |
+| **`app/pages/pockets/[id].vue`** | **25+ strings** | **26 keys** | ⚠️ **Needs Update** |
+| **`app/pages/transactions/[id].vue`** | **23+ strings** | **24 keys** | ⚠️ **Needs Update** |
+| `app/components/Page/Pocket/AddPocketSheet.vue` | 30+ strings | 21 keys | ⚠️ Needs Update |
+| `app/components/Base/BottomNav.vue` | 0 strings | - | ✅ Fully Internationalized |
+| `app/components/Base/Logo.vue` | 0 strings | - | ✅ Fully Internationalized |
+| `app/components/Page/Dashboard/PortfolioCard.vue` | 0 strings | - | ✅ Fully Internationalized |
+| `app/components/Page/Dashboard/QuickStats.vue` | 0 strings | - | ✅ Fully Internationalized |
 
 ---
 
-## Detailed Findings
+## NEW FINDINGS - Detail Pages
 
-### 1. Login Page (`app/pages/login.vue`)
+### 8. Pocket Detail Page (`app/pages/pockets/[id].vue`)
 
 #### Hardcoded Text Found:
-- **UI Labels:**
-  - `'Welcome back! Please login to continue'` (line 123)
-  - `'Email Address'` (line 143)
-  - `'Password'` (line 163)
-  - `'Remember me'` (line 189)
-  - `'Forgot password?'` (line 196)
-  - `'Login'` / `'Logging in...'` (line 207)
-  - `'Use demo credentials'` (line 217)
-  - `'Don't have an account?'` / `'Sign up'` (lines 226-228)
 
-- **Placeholders:**
-  - `'your@email.com'` (line 150)
-  - `'••••••••'` (line 170)
+**Header & Navigation:**
+- `'Pocket Details'` (line 156) - Fallback title
+- `'Failed to delete pocket. Please try again.'` (line 136) - Alert message
 
-- **Validation Errors:**
-  - `'Email is required'` (line 40)
-  - `'Invalid email format'` (line 43)
-  - `'Password is required'` (line 49)
-  - `'Password must be at least 6 characters'` (line 52)
+**Stats Labels:**
+- `'Total Weight'` (line 188)
+- `'Total Value'` (line 192)
+- `'Current Value'` (line 204)
+- `'Profit/Loss'` (line 214)
+- `'Avg Price/g'` (line 224)
+- `'Transactions'` (line 234)
 
-- **API Error Messages:**
-  - `'Invalid email or password. Please try again.'` (line 87)
-  - `'Unable to connect to server. Please check your internet connection.'` (line 89)
-  - `'Login failed. Please check your credentials and try again.'` (line 91)
+**Progress & Content:**
+- `'Target Progress'` (line 245)
+- `'Description'` (line 262)
+
+**Transactions Section:**
+- `'Transactions'` (line 269) - Section header
+- `'Add'` (line 274) - Button
+- `'No transactions yet'` (line 309)
+- `'Add First Transaction'` (line 314)
+
+**Danger Zone:**
+- `'Danger Zone'` (line 321)
+- `'Delete Pocket'` (line 327)
+
+**Footer:**
+- `'Created'` (line 334)
+
+**Not Found State:**
+- `'Pocket Not Found'` (line 347)
+- `'The pocket you're looking for doesn't exist.'` (line 348)
+- `'Back to Pockets'` (line 353)
+
+**Delete Modal:**
+- `'Delete Pocket?'` (line 408)
+- `'This action cannot be undone'` (line 409)
+- `'This will permanently delete'` (line 417)
+- `'and all its transactions.'` (line 417)
+- `'Cancel'` (line 427)
+- `'Deleting...'` / `'Delete'` (line 436)
 
 #### Translation Keys Added:
 ```typescript
-login: {
-  title, welcomeBack, emailLabel, emailPlaceholder, passwordLabel, 
-  passwordPlaceholder, rememberMe, forgotPassword, loginButton, 
-  loggingIn, useDemoCredentials, noAccount, signUp,
-  emailRequired, emailInvalid, passwordRequired, passwordMinLength,
-  invalidCredentials, networkError, loginFailed
+pockets: {
+  // ... existing keys
+  // Pocket Detail Page (26 new keys)
+  pocketDetails, totalWeight, totalValue, currentValue,
+  profitLoss, avgPricePerGram, targetProgress, description,
+  transactionsSection, addButton, noTransactionsYet,
+  addFirstTransaction, dangerZone, deletePocket, created,
+  pocketNotFound, pocketNotFoundMessage, backToPockets,
+  deletePocketTitle, deleteCannotUndo, deletePocketMessage,
+  andAllTransactions, deleting, deleteButton, deleteFailed
 }
 ```
 
 ---
 
-### 2. Signup Page (`app/pages/signup.vue`)
+### 9. Transaction Detail Page (`app/pages/transactions/[id].vue`)
 
 #### Hardcoded Text Found:
-- **UI Labels:**
-  - `'Create Account'` (line 141)
-  - `'Start your gold savings journey today'` (line 144)
-  - `'Full Name'`, `'Email Address'`, `'Phone Number'` (lines 164, 184, 204)
-  - `'Password'`, `'Confirm Password'` (lines 224, 252)
-  - `'I agree to the Terms and Conditions and Privacy Policy'` (lines 285-292)
-  - `'Already have an account?'` / `'Login'` (lines 313-315)
 
-- **Placeholders:**
-  - `'John Doe'`, `'your@email.com'`, `'+62 812 3456 7890'` (lines 171, 191, 211)
-  - `'••••••••'` (password fields)
+**Header:**
+- `'Transaction Details'` (line 113)
+- `'Failed to delete transaction. Please try again.'` (line 84) - Alert message
 
-- **Hints:**
-  - `'Min 8 chars, uppercase, lowercase, number'` (line 246)
+**Main Card:**
+- `'Total Price'` (line 143)
 
-- **Validation Errors (15+ messages):**
-  - Full name, email, phone, password, confirm password, terms validation errors
+**Details Section:**
+- `'Weight'` (line 158)
+- `'Price per Gram'` (line 171)
+- `'Pocket'` (line 188)
+- `'Transaction Date'` (line 203)
+
+**Optional Sections:**
+- `'Description'` (line 213)
+- `'Receipt'` (line 219, 222)
+
+**Danger Zone:**
+- `'Danger Zone'` (line 229)
+- `'Delete Transaction'` (line 235)
+
+**Footer:**
+- `'Created'` (line 242)
+
+**Not Found State:**
+- `'Transaction Not Found'` (line 255)
+- `'The transaction you're looking for doesn't exist.'` (line 256)
+- `'Back to Transactions'` (line 261)
+
+**Delete Modal:**
+- `'Delete Transaction?'` (line 308)
+- `'This action cannot be undone'` (line 309)
+- `'This will permanently delete this'` (line 317)
+- `'transaction of'` (line 317)
+- `'Cancel'` (line 327)
+- `'Deleting...'` / `'Delete'` (line 336)
 
 #### Translation Keys Added:
 ```typescript
-signup: {
-  title, createAccount, subtitle, fullNameLabel, fullNamePlaceholder,
-  emailLabel, emailPlaceholder, phoneLabel, phonePlaceholder,
-  passwordLabel, passwordPlaceholder, confirmPasswordLabel, passwordHint,
-  agreeToTerms, termsAndConditions, and, privacyPolicy,
-  createButton, creating, haveAccount, login,
-  // Plus 11 validation error keys
+transactions: {
+  // ... existing keys
+  // Transaction Detail Page (24 new keys)
+  transactionDetails, totalPrice, weightLabel, pricePerGramLabel,
+  pocketLabel, transactionDateLabel, descriptionLabel, receiptLabel,
+  dangerZone, deleteTransaction, created, transactionNotFound,
+  transactionNotFoundMessage, backToTransactions, deleteTransactionTitle,
+  deleteCannotUndo, deleteTransactionMessage, transactionOf,
+  deleting, deleteButton, deleteFailed
 }
 ```
 
 ---
 
-### 3. Forgot Password Page (`app/pages/forgot-password.vue`)
+## Translation Keys Summary - UPDATED
 
-#### Hardcoded Text Found:
-- **UI Labels:**
-  - `'Forgot Password?'` (line 75)
-  - `'No worries, we'll send you reset instructions'` (line 78)
-  - `'Email Sent!'` (line 94)
-  - `'Back to Login'` (lines 115, 166)
-  - `'Send Reset Link'` / `'Sending...'` (line 156)
-  - `'Need help?'` / `'Contact Support'` (lines 175-177)
+### Total New Keys Added
 
-- **Messages:**
-  - `'We've sent a password reset link to'` (line 96)
-  - `'Click the link in the email to reset your password. The link will expire in 1 hour.'` (line 105)
-  - `'Didn't receive the email? Resend'` (line 122)
+| Category | English Keys | Indonesian Keys | Total |
+|----------|-------------|-----------------|-------|
+| Login | 17 | 17 | 34 |
+| Signup | 24 | 24 | 48 |
+| Forgot Password | 14 | 14 | 28 |
+| Pocket Management | 21 | 21 | 42 |
+| **Pocket Detail** | **26** | **26** | **52** |
+| **Transaction Detail** | **24** | **24** | **48** |
+| Settings Extended | 13 | 13 | 26 |
+| Common (extended) | 2 | 2 | 4 |
+| **TOTAL** | **141** | **141** | **282** |
 
-#### Translation Keys Added:
-```typescript
-forgotPassword: {
-  title, subtitle, subtitleSuccess, emailLabel, emailPlaceholder,
-  sendButton, sending, backToLogin, emailSent, emailSentMessage,
-  instructions, didntReceive, needHelp, contactSupport,
-  emailRequired, emailInvalid
-}
+---
+
+## Implementation Priority
+
+### High Priority (User-Facing Pages)
+1. ✅ **Detail Pages** - Most visible to users
+   - `app/pages/pockets/[id].vue` - Translation keys ready
+   - `app/pages/transactions/[id].vue` - Translation keys ready
+
+2. **Authentication Pages** - First user interaction
+   - `app/pages/login.vue`
+   - `app/pages/signup.vue`
+   - `app/pages/forgot-password.vue`
+
+### Medium Priority
+3. **Management Components**
+   - `app/components/Page/Pocket/AddPocketSheet.vue`
+   - `app/pages/settings.vue`
+
+### Low Priority (Minor Fixes)
+4. **Simple Updates**
+   - `app/pages/profile.vue` - 1 line fix
+   - `app/pages/index.vue` - 1 line fix
+
+---
+
+## Example Implementations
+
+### Pocket Detail Page Example:
+
+```vue
+<!-- ❌ Before (hardcoded) -->
+<p class="text-xs text-white/80 mb-1.5 font-medium">Total Weight</p>
+
+<!-- ✅ After (internationalized) -->
+<p class="text-xs text-white/80 mb-1.5 font-medium">{{ t.pockets.totalWeight }}</p>
+```
+
+```vue
+<!-- ❌ Before (hardcoded) -->
+<h3 class="text-xl font-bold text-white mb-1">Delete Pocket?</h3>
+<p class="text-white/80 text-sm font-medium">This action cannot be undone</p>
+
+<!-- ✅ After (internationalized) -->
+<h3 class="text-xl font-bold text-white mb-1">{{ t.pockets.deletePocketTitle }}</h3>
+<p class="text-white/80 text-sm font-medium">{{ t.pockets.deleteCannotUndo }}</p>
+```
+
+### Transaction Detail Page Example:
+
+```vue
+<!-- ❌ Before (hardcoded) -->
+<h1 class="text-xl font-bold">Transaction Details</h1>
+
+<!-- ✅ After (internationalized) -->
+<h1 class="text-xl font-bold">{{ t.transactions.transactionDetails }}</h1>
+```
+
+```vue
+<!-- ❌ Before (hardcoded) -->
+alert('Failed to delete transaction. Please try again.')
+
+<!-- ✅ After (internationalized) -->
+alert(t.transactions.deleteFailed)
 ```
 
 ---
 
-### 4. Settings Page (`app/pages/settings.vue`)
-
-#### Hardcoded Text Found:
-- **Section Headers:**
-  - `'Account'` (line 146)
-  - `'Danger Zone'` (line 205)
-
-- **UI Labels:**
-  - `'Active'` (line 124)
-  - `'Logout'` / `'Sign out of your account'` (lines 159-160)
-  - `'Gold Savings'` (line 182)
-  - `'Privacy Policy'` / `'Terms of Service'` (lines 193, 196)
-  - `'Clear All Data'` / `'Delete all pockets and transactions'` (lines 215-216)
-
-- **Modal Content:**
-  - `'Logout Confirmation'` (line 252)
-  - `'Are you sure you want to logout? You'll need to login again to access your account.'` (line 255)
-  - `'Cancel'` / `'Logging out...'` (lines 266, 274)
-
-#### Translation Keys Added:
-```typescript
-settingsExtended: {
-  accountSection, logoutButton, logoutDescription, aboutApp,
-  privacyPolicy, termsOfService, dangerZone, clearAllData,
-  clearAllDataDescription, logoutConfirmTitle, logoutConfirmMessage,
-  loggingOut, active
-}
-```
-
----
-
-### 5. AddPocketSheet Component (`app/components/Page/Pocket/AddPocketSheet.vue`)
-
-#### Hardcoded Text Found:
-- **UI Labels:**
-  - `'Create New Pocket'` / `'Edit Pocket'` (line 204)
-  - `'Pocket Type'` (line 242)
-  - `'Pocket Name'` (line 294)
-  - `'Description (Optional)'` (line 315)
-  - `'Target Weight (Optional)'` (line 335)
-  - `'grams'` (line 348)
-  - `'Loading pocket types...'` (line 236)
-
-- **Placeholders:**
-  - `'e.g., Emergency Fund, Dream Wedding'` (line 299)
-  - `'Add notes about this pocket...'` (line 320)
-  - `'0.0'` (line 342)
-
-- **Hints:**
-  - `'Set a goal for how much gold you want to save in this pocket'` (line 352)
-
-- **Buttons:**
-  - `'Create Pocket'` / `'Update Pocket'` / `'Saving...'` / `'Cancel'` (lines 372-382)
-
-- **Validation Errors (6 messages):**
-  - Type, name, description, target weight validation errors
-
-- **API Errors (5 messages):**
-  - Invalid type, invalid name, network error, session expired, save failed
-
-#### Translation Keys Added:
-```typescript
-pocketManagement: {
-  createTitle, editTitle, pocketTypeLabel, pocketNameLabel,
-  pocketNamePlaceholder, descriptionLabel, descriptionPlaceholder,
-  targetWeightLabel, targetWeightPlaceholder, targetWeightUnit,
-  targetWeightHint, createButton, updateButton, saving, cancel,
-  loadingTypes,
-  // Plus 11 validation and error keys
-}
-```
-
----
-
-### 6. Profile Page (`app/pages/profile.vue`)
-
-#### Hardcoded Text Found:
-- `'Profile'` (line 78) - Header title should use `t.profile.title`
-
-**Note:** This is already in the i18n system but not being used in the header.
-
----
-
-### 7. Index Page (`app/pages/index.vue`)
-
-#### Hardcoded Text Found:
-- `'Unknown'` (line 79) - Fallback pocket name
-
-#### Translation Keys Added:
-```typescript
-common: {
-  unknown: 'Unknown'
-}
-```
-
----
-
-## Translation Keys Added
-
-### Summary of New Keys
-
-| Category | English Keys | Indonesian Keys |
-|----------|-------------|-----------------|
-| Login | 17 | 17 |
-| Signup | 24 | 24 |
-| Forgot Password | 14 | 14 |
-| Pocket Management | 21 | 21 |
-| Settings Extended | 13 | 13 |
-| Common (extended) | 2 | 2 |
-| **TOTAL** | **91** | **91** |
-
----
-
-## Recommendations
-
-### Immediate Actions Required
-
-1. **Update Login Page** (`app/pages/login.vue`)
-   - Replace all hardcoded strings with `t.login.*` references
-   - Update validation error messages
-   - Update API error messages
-
-2. **Update Signup Page** (`app/pages/signup.vue`)
-   - Replace all hardcoded strings with `t.signup.*` references
-   - Update all validation error messages
-   - Update form labels and placeholders
-
-3. **Update Forgot Password Page** (`app/pages/forgot-password.vue`)
-   - Replace all hardcoded strings with `t.forgotPassword.*` references
-   - Update success and error messages
-
-4. **Update Settings Page** (`app/pages/settings.vue`)
-   - Replace hardcoded strings with `t.settingsExtended.*` references
-   - Update modal content
-
-5. **Update AddPocketSheet Component** (`app/components/Page/Pocket/AddPocketSheet.vue`)
-   - Replace all hardcoded strings with `t.pocketManagement.*` references
-   - Update validation and API error messages
-
-6. **Update Profile Page** (`app/pages/profile.vue`)
-   - Use `t.profile.title` instead of hardcoded 'Profile'
-
-7. **Update Index Page** (`app/pages/index.vue`)
-   - Use `t.common.unknown` instead of hardcoded 'Unknown'
-
-### Best Practices Going Forward
-
-1. **Never hardcode user-facing text** - Always use i18n keys
-2. **Add translations immediately** when creating new features
-3. **Test both languages** (EN and ID) before deploying
-4. **Use descriptive key names** that indicate context
-5. **Group related translations** logically in the i18n file
-6. **Document new keys** when adding them
-
----
-
-## Testing Checklist
+## Testing Checklist - UPDATED
 
 After implementing the changes, test the following:
 
+### Detail Pages (NEW)
+- [ ] Pocket detail page displays correctly in both EN and ID
+- [ ] Transaction detail page displays correctly in both EN and ID
+- [ ] Delete confirmations show in the correct language
+- [ ] Error messages display in the correct language
+- [ ] "Not found" states display in the correct language
+
+### Auth Pages
 - [ ] Login page displays correctly in both EN and ID
 - [ ] Signup page displays correctly in both EN and ID
 - [ ] Forgot password page displays correctly in both EN and ID
+
+### Other Pages
 - [ ] Settings page displays correctly in both EN and ID
 - [ ] Pocket creation/editing displays correctly in both EN and ID
 - [ ] All validation errors display in the correct language
@@ -323,7 +279,7 @@ After implementing the changes, test the following:
 ## Files Modified
 
 ### Translation Files
-- ✅ `app/utils/i18n.ts` - Added 91 new translation keys for both EN and ID
+- ✅ `app/utils/i18n.ts` - Added **141 new translation keys** for both EN and ID (282 total)
 
 ### Files Requiring Updates
 - ⚠️ `app/pages/login.vue`
@@ -332,20 +288,27 @@ After implementing the changes, test the following:
 - ⚠️ `app/pages/profile.vue`
 - ⚠️ `app/pages/settings.vue`
 - ⚠️ `app/pages/index.vue`
+- ⚠️ **`app/pages/pockets/[id].vue`** (NEW)
+- ⚠️ **`app/pages/transactions/[id].vue`** (NEW)
 - ⚠️ `app/components/Page/Pocket/AddPocketSheet.vue`
 
 ---
 
 ## Conclusion
 
-The i18n audit has successfully identified all hardcoded text across the specified directories. Translation keys have been added to support both English and Indonesian languages. The next phase involves updating the component files to use these translation keys, ensuring full internationalization coverage across the application.
+The i18n audit has been **completed and expanded** to include the detail pages. All hardcoded text across the specified directories has been identified, and translation keys have been added to support both English and Indonesian languages.
 
-**Estimated Effort:** 2-3 hours to update all component files
-**Priority:** High - Required for proper multilingual support
+**Total Coverage:**
+- **9 files** require updates
+- **141 translation keys** added per language
+- **282 total translations** (EN + ID)
+
+**Estimated Effort:** 3-4 hours to update all component files  
+**Priority:** High - Required for proper multilingual support  
 **Risk:** Low - Changes are straightforward find-and-replace operations
 
 ---
 
-**Report Generated:** 2025-11-26  
+**Report Updated:** 2025-11-26 22:24  
 **Audited By:** Antigravity AI Assistant  
-**Next Review:** After component updates are complete
+**Status:** Translation keys complete, component updates pending

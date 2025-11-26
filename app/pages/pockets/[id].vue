@@ -133,7 +133,7 @@ const handleDelete = async () => {
     router.push('/pockets')
   } catch (error) {
     console.error('Failed to delete pocket:', error)
-    alert('Failed to delete pocket. Please try again.')
+    alert(t.value.pockets.deleteFailed)
   } finally {
     isDeleting.value = false
   }
@@ -153,7 +153,7 @@ const handleDelete = async () => {
           <Icon name="heroicons:arrow-left" class="w-6 h-6 text-gray-900 dark:text-gray-100" />
         </button>
         <h1 class="text-xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 dark:from-white dark:to-gray-300 bg-clip-text text-transparent flex-1 truncate">
-          {{ pocket?.name || 'Pocket Details' }}
+          {{ pocket?.name || t.pockets.pocketDetails }}
         </h1>
         <button
           @click="handleEdit"
@@ -185,11 +185,11 @@ const handleDelete = async () => {
 
           <div class="grid grid-cols-2 gap-3">
             <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-3.5 border border-white/20">
-              <p class="text-xs text-white/80 mb-1.5 font-medium">Total Weight</p>
+              <p class="text-xs text-white/80 mb-1.5 font-medium">{{ t.pockets.totalWeight }}</p>
               <p class="text-2xl font-bold tabular-nums">{{ formatWeight(pocket.aggregateTotalWeight) }}</p>
             </div>
             <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-3.5 border border-white/20">
-              <p class="text-xs text-white/80 mb-1.5 font-medium">Total Value</p>
+              <p class="text-xs text-white/80 mb-1.5 font-medium">{{ t.pockets.totalValue }}</p>
               <p class="text-2xl font-bold tabular-nums">{{ formatCurrency(pocket.aggregateTotalPrice) }}</p>
             </div>
           </div>
@@ -201,7 +201,7 @@ const handleDelete = async () => {
         <div class="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-2xl p-4 shadow-glass dark:shadow-glass-dark border border-gray-100/50 dark:border-gray-700/50">
           <div class="flex items-center gap-2 mb-2">
             <Icon name="heroicons:chart-bar" class="w-5 h-5 text-blue-600 dark:text-blue-400" />
-            <p class="text-sm text-gray-600 dark:text-gray-400 font-medium">Current Value</p>
+            <p class="text-sm text-gray-600 dark:text-gray-400 font-medium">{{ t.pockets.currentValue }}</p>
           </div>
           <p class="text-xl font-bold text-gray-900 dark:text-gray-100 tabular-nums">
             {{ formatCurrency(stats.currentValue) }}
@@ -211,7 +211,7 @@ const handleDelete = async () => {
         <div class="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-2xl p-4 shadow-glass dark:shadow-glass-dark border border-gray-100/50 dark:border-gray-700/50">
           <div class="flex items-center gap-2 mb-2">
             <Icon name="heroicons:arrow-trending-up" class="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
-            <p class="text-sm text-gray-600 dark:text-gray-400 font-medium">Profit/Loss</p>
+            <p class="text-sm text-gray-600 dark:text-gray-400 font-medium">{{ t.pockets.profitLoss }}</p>
           </div>
           <p :class="['text-xl font-bold tabular-nums', stats.profitLoss >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400']">
             {{ stats.profitLoss >= 0 ? '+' : '' }}{{ formatCurrency(stats.profitLoss) }}
@@ -221,7 +221,7 @@ const handleDelete = async () => {
         <div class="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-2xl p-4 shadow-glass dark:shadow-glass-dark border border-gray-100/50 dark:border-gray-700/50">
           <div class="flex items-center gap-2 mb-2">
             <Icon name="heroicons:calculator" class="w-5 h-5 text-gold-600 dark:text-gold-400" />
-            <p class="text-sm text-gray-600 dark:text-gray-400 font-medium">Avg Price/g</p>
+            <p class="text-sm text-gray-600 dark:text-gray-400 font-medium">{{ t.pockets.avgPricePerGram }}</p>
           </div>
           <p class="text-xl font-bold text-gray-900 dark:text-gray-100 tabular-nums">
             {{ formatCurrency(stats.averagePricePerGram) }}
@@ -231,7 +231,7 @@ const handleDelete = async () => {
         <div class="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-2xl p-4 shadow-glass dark:shadow-glass-dark border border-gray-100/50 dark:border-gray-700/50">
           <div class="flex items-center gap-2 mb-2">
             <Icon name="heroicons:arrow-path" class="w-5 h-5 text-purple-600 dark:text-purple-400" />
-            <p class="text-sm text-gray-600 dark:text-gray-400 font-medium">Transactions</p>
+            <p class="text-sm text-gray-600 dark:text-gray-400 font-medium">{{ t.pockets.transactionsSection }}</p>
           </div>
           <p class="text-xl font-bold text-gray-900 dark:text-gray-100">
             {{ pocketTransactions.length }}
@@ -242,7 +242,7 @@ const handleDelete = async () => {
       <!-- Progress -->
       <div v-if="pocket.targetWeight" class="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-2xl p-5 shadow-glass dark:shadow-glass-dark border border-gray-100/50 dark:border-gray-700/50 animate-slide-up" style="animation-delay: 0.2s; animation-fill-mode: both;">
         <div class="flex items-center justify-between mb-3">
-          <h3 class="font-bold text-gray-900 dark:text-gray-100">Target Progress</h3>
+          <h3 class="font-bold text-gray-900 dark:text-gray-100">{{ t.pockets.targetProgress }}</h3>
           <span class="text-sm font-bold text-blue-600 dark:text-blue-400 tabular-nums">{{ progress?.toFixed(1) }}%</span>
         </div>
         <div class="h-3 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden mb-2">
@@ -259,19 +259,19 @@ const handleDelete = async () => {
 
       <!-- Description -->
       <div v-if="pocket.description" class="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-2xl p-5 shadow-glass dark:shadow-glass-dark border border-gray-100/50 dark:border-gray-700/50 animate-slide-up" style="animation-delay: 0.3s; animation-fill-mode: both;">
-        <h3 class="text-sm font-bold text-gray-600 dark:text-gray-400 mb-2 uppercase tracking-wide">Description</h3>
+        <h3 class="text-sm font-bold text-gray-600 dark:text-gray-400 mb-2 uppercase tracking-wide">{{ t.pockets.description }}</h3>
         <p class="text-gray-900 dark:text-gray-100 font-medium">{{ pocket.description }}</p>
       </div>
 
       <!-- Transactions List -->
       <div class="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-2xl shadow-glass dark:shadow-glass-dark border border-gray-100/50 dark:border-gray-700/50 animate-slide-up" style="animation-delay: 0.4s; animation-fill-mode: both;">
         <div class="p-5 border-b border-gray-200/50 dark:border-gray-700/50 flex items-center justify-between">
-          <h3 class="font-bold text-gray-900 dark:text-gray-100">Transactions</h3>
+          <h3 class="font-bold text-gray-900 dark:text-gray-100">{{ t.pockets.transactionsSection }}</h3>
           <button
             @click="showAddTransaction = true"
             class="px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white text-sm rounded-xl font-bold transition-all hover:scale-105 active:scale-95 shadow-lg"
           >
-            Add
+            {{ t.pockets.addButton }}
           </button>
         </div>
 
@@ -306,32 +306,32 @@ const handleDelete = async () => {
           <div class="w-16 h-16 bg-gray-100 dark:bg-gray-800 rounded-2xl flex items-center justify-center mx-auto mb-3">
             <Icon name="heroicons:inbox" class="w-8 h-8 text-gray-400" />
           </div>
-          <p class="text-gray-600 dark:text-gray-400 mb-4 font-medium">No transactions yet</p>
+          <p class="text-gray-600 dark:text-gray-400 mb-4 font-medium">{{ t.pockets.noTransactionsYet }}</p>
           <button
             @click="showAddTransaction = true"
             class="px-5 py-2.5 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-xl font-bold transition-all hover:scale-105 active:scale-95 shadow-lg"
           >
-            Add First Transaction
+            {{ t.pockets.addFirstTransaction }}
           </button>
         </div>
       </div>
 
       <!-- Danger Zone -->
       <div class="bg-gradient-to-br from-red-50 to-rose-50 dark:from-red-500/10 dark:to-rose-500/10 backdrop-blur-sm rounded-2xl p-5 border border-red-200/50 dark:border-red-700/50 animate-slide-up" style="animation-delay: 0.5s; animation-fill-mode: both;">
-        <h3 class="text-sm font-bold text-red-600 dark:text-red-400 mb-3 uppercase tracking-wide">Danger Zone</h3>
+        <h3 class="text-sm font-bold text-red-600 dark:text-red-400 mb-3 uppercase tracking-wide">{{ t.pockets.dangerZone }}</h3>
         <button
           @click="openDeleteModal"
           class="w-full px-5 py-3.5 bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 text-white rounded-xl font-bold transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-2 shadow-lg"
         >
           <Icon name="heroicons:trash" class="w-5 h-5" />
-          <span>Delete Pocket</span>
+          <span>{{ t.pockets.deletePocket }}</span>
         </button>
       </div>
 
       <!-- Pocket Info -->
       <div class="bg-gray-100/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-4 text-center border border-gray-200/50 dark:border-gray-700/50 animate-slide-up" style="animation-delay: 0.6s; animation-fill-mode: both;">
         <p class="text-xs text-gray-600 dark:text-gray-400 font-medium">
-          Created {{ formatRelativeTime(pocket.createdAt) }}
+          {{ t.pockets.created }} {{ formatRelativeTime(pocket.createdAt) }}
         </p>
         <p class="text-xs text-gray-500 dark:text-gray-500 mt-1 font-mono">
           ID: {{ pocket.id }}
@@ -344,13 +344,13 @@ const handleDelete = async () => {
       <div class="w-20 h-20 bg-gray-100 dark:bg-gray-800 rounded-2xl flex items-center justify-center mx-auto mb-4">
         <Icon name="heroicons:exclamation-circle" class="w-10 h-10 text-gray-400" />
       </div>
-      <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">Pocket Not Found</h2>
-      <p class="text-gray-600 dark:text-gray-400 mb-6 font-medium">The pocket you're looking for doesn't exist.</p>
+      <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">{{ t.pockets.pocketNotFound }}</h2>
+      <p class="text-gray-600 dark:text-gray-400 mb-6 font-medium">{{ t.pockets.pocketNotFoundMessage }}</p>
       <NuxtLink
         to="/pockets"
         class="inline-block px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-xl font-bold transition-all hover:scale-105 active:scale-95 shadow-lg"
       >
-        Back to Pockets
+        {{ t.pockets.backToPockets }}
       </NuxtLink>
     </div>
 
@@ -405,8 +405,8 @@ const handleDelete = async () => {
                   <div class="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center mx-auto mb-3 ring-4 ring-white/30">
                     <Icon name="heroicons:exclamation-triangle" class="w-8 h-8 text-white" />
                   </div>
-                  <h3 class="text-xl font-bold text-white mb-1">Delete Pocket?</h3>
-                  <p class="text-white/80 text-sm font-medium">This action cannot be undone</p>
+                  <h3 class="text-xl font-bold text-white mb-1">{{ t.pockets.deletePocketTitle }}</h3>
+                  <p class="text-white/80 text-sm font-medium">{{ t.pockets.deleteCannotUndo }}</p>
                 </div>
               </div>
 
@@ -414,7 +414,7 @@ const handleDelete = async () => {
               <div class="p-6 space-y-4">
                 <div class="bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-700/50 rounded-xl p-4">
                   <p class="text-sm text-red-800 dark:text-red-300 font-medium text-center">
-                    This will permanently delete <span class="font-bold">"{{ pocket?.name }}"</span> and all its transactions.
+                    {{ t.pockets.deletePocketMessage }} <span class="font-bold">"{{ pocket?.name }}"</span> {{ t.pockets.andAllTransactions }}
                   </p>
                 </div>
 
@@ -424,7 +424,7 @@ const handleDelete = async () => {
                     :disabled="isDeleting"
                     class="flex-1 px-4 py-3 bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-xl font-bold transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    Cancel
+                    {{ t.common.cancel }}
                   </button>
                   <button
                     @click="handleDelete"
@@ -433,7 +433,7 @@ const handleDelete = async () => {
                   >
                     <Icon v-if="isDeleting" name="heroicons:arrow-path" class="w-5 h-5 animate-spin" />
                     <Icon v-else name="heroicons:trash" class="w-5 h-5" />
-                    <span>{{ isDeleting ? 'Deleting...' : 'Delete' }}</span>
+                    <span>{{ isDeleting ? t.pockets.deleting : t.pockets.deleteButton }}</span>
                   </button>
                 </div>
               </div>
