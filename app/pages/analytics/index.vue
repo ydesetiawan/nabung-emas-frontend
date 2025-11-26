@@ -5,15 +5,37 @@ definePageMeta({
 })
 
 const { t } = useI18n()
+const { currentGoldPrice } = useGoldCalculator()
+
+// Use composables directly
+const pocketApi = usePocketApi()
+const transactionApi = useTransactionApi()
 
 useHead({
   title: computed(() => `${t.value.analytics.title} - Gold Savings`),
 })
 
+const pockets = ref<any[]>([])
+const transactions = ref<any[]>([])
+
+// Fetch data on mount
+onMounted(async () => {
+  try {
+    const [pocketsData, transactionsData] = await Promise.all([
+      pocketApi.fetchPockets(),
+      transactionApi.fetchTransactions()
+    ])
+    pockets.value = pocketsData
+    transactions.value = transactionsData
+  } catch (error) {
+    console.error('Failed to fetch data:', error)
+  }
+})
+
 // Calculate portfolio metrics
 const portfolioMetrics = computed(() => {
-  const totalValue = mockPockets.reduce((sum, p) => sum + p.aggregateTotalPrice, 0)
-  const totalWeight = mockPockets.reduce((sum, p) => sum + p.aggregateTotalWeight, 0)
+  const totalValue = pockets.value.reduce((sum, p) => sum + p.aggregateTotalPrice, 0)
+  const totalWeight = pockets.value.reduce((sum, p) => sum + p.aggregateTotalWeight, 0)
   const avgPrice = totalWeight > 0 ? totalValue / totalWeight : 0
   
   return {
@@ -27,7 +49,7 @@ const portfolioMetrics = computed(() => {
 const monthlyPurchases = computed(() => {
   const monthlyData: Record<string, { weight: number; amount: number; count: number }> = {}
   
-  mockTransactions.forEach(transaction => {
+  transactions.value.forEach(transaction => {
     const date = new Date(transaction.transactionDate)
     const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`
     
@@ -56,21 +78,18 @@ const avgMonthlyPurchase = computed(() => {
 
 // Portfolio distribution by pocket
 const portfolioDistribution = computed(() => {
-  return mockPockets.map(pocket => ({
+  return pockets.value.map(pocket => ({
     ...pocket,
     percentage: (pocket.aggregateTotalPrice / portfolioMetrics.value.totalValue) * 100,
   })).sort((a, b) => b.aggregateTotalPrice - a.aggregateTotalPrice)
 })
 
-// Mock market price (in real app, this would come from an API)
-const marketPrice = 1055000
-
 const priceDifference = computed(() => {
-  return portfolioMetrics.value.avgPrice - marketPrice
+  return portfolioMetrics.value.avgPrice - currentGoldPrice.value
 })
 
 const pricePercentageDiff = computed(() => {
-  return ((priceDifference.value / marketPrice) * 100)
+  return ((priceDifference.value / currentGoldPrice.value) * 100)
 })
 
 const getColorClass = (index: number) => {
@@ -145,7 +164,7 @@ const formatMonth = (monthStr: string) => {
           </div>
           <div class="flex items-center justify-between">
             <span class="text-sm text-gray-600 dark:text-gray-400 font-medium">{{ t.analytics.marketPrice }}</span>
-            <span class="text-sm font-bold text-gray-900 dark:text-gray-100 tabular-nums">{{ formatCurrency(marketPrice) }}</span>
+            <span class="text-sm font-bold text-gray-900 dark:text-gray-100 tabular-nums">{{ formatCurrency(currentGoldPrice) }}</span>
           </div>
           <div class="pt-3 border-t border-gray-200 dark:border-gray-700">
             <div class="flex items-center justify-between">

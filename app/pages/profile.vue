@@ -5,25 +5,38 @@ definePageMeta({
 })
 
 const { t } = useI18n()
+const { user } = useAuth()
+
+// Use composables directly
+const pocketApi = usePocketApi()
+const transactionApi = useTransactionApi()
 
 useHead({
   title: computed(() => `${t.value.profile.title} - Gold Savings`),
 })
 
-// Mock user data
-const user = ref({
-  name: 'John Doe',
-  email: 'john.doe@example.com',
-  phone: '+62 812 3456 7890',
-  joinDate: '2024-01-15',
-  avatar: '', // Empty for now, will use initials
+const pockets = ref<any[]>([])
+const transactions = ref<any[]>([])
+
+// Fetch data on mount
+onMounted(async () => {
+  try {
+    const [pocketsData, transactionsData] = await Promise.all([
+      pocketApi.fetchPockets(),
+      transactionApi.fetchTransactions()
+    ])
+    pockets.value = pocketsData
+    transactions.value = transactionsData
+  } catch (error) {
+    console.error('Failed to fetch data:', error)
+  }
 })
 
 const stats = computed(() => ({
-  totalPockets: mockPockets.length,
-  totalTransactions: mockTransactions.length,
-  totalWeight: mockPockets.reduce((sum, p) => sum + p.aggregateTotalWeight, 0),
-  totalValue: mockPockets.reduce((sum, p) => sum + p.aggregateTotalPrice, 0),
+  totalPockets: pockets.value.length,
+  totalTransactions: transactions.value.length,
+  totalWeight: pockets.value.reduce((sum, p) => sum + p.aggregateTotalWeight, 0),
+  totalValue: pockets.value.reduce((sum, p) => sum + p.aggregateTotalPrice, 0),
 }))
 
 const getInitials = (name: string) => {
@@ -87,7 +100,7 @@ const handleLogout = () => {
           <div class="flex justify-center mb-4">
             <div class="relative">
               <div class="w-24 h-24 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-white text-3xl font-bold shadow-lg ring-4 ring-white/30">
-                {{ getInitials(user.name) }}
+                {{ getInitials(user?.fullName || 'User') }}
               </div>
               <button class="absolute bottom-0 right-0 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform">
                 <Icon name="heroicons:camera" class="w-4 h-4 text-blue-600" />
@@ -97,9 +110,9 @@ const handleLogout = () => {
 
           <!-- User Info -->
           <div class="text-center text-white">
-            <h2 class="text-2xl font-bold mb-1">{{ user.name }}</h2>
-            <p class="text-white/80 text-sm font-medium mb-1">{{ user.email }}</p>
-            <p class="text-white/70 text-xs font-medium">{{ t.profile.memberSince }} {{ formatJoinDate(user.joinDate) }}</p>
+            <h2 class="text-2xl font-bold mb-1">{{ user?.fullName || 'User' }}</h2>
+            <p class="text-white/80 text-sm font-medium mb-1">{{ user?.email || '' }}</p>
+            <p class="text-white/70 text-xs font-medium">{{ t.profile.memberSince }} {{ user?.createdAt ? formatJoinDate(new Date(user.createdAt).toISOString().split('T')[0] || '') : '' }}</p>
           </div>
         </div>
       </div>
@@ -167,7 +180,7 @@ const handleLogout = () => {
               </div>
               <div>
                 <p class="text-xs text-gray-500 dark:text-gray-400 font-medium">{{ t.profile.fullName }}</p>
-                <p class="text-sm font-bold text-gray-900 dark:text-gray-100">{{ user.name }}</p>
+                <p class="text-sm font-bold text-gray-900 dark:text-gray-100">{{ user?.fullName || 'User' }}</p>
               </div>
             </div>
             <button class="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
@@ -182,7 +195,7 @@ const handleLogout = () => {
               </div>
               <div>
                 <p class="text-xs text-gray-500 dark:text-gray-400 font-medium">{{ t.profile.email }}</p>
-                <p class="text-sm font-bold text-gray-900 dark:text-gray-100">{{ user.email }}</p>
+                <p class="text-sm font-bold text-gray-900 dark:text-gray-100">{{ user?.email || '' }}</p>
               </div>
             </div>
             <button class="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
@@ -197,7 +210,7 @@ const handleLogout = () => {
               </div>
               <div>
                 <p class="text-xs text-gray-500 dark:text-gray-400 font-medium">{{ t.profile.phone }}</p>
-                <p class="text-sm font-bold text-gray-900 dark:text-gray-100">{{ user.phone }}</p>
+                <p class="text-sm font-bold text-gray-900 dark:text-gray-100">{{ user?.phone || '' }}</p>
               </div>
             </div>
             <button class="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">

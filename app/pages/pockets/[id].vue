@@ -9,24 +9,46 @@ const router = useRouter()
 const { t } = useI18n()
 const { calculatePocketStats } = useGoldCalculator()
 
+// Use composables directly
+const pocketApi = usePocketApi()
+const typePocketStore = useTypePocketStore()
+
 const pocketId = route.params.id as string
 
-// Find pocket
-const pocket = computed(() => {
-  return mockPockets.find(p => p.id === pocketId)
+const isLoading = ref(true)
+const pocket = ref<any>(null)
+
+// Fetch pocket data on mount
+onMounted(async () => {
+  try {
+    isLoading.value = true
+    await Promise.all([
+      typePocketStore.fetchTypePockets(),
+      fetchPocketData()
+    ])
+  } catch (error) {
+    console.error('Failed to fetch pocket data:', error)
+  } finally {
+    isLoading.value = false
+  }
 })
+
+const fetchPocketData = async () => {
+  pocket.value = await pocketApi.fetchPocketById(pocketId)
+}
 
 // Find type pocket
 const typePocket = computed(() => {
   if (!pocket.value) return null
-  return mockTypePockets.find(tp => tp.id === pocket.value.typePocketId)
+  return typePocketStore.getTypePocketById(pocket.value.typePocketId)
 })
 
 // Get pocket transactions
 const pocketTransactions = computed(() => {
-  return mockTransactions
-    .filter(t => t.pocketId === pocketId)
-    .sort((a, b) => new Date(b.transactionDate).getTime() - new Date(a.transactionDate).getTime())
+  if (!pocket.value?.transactions) return []
+  return pocket.value.transactions.sort((a: any, b: any) => 
+    new Date(b.transactionDate).getTime() - new Date(a.transactionDate).getTime()
+  )
 })
 
 // Calculate stats
@@ -71,20 +93,24 @@ const getBrandColor = (brand: string) => {
 
 const showAddTransaction = ref(false)
 
-const handleTransactionSuccess = () => {
+const handleTransactionSuccess = async () => {
   showAddTransaction.value = false
-  alert('Transaction added successfully!')
-  // In real app, would refresh pocket data
+  await fetchPocketData()
 }
 
 const handleEdit = () => {
   alert('Edit pocket (coming soon)')
 }
 
-const handleDelete = () => {
+const handleDelete = async () => {
   if (confirm('Are you sure you want to delete this pocket and all its transactions?')) {
-    alert('Pocket deleted (mock)')
-    router.push('/pockets')
+    try {
+      await pocketApi.deletePocket(pocketId)
+      router.push('/pockets')
+    } catch (error) {
+      console.error('Failed to delete pocket:', error)
+      alert('Failed to delete pocket. Please try again.')
+    }
   }
 }
 </script>

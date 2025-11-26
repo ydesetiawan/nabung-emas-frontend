@@ -8,23 +8,44 @@ const route = useRoute()
 const router = useRouter()
 const { t } = useI18n()
 
+// Use composables directly
+const transactionApi = useTransactionApi()
+const typePocketStore = useTypePocketStore()
+
 const transactionId = route.params.id as string
 
-// Find transaction
-const transaction = computed(() => {
-  return mockTransactions.find(t => t.id === transactionId)
+const isLoading = ref(true)
+const transaction = ref<any>(null)
+
+// Fetch transaction data on mount
+onMounted(async () => {
+  try {
+    isLoading.value = true
+    await Promise.all([
+      typePocketStore.fetchTypePockets(),
+      fetchTransactionData()
+    ])
+  } catch (error) {
+    console.error('Failed to fetch transaction data:', error)
+  } finally {
+    isLoading.value = false
+  }
 })
+
+const fetchTransactionData = async () => {
+  transaction.value = await transactionApi.fetchTransactionById(transactionId)
+}
 
 // Find pocket
 const pocket = computed(() => {
-  if (!transaction.value) return null
-  return mockPockets.find(p => p.id === transaction?.value?.pocketId)
+  if (!transaction.value?.pocket) return null
+  return transaction.value.pocket
 })
 
 // Find type pocket
 const typePocket = computed(() => {
   if (!pocket.value) return null
-  return mockTypePockets.find(tp => tp.id === pocket?.value?.typePocketId)
+  return typePocketStore.getTypePocketById(pocket.value.typePocketId)
 })
 
 useHead({
@@ -44,11 +65,15 @@ const getBrandColor = (brand: string) => {
   return colors[brand] || 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300'
 }
 
-const handleDelete = () => {
+const handleDelete = async () => {
   if (confirm('Are you sure you want to delete this transaction?')) {
-    // In real app, would call API
-    alert('Transaction deleted (mock)')
-    router.push('/transactions')
+    try {
+      await transactionApi.deleteTransaction(transactionId)
+      router.push('/transactions')
+    } catch (error) {
+      console.error('Failed to delete transaction:', error)
+      alert('Failed to delete transaction. Please try again.')
+    }
   }
 }
 
