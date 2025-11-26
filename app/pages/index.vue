@@ -11,6 +11,8 @@ const { user } = useAuth()
 const pocketStore = usePocketStore()
 const transactionStore = useTransactionStore()
 const typePocketStore = useTypePocketStore()
+const analyticsStore = useAnalyticsStore()
+const { currentGoldPrice } = useGoldCalculator()
 
 useHead({
   title: computed(() => `${t.value.dashboard.goldSavings} - EmasGo`),
@@ -27,6 +29,7 @@ onMounted(async () => {
       pocketStore.fetchPockets(),
       transactionStore.fetchTransactions(),
       typePocketStore.fetchTypePockets(),
+      analyticsStore.fetchDashboard(currentGoldPrice.value),
     ])
   } catch (error) {
     console.error('Failed to fetch data:', error)
@@ -51,6 +54,7 @@ const handleTransactionSuccess = async (transaction: ITransactionCreate) => {
   await Promise.all([
     pocketStore.fetchPockets(),
     transactionStore.fetchTransactions(),
+    analyticsStore.fetchDashboard(currentGoldPrice.value, true), // Force refresh dashboard
   ])
 }
 
@@ -145,11 +149,17 @@ const getBrandColor = (brand: string) => {
     <div class="px-5 py-6 space-y-6 pb-24">
       <!-- Portfolio Card with Premium Gradient -->
       <div class="relative overflow-hidden">
-        <PageDashboardPortfolioCard />
+        <PageDashboardPortfolioCard 
+          :portfolio="analyticsStore.dashboard?.portfolio"
+          :is-loading="analyticsStore.isLoading"
+        />
       </div>
 
       <!-- Quick Stats -->
-      <PageDashboardQuickStats />
+      <PageDashboardQuickStats 
+        :portfolio="analyticsStore.dashboard?.portfolio"
+        :is-loading="analyticsStore.isLoading"
+      />
 
       <!-- Pockets Section -->
       <div class="animate-slide-up" style="animation-delay: 0.1s; animation-fill-mode: both;">

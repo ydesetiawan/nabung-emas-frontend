@@ -6,19 +6,34 @@
 /**
  * Dashboard statistics
  */
-export interface IDashboardData {
-    totalPockets: number
+export interface IPortfolioSummary {
+    totalValue: number
     totalWeight: number
-    totalInvested: number
+    totalPockets: number
+    totalTransactions: number
+    averagePricePerGram: number
+    currentGoldPrice: number
     currentValue: number
     profitLoss: number
     profitLossPercentage: number
+}
+
+export interface IDashboardData {
+    portfolio: IPortfolioSummary
     recentTransactions: Array<{
         id: string
-        pocketName: string
+        pocketId: string
+        transactionDate: string
+        brand: string
         weight: number
         totalPrice: number
-        transactionDate: Date
+        pocket: {
+            id: string
+            name: string
+            typePocket: {
+                color: string
+            }
+        }
     }>
 }
 

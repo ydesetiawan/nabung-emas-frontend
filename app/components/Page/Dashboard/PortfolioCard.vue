@@ -1,17 +1,14 @@
 <script setup lang="ts">
-import { mockPockets } from "@/utils/mockData"
+import type { IPortfolioSummary } from '~/types/analytics'
+
+const props = defineProps<{
+  portfolio?: IPortfolioSummary
+  isLoading?: boolean
+}>()
 
 const { t } = useI18n()
-const { calculatePocketStats } = useGoldCalculator()
 
-// Calculate total portfolio stats
-const totalStats = computed(() => {
-  const totalPrice = mockPockets.reduce((sum, p) => sum + p.aggregateTotalPrice, 0)
-  const totalWeight = mockPockets.reduce((sum, p) => sum + p.aggregateTotalWeight, 0)
-  return calculatePocketStats(totalPrice, totalWeight)
-})
-
-const isProfit = computed(() => totalStats.value.profitLoss >= 0)
+const isProfit = computed(() => (props.portfolio?.profitLoss || 0) >= 0)
 </script>
 
 <template>
@@ -28,16 +25,20 @@ const isProfit = computed(() => totalStats.value.profitLoss >= 0)
       <div class="flex items-center justify-between mb-2">
         <p class="text-sm text-white/90 font-semibold">{{ t.dashboard.totalPortfolio }}</p>
         <div class="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center">
-          <Icon name="heroicons:chart-pie" class="w-5 h-5" />
+          <Icon v-if="isLoading" name="heroicons:arrow-path" class="w-5 h-5 animate-spin" />
+          <Icon v-else name="heroicons:chart-pie" class="w-5 h-5" />
         </div>
       </div>
       
-      <h2 class="text-4xl font-bold tracking-tight mb-4 tabular-nums drop-shadow-lg">
-        {{ formatCurrency(totalStats.currentValue) }}
+      <div v-if="isLoading" class="h-10 w-48 bg-white/20 rounded-lg animate-pulse mb-4"></div>
+      <h2 v-else class="text-4xl font-bold tracking-tight mb-4 tabular-nums drop-shadow-lg">
+        {{ formatCurrency(portfolio?.currentValue || 0) }}
       </h2>
 
       <!-- Profit/Loss Badge with enhanced styling -->
+      <div v-if="isLoading" class="h-9 w-32 bg-white/20 rounded-2xl animate-pulse"></div>
       <div
+        v-else
         :class="[
           'inline-flex items-center gap-2 px-4 py-2 rounded-2xl text-sm font-bold backdrop-blur-sm',
           isProfit 
@@ -50,10 +51,10 @@ const isProfit = computed(() => totalStats.value.profitLoss >= 0)
           class="w-5 h-5"
         />
         <span class="tabular-nums">
-          {{ isProfit ? '+' : '' }}{{ totalStats.profitLossPercentage.toFixed(2) }}%
+          {{ isProfit ? '+' : '' }}{{ (portfolio?.profitLossPercentage || 0).toFixed(2) }}%
         </span>
         <span class="text-white/80 tabular-nums text-xs">
-          ({{ isProfit ? '+' : '' }}{{ formatCurrency(totalStats.profitLoss) }})
+          ({{ isProfit ? '+' : '' }}{{ formatCurrency(portfolio?.profitLoss || 0) }})
         </span>
       </div>
 
@@ -61,11 +62,13 @@ const isProfit = computed(() => totalStats.value.profitLoss >= 0)
       <div class="grid grid-cols-2 gap-3 mt-6">
         <div class="bg-white/10 dark:bg-white/5 backdrop-blur-sm rounded-2xl p-3.5 border border-white/20">
           <p class="text-xs text-white/80 mb-1.5 font-medium">{{ t.dashboard.totalWeight }}</p>
-          <p class="text-xl font-bold tabular-nums">{{ formatWeight(totalStats.totalWeight) }}</p>
+          <div v-if="isLoading" class="h-7 w-20 bg-white/20 rounded animate-pulse"></div>
+          <p v-else class="text-xl font-bold tabular-nums">{{ formatWeight(portfolio?.totalWeight || 0) }}</p>
         </div>
         <div class="bg-white/10 dark:bg-white/5 backdrop-blur-sm rounded-2xl p-3.5 border border-white/20">
           <p class="text-xs text-white/80 mb-1.5 font-medium">{{ t.dashboard.avgPrice }}</p>
-          <p class="text-xl font-bold tabular-nums">{{ formatCurrency(totalStats.averagePricePerGram) }}</p>
+          <div v-if="isLoading" class="h-7 w-24 bg-white/20 rounded animate-pulse"></div>
+          <p v-else class="text-xl font-bold tabular-nums">{{ formatCurrency(portfolio?.averagePricePerGram || 0) }}</p>
         </div>
       </div>
     </div>
