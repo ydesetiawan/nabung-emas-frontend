@@ -11,7 +11,12 @@ export const useAuthStore = defineStore('auth', () => {
     const { $api, $publicApi } = useNuxtApp()
 
     // State
-    const user = useLocalStorage<IUser | null>(STORAGE_KEYS.user, null)
+    const user = useLocalStorage<IUser | null>(STORAGE_KEYS.user, null, {
+        serializer: {
+            read: (v: string) => v ? JSON.parse(v) : null,
+            write: (v: any) => JSON.stringify(v),
+        },
+    })
     const isLoading = ref(false)
     const error = ref<string | null>(null)
 
@@ -43,6 +48,8 @@ export const useAuthStore = defineStore('auth', () => {
 
             // User data and tokens are automatically handled by the API plugin
             user.value = response.data.user
+
+            console.log('User logged in:', user.value)
 
             return true
         } catch (err: any) {
