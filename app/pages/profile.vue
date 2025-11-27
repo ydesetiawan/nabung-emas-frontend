@@ -7,37 +7,9 @@ definePageMeta({
 const { t } = useI18n()
 const { user } = useAuth()
 
-// Use composables directly
-const pocketApi = usePocketApi()
-const transactionApi = useTransactionApi()
-
 useHead({
   title: computed(() => `${t.value.profile.title} - Gold Savings`),
 })
-
-const pockets = ref<any[]>([])
-const transactions = ref<any[]>([])
-
-// Fetch data on mount
-onMounted(async () => {
-  try {
-    const [pocketsData, transactionsData] = await Promise.all([
-      pocketApi.fetchPockets(),
-      transactionApi.fetchTransactions()
-    ])
-    pockets.value = pocketsData
-    transactions.value = transactionsData
-  } catch (error) {
-    console.error('Failed to fetch data:', error)
-  }
-})
-
-const stats = computed(() => ({
-  totalPockets: pockets.value.length,
-  totalTransactions: transactions.value.length,
-  totalWeight: pockets.value.reduce((sum, p) => sum + p.aggregateTotalWeight, 0),
-  totalValue: pockets.value.reduce((sum, p) => sum + p.aggregateTotalPrice, 0),
-}))
 
 const getInitials = (name: string) => {
   return name
@@ -113,57 +85,6 @@ const handleLogout = () => {
             <h2 class="text-2xl font-bold mb-1">{{ user?.fullName || 'User' }}</h2>
             <p class="text-white/80 text-sm font-medium mb-1">{{ user?.email || '' }}</p>
             <p class="text-white/70 text-xs font-medium">{{ t.profile.memberSince }} {{ user?.createdAt ? formatJoinDate(new Date(user.createdAt).toISOString().split('T')[0] || '') : '' }}</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Stats Grid -->
-      <div class="grid grid-cols-2 gap-3 animate-slide-up" style="animation-delay: 0.1s; animation-fill-mode: both;">
-        <div class="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-2xl p-4 shadow-glass dark:shadow-glass-dark border border-gray-200/50 dark:border-gray-700/50">
-          <div class="flex items-center gap-3 mb-2">
-            <div class="w-10 h-10 rounded-xl bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
-              <Icon name="heroicons:wallet" class="w-5 h-5 text-blue-600 dark:text-blue-400" />
-            </div>
-            <div>
-              <p class="text-xs text-gray-500 dark:text-gray-400 font-medium">{{ t.profile.pockets }}</p>
-              <p class="text-2xl font-bold text-gray-900 dark:text-gray-100 tabular-nums">{{ stats.totalPockets }}</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-2xl p-4 shadow-glass dark:shadow-glass-dark border border-gray-200/50 dark:border-gray-700/50">
-          <div class="flex items-center gap-3 mb-2">
-            <div class="w-10 h-10 rounded-xl bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center">
-              <Icon name="heroicons:arrow-path" class="w-5 h-5 text-purple-600 dark:text-purple-400" />
-            </div>
-            <div>
-              <p class="text-xs text-gray-500 dark:text-gray-400 font-medium">{{ t.profile.transactions }}</p>
-              <p class="text-2xl font-bold text-gray-900 dark:text-gray-100 tabular-nums">{{ stats.totalTransactions }}</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-2xl p-4 shadow-glass dark:shadow-glass-dark border border-gray-200/50 dark:border-gray-700/50">
-          <div class="flex items-center gap-3 mb-2">
-            <div class="w-10 h-10 rounded-xl bg-gold-100 dark:bg-gold-900/30 flex items-center justify-center">
-              <Icon name="heroicons:scale" class="w-5 h-5 text-gold-600 dark:text-gold-400" />
-            </div>
-            <div>
-              <p class="text-xs text-gray-500 dark:text-gray-400 font-medium">{{ t.profile.totalGold }}</p>
-              <p class="text-2xl font-bold text-gray-900 dark:text-gray-100 tabular-nums">{{ formatWeight(stats.totalWeight) }}</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-2xl p-4 shadow-glass dark:shadow-glass-dark border border-gray-200/50 dark:border-gray-700/50">
-          <div class="flex items-center gap-3 mb-2">
-            <div class="w-10 h-10 rounded-xl bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
-              <Icon name="heroicons:currency-dollar" class="w-5 h-5 text-green-600 dark:text-green-400" />
-            </div>
-            <div>
-              <p class="text-xs text-gray-500 dark:text-gray-400 font-medium">{{ t.profile.totalValue }}</p>
-              <p class="text-lg font-bold text-gray-900 dark:text-gray-100 tabular-nums">{{ formatCompactCurrency(stats.totalValue) }}</p>
-            </div>
           </div>
         </div>
       </div>
