@@ -1,15 +1,51 @@
 <script setup lang="ts">
+import type { IProfileUpdateRequest } from '~/types/auth'
 
 definePageMeta({
   layout: 'default',
 })
 
 const { t } = useI18n()
-const { user } = useAuth()
+const { user, updateProfile } = useAuth()
 
 useHead({
   title: computed(() => `${t.value.profile.title} - Gold Savings`),
 })
+
+// Edit profile state
+const showEditProfile = ref(false)
+const isUpdating = ref(false)
+const editForm = ref<IProfileUpdateRequest>({
+  fullName: '',
+  phone: '',
+})
+
+// Open edit modal with current user data
+const openEditProfile = () => {
+  if (user.value) {
+    editForm.value = {
+      fullName: user.value.fullName,
+      phone: user.value.phone,
+    }
+  }
+  showEditProfile.value = true
+}
+
+// Handle profile update
+const handleUpdateProfile = async () => {
+  isUpdating.value = true
+  try {
+    const success = await updateProfile(editForm.value)
+    if (success) {
+      showEditProfile.value = false
+      // Show success message (you can add a toast notification here)
+    }
+  } catch (error) {
+    console.error('Failed to update profile:', error)
+  } finally {
+    isUpdating.value = false
+  }
+}
 
 const getInitials = (name: string) => {
   return name
@@ -91,52 +127,45 @@ const handleLogout = () => {
 
       <!-- Account Information -->
       <div class="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-2xl p-5 shadow-glass dark:shadow-glass-dark border border-gray-200/50 dark:border-gray-700/50 animate-slide-up" style="animation-delay: 0.2s; animation-fill-mode: both;">
-        <h3 class="text-sm font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-4">{{ t.profile.accountInfo }}</h3>
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-sm font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">{{ t.profile.accountInfo }}</h3>
+          <button 
+            @click="openEditProfile"
+            class="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+          >
+            <Icon name="heroicons:pencil" class="w-5 h-5 text-gray-600 dark:text-gray-400" />
+          </button>
+        </div>
         
         <div class="space-y-4">
-          <div class="flex items-center justify-between">
-            <div class="flex items-center gap-3">
-              <div class="w-10 h-10 rounded-xl bg-gray-100 dark:bg-gray-700 flex items-center justify-center">
-                <Icon name="heroicons:user" class="w-5 h-5 text-gray-600 dark:text-gray-400" />
-              </div>
-              <div>
-                <p class="text-xs text-gray-500 dark:text-gray-400 font-medium">{{ t.profile.fullName }}</p>
-                <p class="text-sm font-bold text-gray-900 dark:text-gray-100">{{ user?.fullName || 'User' }}</p>
-              </div>
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-gray-100 dark:bg-gray-700 flex items-center justify-center">
+              <Icon name="heroicons:user" class="w-5 h-5 text-gray-600 dark:text-gray-400" />
             </div>
-            <button class="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
-              <Icon name="heroicons:pencil" class="w-4 h-4 text-gray-500 dark:text-gray-400" />
-            </button>
+            <div>
+              <p class="text-xs text-gray-500 dark:text-gray-400 font-medium">{{ t.profile.fullName }}</p>
+              <p class="text-sm font-bold text-gray-900 dark:text-gray-100">{{ user?.fullName || 'User' }}</p>
+            </div>
           </div>
 
-          <div class="flex items-center justify-between">
-            <div class="flex items-center gap-3">
-              <div class="w-10 h-10 rounded-xl bg-gray-100 dark:bg-gray-700 flex items-center justify-center">
-                <Icon name="heroicons:envelope" class="w-5 h-5 text-gray-600 dark:text-gray-400" />
-              </div>
-              <div>
-                <p class="text-xs text-gray-500 dark:text-gray-400 font-medium">{{ t.profile.email }}</p>
-                <p class="text-sm font-bold text-gray-900 dark:text-gray-100">{{ user?.email || '' }}</p>
-              </div>
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-gray-100 dark:bg-gray-700 flex items-center justify-center">
+              <Icon name="heroicons:envelope" class="w-5 h-5 text-gray-600 dark:text-gray-400" />
             </div>
-            <button class="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
-              <Icon name="heroicons:pencil" class="w-4 h-4 text-gray-500 dark:text-gray-400" />
-            </button>
+            <div>
+              <p class="text-xs text-gray-500 dark:text-gray-400 font-medium">{{ t.profile.email }}</p>
+              <p class="text-sm font-bold text-gray-900 dark:text-gray-100">{{ user?.email || '' }}</p>
+            </div>
           </div>
 
-          <div class="flex items-center justify-between">
-            <div class="flex items-center gap-3">
-              <div class="w-10 h-10 rounded-xl bg-gray-100 dark:bg-gray-700 flex items-center justify-center">
-                <Icon name="heroicons:phone" class="w-5 h-5 text-gray-600 dark:text-gray-400" />
-              </div>
-              <div>
-                <p class="text-xs text-gray-500 dark:text-gray-400 font-medium">{{ t.profile.phone }}</p>
-                <p class="text-sm font-bold text-gray-900 dark:text-gray-100">{{ user?.phone || '' }}</p>
-              </div>
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-gray-100 dark:bg-gray-700 flex items-center justify-center">
+              <Icon name="heroicons:phone" class="w-5 h-5 text-gray-600 dark:text-gray-400" />
             </div>
-            <button class="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
-              <Icon name="heroicons:pencil" class="w-4 h-4 text-gray-500 dark:text-gray-400" />
-            </button>
+            <div>
+              <p class="text-xs text-gray-500 dark:text-gray-400 font-medium">{{ t.profile.phone }}</p>
+              <p class="text-sm font-bold text-gray-900 dark:text-gray-100">{{ user?.phone || '' }}</p>
+            </div>
           </div>
         </div>
       </div>
@@ -161,5 +190,129 @@ const handleLogout = () => {
         </div>
       </div>
     </div>
+
+    <!-- Edit Profile Sheet -->
+    <Teleport to="body">
+      <!-- Backdrop -->
+      <Transition
+        enter-active-class="transition-opacity duration-300"
+        enter-from-class="opacity-0"
+        enter-to-class="opacity-100"
+        leave-active-class="transition-opacity duration-200"
+        leave-from-class="opacity-100"
+        leave-to-class="opacity-0"
+      >
+        <div
+          v-if="showEditProfile"
+          class="fixed inset-0 bg-black/60 dark:bg-black/80 backdrop-blur-sm z-50"
+          @click="showEditProfile = false"
+        />
+      </Transition>
+
+      <!-- Sheet -->
+      <Transition
+        enter-active-class="transition-transform duration-300 ease-out"
+        enter-from-class="translate-y-full"
+        enter-to-class="translate-y-0"
+        leave-active-class="transition-transform duration-200 ease-in"
+        leave-from-class="translate-y-0"
+        leave-to-class="translate-y-full"
+      >
+        <div
+          v-if="showEditProfile"
+          class="fixed inset-x-0 bottom-0 z-50 bg-gradient-to-b from-white to-slate-50 dark:from-slate-900 dark:to-slate-950 rounded-t-3xl shadow-premium max-h-[90vh] flex flex-col max-w-md mx-auto"
+        >
+          <!-- Header with gradient -->
+          <div class="relative">
+            <div class="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-700 dark:to-purple-700 rounded-t-3xl"></div>
+            <div class="relative flex items-center justify-between p-6 text-white">
+              <h2 class="text-2xl font-bold drop-shadow-lg">
+                Edit Profile
+              </h2>
+              <button
+                @click="showEditProfile = false"
+                class="p-2.5 hover:bg-white/20 rounded-xl transition-all active:scale-95 backdrop-blur-sm"
+              >
+                <Icon name="heroicons:x-mark" class="w-6 h-6" />
+              </button>
+            </div>
+          </div>
+
+          <!-- Form -->
+          <form @submit.prevent="handleUpdateProfile" class="flex-1 overflow-y-auto p-6 space-y-6">
+            <!-- Full Name -->
+            <div>
+              <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2 uppercase tracking-wide">
+                {{ t.profile.fullName }} <span class="text-red-500">*</span>
+              </label>
+              <input
+                v-model="editForm.fullName"
+                type="text"
+                required
+                placeholder="Enter your full name"
+                class="w-full px-4 py-3.5 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border-2 border-gray-200/50 dark:border-gray-700/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 font-medium shadow-glass dark:shadow-glass-dark"
+              />
+            </div>
+
+            <!-- Phone -->
+            <div>
+              <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2 uppercase tracking-wide">
+                {{ t.profile.phone }} <span class="text-red-500">*</span>
+              </label>
+              <input
+                v-model="editForm.phone"
+                type="tel"
+                required
+                placeholder="+62 812 3456 7890"
+                class="w-full px-4 py-3.5 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border-2 border-gray-200/50 dark:border-gray-700/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 font-medium shadow-glass dark:shadow-glass-dark"
+              />
+            </div>
+
+            <!-- Email (Read-only) -->
+            <div>
+              <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2 uppercase tracking-wide">
+                {{ t.profile.email }}
+              </label>
+              <input
+                :value="user?.email"
+                type="email"
+                disabled
+                class="w-full px-4 py-3.5 bg-gray-100 dark:bg-gray-800 border-2 border-gray-200/50 dark:border-gray-700/50 rounded-xl text-gray-500 dark:text-gray-400 font-medium cursor-not-allowed"
+              />
+              <p class="mt-2 text-xs text-gray-500 dark:text-gray-400 font-medium">Email cannot be changed</p>
+            </div>
+          </form>
+
+          <!-- Footer -->
+          <div class="p-6 border-t border-gray-200/50 dark:border-gray-700/50 bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm space-y-3">
+            <button
+              type="submit"
+              @click="handleUpdateProfile"
+              :disabled="isUpdating"
+              :class="[
+                'w-full py-4 rounded-xl font-bold text-white transition-all shadow-lg',
+                isUpdating
+                  ? 'bg-gray-400 cursor-not-allowed'
+                  : 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 hover:scale-105 active:scale-95'
+              ]"
+            >
+              <span v-if="isUpdating" class="flex items-center justify-center gap-2">
+                <Icon name="heroicons:arrow-path" class="w-5 h-5 animate-spin" />
+                Saving...
+              </span>
+              <span v-else>Save Changes</span>
+            </button>
+            
+            <button
+              type="button"
+              @click="showEditProfile = false"
+              class="w-full py-3.5 text-gray-700 dark:text-gray-300 font-bold hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition-all"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      </Transition>
+    </Teleport>
   </div>
 </template>
