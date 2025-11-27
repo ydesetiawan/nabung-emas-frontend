@@ -117,10 +117,67 @@ watch(() => props.open, (isOpen) => {
   }
 })
 
-// Auto-calculate total price
+// Auto-calculate total price when weight or price per gram changes
 watch([() => formData.value.weight, () => formData.value.pricePerGram], ([weight, price]) => {
   if (weight && price) {
     formData.value.totalPrice = calculateTotalPrice(weight, price)
+  }
+})
+
+// Currency formatting for price per gram input
+const pricePerGramDisplay = ref('')
+const isPricePerGramFocused = ref(false)
+
+// Format price per gram for display
+const formatPricePerGramDisplay = () => {
+  if (formData.value.pricePerGram && !isPricePerGramFocused.value) {
+    pricePerGramDisplay.value = formatCurrency(formData.value.pricePerGram)
+  } else if (isPricePerGramFocused.value) {
+    pricePerGramDisplay.value = formData.value.pricePerGram ? formData.value.pricePerGram.toString() : ''
+  } else {
+    pricePerGramDisplay.value = ''
+  }
+}
+
+// Watch for changes to format display
+watch(() => formData.value.pricePerGram, formatPricePerGramDisplay)
+watch(() => isPricePerGramFocused.value, formatPricePerGramDisplay)
+
+// Handle price per gram input
+const handlePricePerGramFocus = () => {
+  isPricePerGramFocused.value = true
+  formatPricePerGramDisplay()
+}
+
+const handlePricePerGramBlur = () => {
+  isPricePerGramFocused.value = false
+  formatPricePerGramDisplay()
+}
+
+const handlePricePerGramInput = (event: Event) => {
+  const input = event.target as HTMLInputElement
+  const value = input.value.replace(/[^0-9]/g, '')
+  formData.value.pricePerGram = value ? parseInt(value) : 0
+}
+
+// Initialize display when opening
+watch(() => props.open, (isOpen) => {
+  if (isOpen) {
+    formatPricePerGramDisplay()
+  }
+})
+
+// Total price inline editing
+const isTotalPriceEditing = ref(false)
+const totalPriceInput = ref<HTMLInputElement | null>(null)
+
+// Auto-focus when entering edit mode
+watch(isTotalPriceEditing, (isEditing) => {
+  if (isEditing) {
+    nextTick(() => {
+      totalPriceInput.value?.focus()
+      totalPriceInput.value?.select()
+    })
   }
 })
 
@@ -474,10 +531,12 @@ const close = () => {
               Price per Gram (IDR) <span class="text-red-500">*</span>
             </label>
             <input
-              v-model.number="formData.pricePerGram"
-              type="number"
-              step="1000"
-              placeholder="0"
+              :value="pricePerGramDisplay"
+              @input="handlePricePerGramInput"
+              @focus="handlePricePerGramFocus"
+              @blur="handlePricePerGramBlur"
+              type="text"
+              placeholder="Rp 0"
               :class="[
                 'w-full px-4 py-3.5 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all text-gray-900 dark:text-gray-100 font-medium shadow-glass dark:shadow-glass-dark',
                 errors.pricePerGram ? 'border-red-500' : 'border-gray-200/50 dark:border-gray-700/50'
@@ -486,15 +545,36 @@ const close = () => {
             <p v-if="errors.pricePerGram" class="mt-2 text-sm text-red-500 font-semibold">{{ errors.pricePerGram }}</p>
           </div>
 
-          <!-- Total Price (Auto-calculated) -->
-          <div class="p-5 bg-gradient-to-br from-blue-50 to-purple-50 dark:from-blue-500/10 dark:to-purple-500/10 rounded-2xl border-2 border-blue-200/50 dark:border-blue-700/50 shadow-glass dark:shadow-glass-dark">
-            <div class="flex items-center justify-between">
+          <!-- Total Price (Editable with gradient card UI) -->
+          <div 
+            @click="isTotalPriceEditing = true"
+            :class="[
+              'p-5 rounded-2xl border-2 shadow-glass dark:shadow-glass-dark transition-all cursor-pointer',
+              isTotalPriceEditing 
+                ? 'bg-white dark:bg-slate-800 border-blue-500 dark:border-blue-600' 
+                : 'bg-gradient-to-br from-blue-50 to-purple-50 dark:from-blue-500/10 dark:to-purple-500/10 border-blue-200/50 dark:border-blue-700/50 hover:scale-105'
+            ]"
+          >
+            <div class="flex items-center justify-between mb-2">
               <span class="text-sm font-bold text-blue-900 dark:text-blue-300 uppercase tracking-wide">Total Price</span>
-              <span class="text-3xl font-bold text-blue-600 dark:text-blue-400 tabular-nums">
-                {{ formatCompactCurrency(formData.totalPrice) }}
-              </span>
+              <div v-if="!isTotalPriceEditing" class="text-3xl font-bold text-blue-600 dark:text-blue-400 tabular-nums">
+                {{ formatCurrency(formData.totalPrice) }}
+              </div>
+              <input
+                v-else
+                ref="totalPriceInput"
+                v-model.number="formData.totalPrice"
+                @blur="isTotalPriceEditing = false"
+                @keyup.enter="isTotalPriceEditing = false"
+                type="number"
+                step="1000"
+                class="text-3xl font-bold text-blue-600 dark:text-blue-400 tabular-nums bg-transparent border-none outline-none focus:ring-0 text-right w-full"
+                placeholder="0"
+              />
             </div>
-            <p class="text-xs text-blue-600 dark:text-blue-400 mt-2 font-medium">Auto-calculated from weight × price per gram</p>
+            <p class="text-xs text-blue-600 dark:text-blue-400 font-medium">
+              {{ isTotalPriceEditing ? '✏️ Editing... Press Enter or click away to save' : '💡 Click to edit or auto-calculated from Weight × Price per Gram' }}
+            </p>
           </div>
 
           <!-- Description -->
